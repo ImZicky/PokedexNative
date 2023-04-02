@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Text, Image } from "react-native";
+import { Image } from "react-native";
 import PokeButton from "../../components/buttons/PokeButton";
 import { User } from "../../components/user/types/User";
-import { Flex, TextInput } from "@react-native-material/core";
+import { Flex } from "@react-native-material/core";
 import { PokemonClient, Pokemon } from "pokenode-ts";
 import { StyleSheet } from "react-native";
 import PokeTextField from "../../components/textfields/PokeTextField";
-import { useFonts } from "expo-font";
+import PokeLoading from "../../components/loader/PokeLoading";
+import PokeText from "../../components/texts/PokeText";
+import { usePokemonService } from "../../service/api/PokemonService";
+import { useCommonService } from "../../service/common/CommonService";
 
 export type PokeLoginProps = {
   handlerUser: (user: User) => void;
@@ -22,84 +25,24 @@ function PokeLogin(props: PokeLoginProps) {
   const [password, setPassword] = useState<string | undefined>();
 
   //Services
-  const api = new PokemonClient();
-
-  //Fonts
-  const [loaded] = useFonts({
-    Orbitron: require("../../assets/fonts/Orbitron-VariableFont_wght.ttf"),
-    PressStart: require("../../assets/fonts/PressStart2P-Regular.ttf"),
-    SpaceGrotesk: require("../../assets/fonts/SpaceGrotesk-VariableFont_wght.ttf"),
-  });
-
-  //Miscelaneous functions
-  const getRandomInt = (max: number) => {
-    return Math.floor(Math.random() * max);
-  };
+  const pokemonService = usePokemonService();
+  const commonService = useCommonService();
 
   //UseEffect
   useEffect(() => {
     const fetchPokemon = async () => {
-      const ramdomId = getRandomInt(100);
-      await api
-        .getPokemonById(ramdomId)
+      pokemonService
+        .getRamdomPokemon()
         .then((data) => {
           setPokemon(data);
-          setPokemonTypeColor(getColorFromType(data?.types[0].type.name ?? ""));
+          setPokemonTypeColor(
+            commonService.getColorFromType(data?.types[0].type.name ?? "")
+          );
         })
         .catch((error) => console.error(error));
     };
-    if (loaded) {
-      if (pokemon === undefined) fetchPokemon();
-    }
+    if (pokemon === undefined) fetchPokemon();
   });
-
-  // Style Methods
-  const getColorFromType = (type: string) => {
-    switch (type) {
-      case "primary":
-        return "#a30000";
-      case "secondary":
-        return "#000000";
-      case "bug":
-        return "#97c220";
-      case "dark":
-        return "#50495f";
-      case "dragon":
-        return "#0969c2";
-      case "electric":
-        return "#f4d543";
-      case "fairy":
-        return "#ed8fe5";
-      case "fighting":
-        return "#cf4068";
-      case "fire":
-        return "#ffa053";
-      case "flying":
-        return "#92acdf";
-      case "ghost":
-        return "#606dbb";
-      case "grass":
-        return "#5fba58";
-      case "ground":
-        return "#dc8658";
-      case "ice":
-        return "#6ccdbf";
-      case "normal":
-        return "#959ca1";
-      case "poison":
-        return "#a765c8";
-      case "psychic":
-        return "#f86e74";
-      case "rock":
-        return "#cbbd8d";
-      case "steel":
-        return "#548f9f";
-      case "water":
-        return "#5398d8";
-      default:
-        return "#a30000";
-    }
-  };
 
   const styles = StyleSheet.create({
     view: {
@@ -119,19 +62,6 @@ function PokeLogin(props: PokeLoginProps) {
       padding: 50,
       backgroundColor: "#FFFFFF",
     },
-    titleHeader: {
-      color: "#FFFFFF",
-      fontFamily: "PressStart",
-      fontSize: 20,
-      textAlign: "center",
-    },
-    titleForm: {
-      color: pokemonTypeColor,
-      fontSize: 35,
-      fontFamily: "Orbitron",
-      textAlign: "center",
-      marginBottom: 20,
-    },
     centeredDiv: {
       alignItems: "center",
       alignContent: "center",
@@ -141,11 +71,15 @@ function PokeLogin(props: PokeLoginProps) {
 
   return (
     <>
-      {pokemon && (
+      {pokemon ? (
         <>
           <Flex style={styles.view}>
             <Flex style={styles.header}>
-              <Text style={styles.titleHeader}>Quem é esse Pokemon?</Text>
+              <PokeText
+                text="Quem é esse Pokemon?"
+                color={"#FFFFFF"}
+                type={"h1"}
+              />
               <Flex style={styles.centeredDiv}>
                 <Image
                   style={styles.headerImage}
@@ -154,14 +88,20 @@ function PokeLogin(props: PokeLoginProps) {
                   }}
                 />
               </Flex>
-              <Text style={styles.titleHeader}>
-                {pokemon?.name.toUpperCase()}
-              </Text>
+              <PokeText
+                text={pokemon?.name.toUpperCase()}
+                color={"#FFFFFF"}
+                type={"h1"}
+              />
             </Flex>
           </Flex>
           <Flex fill style={styles.centeredDiv}>
             <Flex style={styles.form}>
-              <Text style={styles.titleForm}>Login</Text>
+              <PokeText
+                text={"Login"}
+                color={pokemonTypeColor ?? "#000000"}
+                type={"h2"}
+              />
               <PokeTextField
                 color={pokemonTypeColor}
                 cursorColor={pokemonTypeColor}
@@ -186,7 +126,6 @@ function PokeLogin(props: PokeLoginProps) {
                 icon="eye-outline"
                 isPassword
               />
-
               <PokeButton
                 text="Entrar"
                 size="fullwidth"
@@ -197,6 +136,8 @@ function PokeLogin(props: PokeLoginProps) {
             </Flex>
           </Flex>
         </>
+      ) : (
+        <PokeLoading />
       )}
     </>
   );
