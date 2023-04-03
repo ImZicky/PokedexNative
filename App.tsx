@@ -1,33 +1,35 @@
 import { IconComponentProvider } from "@react-native-material/core";
 import React, { createContext, useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { User } from "./components/user/types/User";
+import { UserCredentials } from "./service/api/types/User";
 import PokeDash from "./views/PokeDash/PokeDash";
 import PokeLogin from "./views/PokeLogin/PokeLogin";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
-const UserContext = createContext<User | undefined>({
-  email: "",
-  name: "",
+const UserContext = createContext<UserCredentials | undefined>({
+  user: undefined,
+  token: undefined,
   isLogged: false,
 });
 
 export default function App() {
-  const [user, setUser] = useState<User>();
+  const [userCredentials, setUserCredentials] = useState<UserCredentials>();
 
-  const handlerUser = (user: User) => {
-    setUser(user);
+  const handlerUser = (userCredentials: UserCredentials) => {
+    setUserCredentials(userCredentials);
   };
 
   return (
     <View style={styles.container}>
       <IconComponentProvider IconComponent={MaterialCommunityIcons}>
-        <UserContext.Provider value={user}>
-          {user && user.isLogged ? (
+        <UserContext.Provider value={userCredentials}>
+          {userCredentials && userCredentials.isLogged ? (
             <PokeDash></PokeDash>
           ) : (
             <PokeLogin
-              handlerUser={(user: User) => handlerUser(user)}
+              handlerUser={(userLogin: UserCredentials) =>
+                handlerUser(userLogin)
+              }
             ></PokeLogin>
           )}
         </UserContext.Provider>

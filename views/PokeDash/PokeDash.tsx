@@ -6,7 +6,7 @@ export type PokeDashProps = {};
 function PokeDash(props: PokeDashProps) {
   return (
     <View>
-      <Text>dash</Text>
+      <Text>ENTROU COM SUCESSO!!!</Text>
     </View>
   );
 }

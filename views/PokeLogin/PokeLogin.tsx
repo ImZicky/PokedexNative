@@ -1,32 +1,45 @@
 import React, { useEffect, useState } from "react";
 import { Image } from "react-native";
 import PokeButton from "../../components/buttons/PokeButton";
-import { User } from "../../components/user/types/User";
+import { UserCredentials, UserCriteria } from "../../service/api/types/User";
 import { Flex } from "@react-native-material/core";
-import { PokemonClient, Pokemon } from "pokenode-ts";
+import { Pokemon } from "pokenode-ts";
 import { StyleSheet } from "react-native";
 import PokeTextField from "../../components/textfields/PokeTextField";
 import PokeLoading from "../../components/loader/PokeLoading";
 import PokeText from "../../components/texts/PokeText";
 import { usePokemonService } from "../../service/api/PokemonService";
 import { useCommonService } from "../../service/common/CommonService";
+import UseUserService from "../../service/api/UserService";
+import * as Yup from "yup";
+import { FormikProvider, useFormik } from "formik";
 
 export type PokeLoginProps = {
-  handlerUser: (user: User) => void;
+  handlerUser: (userLogin: UserCredentials) => void;
+};
+
+const DefaultValue = {
+  password: "",
+  email: "",
+};
+
+type FormValues = {
+  email?: string;
+  password?: string;
 };
 
 function PokeLogin(props: PokeLoginProps) {
   //Consts
+  const [userCriteria] = useState<UserCriteria>(DefaultValue);
   const [pokemon, setPokemon] = useState<Pokemon | undefined>(undefined);
   const [pokemonTypeColor, setPokemonTypeColor] = useState<
     string | undefined
   >();
-  const [email, setEmail] = useState<string | undefined>();
-  const [password, setPassword] = useState<string | undefined>();
 
   //Services
   const pokemonService = usePokemonService();
   const commonService = useCommonService();
+  const userService = UseUserService();
 
   //UseEffect
   useEffect(() => {
@@ -44,6 +57,55 @@ function PokeLogin(props: PokeLoginProps) {
     if (pokemon === undefined) fetchPokemon();
   });
 
+  //Methods
+  const handleLogin = async () => {
+    if (userCriteria !== undefined) {
+      userService
+        .login(userCriteria)
+        .then((data) => {
+          props.handlerUser(data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  };
+
+  //Validatiopn
+  const LoginSchema = Yup.object().shape({
+    email: Yup.string()
+      .email("Deve ser um email válido")
+      .required("É necessário"),
+    password: Yup.string()
+      .min(6, "Mínimo de 6 caracteres")
+      .required("É necessário")
+      .matches(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{6,})/,
+        "Senha inválida"
+      ),
+  });
+
+  //Formik
+  const formik = useFormik<FormValues>({
+    initialValues: userCriteria,
+    validationSchema: LoginSchema,
+    onSubmit: async (values, { setSubmitting }) => {
+      setSubmitting(true);
+      await handleLogin();
+      setSubmitting(false);
+    },
+  });
+
+  const {
+    errors,
+    getFieldProps,
+    touched,
+    isSubmitting,
+    handleSubmit,
+    setFieldValue,
+  } = formik;
+
+  //Style
   const styles = StyleSheet.create({
     view: {
       backgroundColor: pokemonTypeColor,
@@ -97,42 +159,50 @@ function PokeLogin(props: PokeLoginProps) {
           </Flex>
           <Flex fill style={styles.centeredDiv}>
             <Flex style={styles.form}>
-              <PokeText
-                text={"Login"}
-                color={pokemonTypeColor ?? "#000000"}
-                type={"h2"}
-              />
-              <PokeTextField
-                color={pokemonTypeColor}
-                cursorColor={pokemonTypeColor}
-                variant="outlined"
-                label={"Email"}
-                value={email}
-                placeholder="Email"
-                isReadOnly={false}
-                placeholderTextColor={pokemonTypeColor}
-                onChange={setEmail}
-              />
-              <PokeTextField
-                color={pokemonTypeColor}
-                cursorColor={pokemonTypeColor}
-                variant="outlined"
-                placeholder="Senha"
-                label={"Senha"}
-                value={password}
-                isReadOnly={false}
-                placeholderTextColor={pokemonTypeColor}
-                onChange={setPassword}
-                icon="eye-outline"
-                isPassword
-              />
-              <PokeButton
-                text="Entrar"
-                size="fullwidth"
-                icon="send"
-                variant="contained"
-                type={pokemon?.types[0].type.name ?? ""}
-              />
+              <FormikProvider value={formik}>
+                <PokeText
+                  text={"Login"}
+                  color={pokemonTypeColor ?? "#000000"}
+                  type={"h2"}
+                />
+                <PokeTextField
+                  {...getFieldProps("email")}
+                  color={pokemonTypeColor}
+                  cursorColor={pokemonTypeColor}
+                  variant="outlined"
+                  label={"Email"}
+                  placeholder="Email"
+                  isReadOnly={false}
+                  placeholderTextColor={pokemonTypeColor}
+                  onChange={(val) => setFieldValue("email", val)}
+                  error={Boolean(touched.email && errors.email)}
+                  helperText={touched.email && errors.email}
+                />
+                <PokeTextField
+                  {...getFieldProps("password")}
+                  color={pokemonTypeColor}
+                  cursorColor={pokemonTypeColor}
+                  variant="outlined"
+                  placeholder="Senha"
+                  label={"Senha"}
+                  isReadOnly={false}
+                  placeholderTextColor={pokemonTypeColor}
+                  onChange={(val) => setFieldValue("password", val)}
+                  icon="eye-outline"
+                  isPassword
+                  error={Boolean(touched.password && errors.password)}
+                  helperText={touched.password && errors.password}
+                />
+                <PokeButton
+                  text="Entrar"
+                  size="fullwidth"
+                  icon="send"
+                  variant="contained"
+                  loading={isSubmitting}
+                  styleType={pokemon?.types[0].type.name ?? ""}
+                  onClick={handleSubmit}
+                />
+              </FormikProvider>
             </Flex>
           </Flex>
         </>

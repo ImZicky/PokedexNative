@@ -7,7 +7,7 @@ export function usePokemonService() {
 
   return {
     getRamdomPokemon: async () => {
-      const ramdomId = commonService.getRandomInt(100);
+      const ramdomId = commonService.getRandomInt(1010);
       const result = await api.getPokemonById(ramdomId);
       if (result === undefined) throw new Error("something went wrong");
       return result;

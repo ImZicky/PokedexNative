@@ -10,7 +10,7 @@ export type PokeTextFieldProps = {
   value?: string;
   label: string;
   isReadOnly: boolean;
-  helperText?: string;
+  helperText?: string | boolean | undefined;
   error?: boolean;
   color?: string;
   cursorColor?: string;
@@ -80,7 +80,11 @@ function PokeTextField(textFieldProps: PokeTextFieldProps) {
       }
       underlineColorAndroid={"transparent"}
       secureTextEntry={!showPassword}
-      helperText={textFieldProps.helperText}
+      helperText={
+        typeof textFieldProps.helperText == "string"
+          ? textFieldProps.helperText
+          : undefined
+      }
       color={textFieldProps.color}
       placeholderTextColor={textFieldProps.placeholderTextColor}
       cursorColor={textFieldProps.cursorColor}
@@ -113,7 +117,11 @@ function PokeTextField(textFieldProps: PokeTextFieldProps) {
       style={
         textFieldProps.error ? styles.pokeTextFieldError : styles.pokeTextField
       }
-      helperText={textFieldProps.helperText}
+      helperText={
+        typeof textFieldProps.helperText == "string"
+          ? textFieldProps.helperText
+          : undefined
+      }
       onChangeText={textFieldProps.onChange}
       color={textFieldProps.color}
       placeholderTextColor={textFieldProps.placeholderTextColor}
