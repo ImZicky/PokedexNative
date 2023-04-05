@@ -1,3 +1,4 @@
+import { PokemonSprites } from "pokenode-ts";
 import React from "react";
 
 export function useCommonService() {
@@ -5,7 +6,11 @@ export function useCommonService() {
     getRandomInt: (max: number) => {
       return Math.floor(Math.random() * max);
     },
-
+    getPokemonMainImage: (sprites: PokemonSprites) => {
+      return sprites.other?.["official-artwork"].front_default !== undefined
+        ? sprites.other?.["official-artwork"].front_default
+        : sprites.front_default;
+    },
     getColorFromType: (type: string) => {
       switch (type) {
         case "primary":

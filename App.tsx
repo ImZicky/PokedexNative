@@ -2,7 +2,7 @@ import { IconComponentProvider } from "@react-native-material/core";
 import React, { createContext, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { UserCredentials } from "./service/api/types/User";
-import PokeDash from "./views/PokeDash/PokeDash";
+import PokeList from "./views/PokeList/PokeList";
 import PokeLogin from "./views/PokeLogin/PokeLogin";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
@@ -24,13 +24,15 @@ export default function App() {
       <IconComponentProvider IconComponent={MaterialCommunityIcons}>
         <UserContext.Provider value={userCredentials}>
           {userCredentials && userCredentials.isLogged ? (
-            <PokeDash></PokeDash>
+            <PokeList></PokeList>
           ) : (
-            <PokeLogin
-              handlerUser={(userLogin: UserCredentials) =>
-                handlerUser(userLogin)
-              }
-            ></PokeLogin>
+            <PokeList></PokeList>
+
+            // <PokeLogin
+            //   handlerUser={(userLogin: UserCredentials) =>
+            //     handlerUser(userLogin)
+            //   }
+            // ></PokeLogin>
           )}
         </UserContext.Provider>
       </IconComponentProvider>

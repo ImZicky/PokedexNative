@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Image } from "react-native";
 import PokeButton from "../../components/buttons/PokeButton";
 import { UserCredentials, UserCriteria } from "../../service/api/types/User";
 import { Flex } from "@react-native-material/core";
 import { Pokemon } from "pokenode-ts";
-import { StyleSheet } from "react-native";
+import { StyleSheet, Image } from "react-native";
 import PokeTextField from "../../components/textfields/PokeTextField";
 import PokeLoading from "../../components/loader/PokeLoading";
 import PokeText from "../../components/texts/PokeText";
@@ -75,10 +74,10 @@ function PokeLogin(props: PokeLoginProps) {
   const LoginSchema = Yup.object().shape({
     email: Yup.string()
       .email("Deve ser um email válido")
-      .required("É necessário"),
+      .required("Campo obrigatório"),
     password: Yup.string()
       .min(6, "Mínimo de 6 caracteres")
-      .required("É necessário")
+      .required("Campo obrigatório")
       .matches(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{6,})/,
         "Senha inválida"
@@ -146,7 +145,9 @@ function PokeLogin(props: PokeLoginProps) {
                 <Image
                   style={styles.headerImage}
                   source={{
-                    uri: `${pokemon?.sprites.other?.["official-artwork"].front_default}`,
+                    uri: `${commonService.getPokemonMainImage(
+                      pokemon?.sprites
+                    )}`,
                   }}
                 />
               </Flex>
