@@ -11,6 +11,18 @@ export function useCommonService() {
         ? sprites.other?.["official-artwork"].front_default
         : sprites.front_default;
     },
+    getPokemonHeight: (height: number) => {
+      const heightCm = height * 10;
+      return heightCm >= 100
+        ? `${(heightCm * 0.01).toFixed(2)} m`
+        : `${heightCm} cm`;
+    },
+    getPokemonWheight: (wheight: number) => {
+      const wheightGram = wheight * 100;
+      return wheightGram >= 1000
+        ? `${(wheightGram * 0.001).toFixed(2)} kg`
+        : `${wheightGram} g`;
+    },
     getColorFromType: (type: string) => {
       switch (type) {
         case "primary":

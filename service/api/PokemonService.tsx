@@ -19,13 +19,24 @@ export function usePokemonService() {
     },
     getPokemonListPagination: async (pageNumber: number, pageSize: number) => {
       let pokemonList: Pokemon[] = [];
-      const initialPokemonId = pageNumber === 1 ? 1 : pageNumber + pageSize;
+      const initialPokemonIdPages: number[] = [1];
+
+      for (let i = 1; i <= 1010; i++) {
+        if (i % 50 === 0) initialPokemonIdPages.push(i);
+      }
+
+      let initialPokemonId = initialPokemonIdPages[pageNumber];
+
+      if (initialPokemonId === undefined)
+        initialPokemonId = initialPokemonIdPages.reverse()[0];
       const finalPokemonId = initialPokemonId + pageSize;
 
       for (let id = initialPokemonId; id < finalPokemonId; id++) {
-        const result = await api.getPokemonById(id);
-        if (result === undefined) throw new Error("something went wrong");
-        else pokemonList.push(result);
+        if (id <= 1010) {
+          const result = await api.getPokemonById(id);
+          if (result === undefined) throw new Error("something went wrong");
+          else pokemonList.push(result);
+        }
       }
       return pokemonList;
     },

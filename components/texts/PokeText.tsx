@@ -23,6 +23,19 @@ function PokeText(props: PokeTextProps) {
       textAlign: "center",
       marginBottom: 20,
     },
+    cardTitle: {
+      fontSize: 20,
+      fontFamily: "SpaceGrotesk",
+      textAlign: "center",
+      marginBottom: 5,
+      marginTop: 5,
+    },
+    cardId: {
+      position: "absolute",
+      fontSize: 25,
+      fontFamily: "SpaceGrotesk",
+      textAlign: "left",
+    },
   });
 
   //Fonts
@@ -36,6 +49,8 @@ function PokeText(props: PokeTextProps) {
     const stylesArray = [
       { name: "h1", value: styles.h1 },
       { name: "h2", value: styles.h2 },
+      { name: "card-title", value: styles.cardTitle },
+      { name: "card-id", value: styles.cardId },
     ];
     return stylesArray.find((x) => x.name === type)?.value;
   };
