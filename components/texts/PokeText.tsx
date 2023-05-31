@@ -31,8 +31,10 @@ function PokeText(props: PokeTextProps) {
       marginTop: 5,
     },
     cardId: {
+      paddingTop: 10,
+      paddingLeft: 10,
       position: "absolute",
-      fontSize: 25,
+      fontSize: 20,
       fontFamily: "SpaceGrotesk",
       textAlign: "left",
     },

@@ -1,11 +1,13 @@
 import React from "react";
 import { Flex, HStack } from "@react-native-material/core";
-import { Image, StyleSheet } from "react-native";
+import { ActivityIndicator, Image, StyleSheet } from "react-native";
 import PokeText from "../texts/PokeText";
 
-export type PokeLoadingProps = {};
+export type PokeLoadingProps = {
+  loadType: "page" | "list";
+};
 
-function PokeLoading(pros: PokeLoadingProps) {
+function PokeLoading(props: PokeLoadingProps) {
   const styles = StyleSheet.create({
     view: {
       backgroundColor: "#FFF",
@@ -15,6 +17,15 @@ function PokeLoading(pros: PokeLoadingProps) {
       alignItems: "center",
       flex: 1,
       justifyContent: "center",
+    },
+    listView: {
+      backgroundColor: "#FFF",
+      width: "auto",
+      height: "auto",
+      padding: 50,
+      alignItems: "center",
+      justifyContent: "center",
+      borderRadius: 20,
     },
     pokeball: {
       width: 300,
@@ -28,17 +39,30 @@ function PokeLoading(pros: PokeLoadingProps) {
   });
 
   return (
-    <Flex fill style={styles.view}>
-      <Image
-        style={styles.pokeball}
-        source={require("../../assets/images/pikachu-loader.gif")}
-      />
-      <PokeText text="Carregando" color={"#000"} type={"h2"} />
-      <Image
-        style={styles.loader}
-        source={require("../../assets/images/loader.gif")}
-      />
-    </Flex>
+    <>
+      {props.loadType === "page" && (
+        <Flex fill style={styles.view}>
+          <Image
+            style={styles.pokeball}
+            source={require("../../assets/images/pikachu-loader.gif")}
+          />
+          <PokeText text="Carregando" color={"#000"} type={"h2"} />
+          <Image
+            style={styles.loader}
+            source={require("../../assets/images/loader.gif")}
+          />
+        </Flex>
+      )}
+      {props.loadType === "list" && (
+        <Flex fill style={styles.listView}>
+          <Image
+            style={styles.loader}
+            source={require("../../assets/images/pokeball-loader.gif")}
+          />
+          <PokeText text="Carregando" color={"#000"} type={"h2"} />
+        </Flex>
+      )}
+    </>
   );
 }
 

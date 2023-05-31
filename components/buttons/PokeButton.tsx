@@ -2,11 +2,11 @@ import React from "react";
 import { Button } from "@react-native-material/core";
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import { IconType } from "../icons/types/IconType";
-import { GestureResponderEvent, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import { useCommonService } from "../../service/common/CommonService";
 
 export type ButtonProps = {
-  text: string;
+  text?: string;
   size: "fullwidth" | "medium" | "small";
   icon?: IconType;
   loading?: boolean;

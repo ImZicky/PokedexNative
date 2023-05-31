@@ -26,13 +26,12 @@ export default function App() {
           {userCredentials && userCredentials.isLogged ? (
             <PokeList></PokeList>
           ) : (
-            <PokeList></PokeList>
-
-            // <PokeLogin
-            //   handlerUser={(userLogin: UserCredentials) =>
-            //     handlerUser(userLogin)
-            //   }
-            // ></PokeLogin>
+            // <PokeList></PokeList>
+            <PokeLogin
+              handlerUser={(userLogin: UserCredentials) =>
+                handlerUser(userLogin)
+              }
+            ></PokeLogin>
           )}
         </UserContext.Provider>
       </IconComponentProvider>

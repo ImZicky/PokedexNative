@@ -208,7 +208,7 @@ function PokeLogin(props: PokeLoginProps) {
           </Flex>
         </>
       ) : (
-        <PokeLoading />
+        <PokeLoading loadType="page" />
       )}
     </>
   );

@@ -27,8 +27,6 @@ export function usePokemonService() {
 
       let initialPokemonId = initialPokemonIdPages[pageNumber];
 
-      if (initialPokemonId === undefined)
-        initialPokemonId = initialPokemonIdPages.reverse()[0];
       const finalPokemonId = initialPokemonId + pageSize;
 
       for (let id = initialPokemonId; id < finalPokemonId; id++) {
