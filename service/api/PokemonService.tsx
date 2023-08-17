@@ -38,5 +38,10 @@ export function usePokemonService() {
       }
       return pokemonList;
     },
+    getAbilityDescription: async (name: string) => {
+      const ability = await api.getAbilityByName(name);
+      return ability.effect_entries.find((x) => x.language.name === "en")
+        ?.short_effect;
+    },
   };
 }

@@ -12,7 +12,9 @@ import PokeCard from "../../components/cards/PokeCard";
 import PokeIconButton from "../../components/buttons/PokeIconButton";
 import PokePagination from "../../components/paginations/PokePagination";
 
-export type PokeListProps = {};
+export type PokeListProps = {
+  setIsAppLoading: (value: boolean) => void;
+};
 
 function PokeList(props: PokeListProps) {
   //Consts
@@ -30,7 +32,7 @@ function PokeList(props: PokeListProps) {
 
   //Fetches
   const fetchPokemonList = async () => {
-    setLoading(true);
+    pokemonList !== undefined ? setLoading(true) : props.setIsAppLoading(true);
     pokemonService
       .getPokemonListPagination(pageNumber, pageSize)
       .then((data) => {
@@ -38,7 +40,9 @@ function PokeList(props: PokeListProps) {
       })
       .catch((error) => console.error(error))
       .finally(() => {
-        setLoading(false);
+        pokemonList !== undefined
+          ? setLoading(false)
+          : props.setIsAppLoading(false);
       });
   };
 
@@ -55,6 +59,7 @@ function PokeList(props: PokeListProps) {
     view: {
       width: "100%",
       height: "100%",
+      backgroundColor: "#ed5463",
     },
     header: {
       paddingTop: 20,
@@ -66,9 +71,11 @@ function PokeList(props: PokeListProps) {
     scrollview: {
       width: "100%",
       height: "100%",
-      padding: 10,
+      paddingLeft: 10,
+      paddingRight: 10,
+      marginTop: 10,
       backgroundColor: "#ed5463",
-      paddingBottom: 50,
+      marginBottom: 60,
     },
     centeredDiv: {
       alignItems: "center",
@@ -87,21 +94,25 @@ function PokeList(props: PokeListProps) {
   return (
     <View style={styles.view}>
       {pokemonList ? (
-        <ScrollView style={styles.scrollview}>
-          <PokePagination
-            changePage={(pageNumber) => changePage(pageNumber)}
-            pageNumber={pageNumber}
-          />
+        <>
           {!loading ? (
-            <Wrap>
-              {pokemonList.map((pokemon) => (
-                <PokeCard key={`${pokemon.name}`} pokemon={pokemon} />
-              ))}
-            </Wrap>
+            <>
+              <ScrollView style={styles.scrollview}>
+                <Wrap>
+                  {pokemonList.map((pokemon) => (
+                    <PokeCard key={`${pokemon.name}`} pokemon={pokemon} />
+                  ))}
+                </Wrap>
+              </ScrollView>
+              <PokePagination
+                changePage={(pageNumber) => changePage(pageNumber)}
+                pageNumber={pageNumber}
+              />
+            </>
           ) : (
             <PokeLoading loadType="list" />
           )}
-        </ScrollView>
+        </>
       ) : (
         <PokeLoading loadType="page" />
       )}

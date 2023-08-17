@@ -13,6 +13,11 @@ export default function PokePagination(props: PokePaginationProps) {
   //Style
   const styles = StyleSheet.create({
     centeredDiv: {
+      position: "absolute",
+      bottom: 0,
+      width: "100%",
+      backgroundColor: "#ed5463",
+      paddingTop: 10,
       alignItems: "center",
       alignContent: "center",
     },
@@ -33,7 +38,7 @@ export default function PokePagination(props: PokePaginationProps) {
           <PokeText
             color="#FFF"
             type="h1"
-            text={`${props.pageNumber + 1} de ${parseInt(`${1010 / 50 + 1}`)}`}
+            text={`${props.pageNumber + 1} of ${parseInt(`${1010 / 50 + 1}`)}`}
           />
         </Box>
         <Box m={10}>

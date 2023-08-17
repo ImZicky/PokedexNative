@@ -73,14 +73,14 @@ function PokeLogin(props: PokeLoginProps) {
   //Validatiopn
   const LoginSchema = Yup.object().shape({
     email: Yup.string()
-      .email("Deve ser um email válido")
-      .required("Campo obrigatório"),
+      .email("It must to be a valid email")
+      .required("Required field"),
     password: Yup.string()
-      .min(6, "Mínimo de 6 caracteres")
-      .required("Campo obrigatório")
+      .min(6, "Minimun 6 caracters")
+      .required("Required field")
       .matches(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{6,})/,
-        "Senha inválida"
+        "Invalid password"
       ),
   });
 
@@ -116,6 +116,7 @@ function PokeLogin(props: PokeLoginProps) {
       justifyContent: "center",
     },
     header: {
+      padding: 5,
       height: "auto",
     },
     form: {
@@ -137,7 +138,7 @@ function PokeLogin(props: PokeLoginProps) {
           <Flex style={styles.view}>
             <Flex style={styles.header}>
               <PokeText
-                text="Quem é esse Pokemon?"
+                text="Who's That Pokémon??"
                 color={"#FFFFFF"}
                 type={"h1"}
               />
@@ -152,7 +153,7 @@ function PokeLogin(props: PokeLoginProps) {
                 />
               </Flex>
               <PokeText
-                text={pokemon?.name.toUpperCase()}
+                text={`It's ${pokemon?.name.toUpperCase()}`}
                 color={"#FFFFFF"}
                 type={"h1"}
               />
@@ -175,7 +176,7 @@ function PokeLogin(props: PokeLoginProps) {
                   placeholder="Email"
                   isReadOnly={false}
                   placeholderTextColor={pokemonTypeColor}
-                  onChange={(val) => setFieldValue("email", val)}
+                  onChange={(val) => setFieldValue("email", val.trim())}
                   error={Boolean(touched.email && errors.email)}
                   helperText={touched.email && errors.email}
                 />
@@ -184,11 +185,11 @@ function PokeLogin(props: PokeLoginProps) {
                   color={pokemonTypeColor}
                   cursorColor={pokemonTypeColor}
                   variant="outlined"
-                  placeholder="Senha"
-                  label={"Senha"}
+                  placeholder="Password"
+                  label={"Password"}
                   isReadOnly={false}
                   placeholderTextColor={pokemonTypeColor}
-                  onChange={(val) => setFieldValue("password", val)}
+                  onChange={(val) => setFieldValue("password", val.trim())}
                   icon="eye-outline"
                   isPassword
                   error={Boolean(touched.password && errors.password)}

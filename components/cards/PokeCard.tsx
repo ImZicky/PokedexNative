@@ -5,6 +5,7 @@ import { Pokemon } from "pokenode-ts";
 import { StyleSheet, Image } from "react-native";
 import { useCommonService } from "../../service/common/CommonService";
 import PokeButton from "../buttons/PokeButton";
+import { useNavigation } from "@react-navigation/native";
 
 export type PokeCardProps = {
   pokemon: Pokemon;
@@ -24,7 +25,11 @@ function PokeCard(props: PokeCardProps) {
   });
 
   //Navigation
-  const goToPokemonDetails = () => {};
+  const navigation = useNavigation();
+
+  const goToPokemonDetails = () => {
+    navigation.navigate("PokePerfil", { pokemon: props.pokemon });
+  };
 
   return (
     <Box
@@ -77,7 +82,7 @@ function PokeCard(props: PokeCardProps) {
             marginTop: 10,
           }}
         >
-          <PokeText color="#000" type="card-text" text="Altura: " />
+          <PokeText color="#000" type="card-text" text="Height: " />
           <PokeText
             color="#000"
             type="card-text"
@@ -90,7 +95,7 @@ function PokeCard(props: PokeCardProps) {
             marginBottom: 20,
           }}
         >
-          <PokeText color="#000" type="card-text" text="Peso: " />
+          <PokeText color="#000" type="card-text" text="Wheight: " />
           <PokeText
             color="#000"
             type="card-text"
@@ -98,8 +103,8 @@ function PokeCard(props: PokeCardProps) {
           />
         </Wrap>
         <PokeButton
-          onClick={() => goToPokemonDetails(props.pokemon.id)}
-          text="Detalhes"
+          onClick={() => goToPokemonDetails()}
+          text="Details"
           variant="contained"
           styleType={props.pokemon.types[0].type.name}
           size="small"

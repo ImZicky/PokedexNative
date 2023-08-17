@@ -4,7 +4,7 @@ import { ActivityIndicator, Image, StyleSheet } from "react-native";
 import PokeText from "../texts/PokeText";
 
 export type PokeLoadingProps = {
-  loadType: "page" | "list";
+  loadType: "page" | "list" | "component";
 };
 
 function PokeLoading(props: PokeLoadingProps) {
@@ -19,13 +19,18 @@ function PokeLoading(props: PokeLoadingProps) {
       justifyContent: "center",
     },
     listView: {
-      backgroundColor: "#FFF",
-      width: "auto",
-      height: "auto",
-      padding: 50,
+      width: "100%",
+      height: "100%",
       alignItems: "center",
       justifyContent: "center",
-      borderRadius: 20,
+    },
+    listViewInside: {
+      backgroundColor: "#FFF",
+      width: 300,
+      height: 300,
+      borderRadius: 10,
+      alignItems: "center",
+      justifyContent: "center",
     },
     pokeball: {
       width: 300,
@@ -46,7 +51,7 @@ function PokeLoading(props: PokeLoadingProps) {
             style={styles.pokeball}
             source={require("../../assets/images/pikachu-loader.gif")}
           />
-          <PokeText text="Carregando" color={"#000"} type={"h2"} />
+          <PokeText text="Loading" color={"#000"} type={"h2"} />
           <Image
             style={styles.loader}
             source={require("../../assets/images/loader.gif")}
@@ -54,12 +59,14 @@ function PokeLoading(props: PokeLoadingProps) {
         </Flex>
       )}
       {props.loadType === "list" && (
-        <Flex fill style={styles.listView}>
-          <Image
-            style={styles.loader}
-            source={require("../../assets/images/pokeball-loader.gif")}
-          />
-          <PokeText text="Carregando" color={"#000"} type={"h2"} />
+        <Flex style={styles.listView}>
+          <Flex style={styles.listViewInside}>
+            <Image
+              style={styles.loader}
+              source={require("../../assets/images/pokeball-loader.gif")}
+            />
+            <PokeText text="Loading" color={"#000"} type={"h2"} />
+          </Flex>
         </Flex>
       )}
     </>

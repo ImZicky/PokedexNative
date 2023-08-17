@@ -6,6 +6,11 @@ export function useCommonService() {
     getRandomInt: (max: number) => {
       return Math.floor(Math.random() * max);
     },
+    getPokemonMainPerfil: (sprites: PokemonSprites) => {
+      return sprites.other?.home.front_default !== undefined
+        ? sprites.other?.home.front_default
+        : sprites.front_default;
+    },
     getPokemonMainImage: (sprites: PokemonSprites) => {
       return sprites.other?.["official-artwork"].front_default !== undefined
         ? sprites.other?.["official-artwork"].front_default
