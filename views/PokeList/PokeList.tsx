@@ -12,11 +12,7 @@ import PokeCard from "../../components/cards/PokeCard";
 import PokeIconButton from "../../components/buttons/PokeIconButton";
 import PokePagination from "../../components/paginations/PokePagination";
 
-export type PokeListProps = {
-  setIsAppLoading: (value: boolean) => void;
-};
-
-function PokeList(props: PokeListProps) {
+function PokeList() {
   //Consts
   const [pokemonList, setPokemonList] = useState<Pokemon[] | undefined>();
   const [pageNumber, setPageNumber] = useState<number>(0);
@@ -32,7 +28,7 @@ function PokeList(props: PokeListProps) {
 
   //Fetches
   const fetchPokemonList = async () => {
-    pokemonList !== undefined ? setLoading(true) : props.setIsAppLoading(true);
+    pokemonList !== undefined ? setLoading(true) : undefined;
     pokemonService
       .getPokemonListPagination(pageNumber, pageSize)
       .then((data) => {
@@ -40,9 +36,7 @@ function PokeList(props: PokeListProps) {
       })
       .catch((error) => console.error(error))
       .finally(() => {
-        pokemonList !== undefined
-          ? setLoading(false)
-          : props.setIsAppLoading(false);
+        pokemonList !== undefined ? setLoading(false) : undefined;
       });
   };
 

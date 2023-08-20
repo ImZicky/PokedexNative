@@ -1,3 +1,4 @@
+import "react-native-gesture-handler";
 import { IconComponentProvider } from "@react-native-material/core";
 import React, { createContext, useState } from "react";
 import { StyleSheet, View } from "react-native";
@@ -9,6 +10,7 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import PokeLoading from "./components/loader/PokeLoading";
+import Routes from "./routes";
 
 const UserContext = createContext<UserCredentials | undefined>({
   user: undefined,
@@ -26,93 +28,32 @@ export default function App() {
     setUserCredentials(userCredentials);
   };
 
-  const headerOptions = {
-    headerStyle: {
-      backgroundColor: "#fff",
-    },
-    headerTintColor: "#ed5463",
-    headerTitleStyle: {
-      fontWeight: "bold",
-    },
-    headerTitleAlign: "center",
-  };
-
   return (
     <>
       {userCredentials && userCredentials.isLogged ? (
         <IconComponentProvider IconComponent={MaterialCommunityIcons}>
           <UserContext.Provider value={userCredentials}>
-            <NavigationContainer>
-              <Stack.Navigator>
-                <Stack.Screen
-                  name="PokeList"
-                  options={{
-                    ...headerOptions,
-                    title: "POKEDEX",
-                    headerShown: !isAppLoading,
-                  }}
-                >
-                  {(props) => (
-                    <PokeList {...props} setIsAppLoading={setIsAppLoading} />
-                  )}
-                </Stack.Screen>
-
-                <Stack.Screen
-                  name="PokePerfil"
-                  options={{ ...headerOptions, title: "DETAILS" }}
-                >
-                  {(props) => (
-                    <PokePerfil
-                      {...props}
-                      navigation={props.navigation}
-                      route={props.route}
-                      setIsAppLoading={setIsAppLoading}
-                    />
-                  )}
-                </Stack.Screen>
-              </Stack.Navigator>
-            </NavigationContainer>
+            <Routes></Routes>
           </UserContext.Provider>
         </IconComponentProvider>
       ) : (
-        // <IconComponentProvider IconComponent={MaterialCommunityIcons}>
-        //   <UserContext.Provider value={userCredentials}>
-        //     <NavigationContainer>
-        //       <Stack.Navigator>
-        //         <Stack.Screen
-        //           name="PokeList"
-        //           options={{
-        //             ...headerOptions,
-        //             title: "POKEDEX",
-        //             headerShown: !isAppLoading,
-        //           }}
-        //         >
-        //           {(props) => (
-        //             <PokeList {...props} setIsAppLoading={setIsAppLoading} />
-        //           )}
-        //         </Stack.Screen>
+        <IconComponentProvider IconComponent={MaterialCommunityIcons}>
+          <UserContext.Provider value={userCredentials}>
+            <Routes></Routes>
+          </UserContext.Provider>
+        </IconComponentProvider>
 
-        //         <Stack.Screen
-        //           name="PokePerfil"
-        //           component={PokePerfil}
-        //           options={{ ...headerOptions, title: "DETAILS" }}
-        //         />
-        //       </Stack.Navigator>
-        //     </NavigationContainer>
-        //   </UserContext.Provider>
-        // </IconComponentProvider>
-
-        <View style={styles.container}>
-          <IconComponentProvider IconComponent={MaterialCommunityIcons}>
-            <UserContext.Provider value={userCredentials}>
-              <PokeLogin
-                handlerUser={(userLogin: UserCredentials) =>
-                  handlerUser(userLogin)
-                }
-              />
-            </UserContext.Provider>
-          </IconComponentProvider>
-        </View>
+        // <View style={styles.container}>
+        //   <IconComponentProvider IconComponent={MaterialCommunityIcons}>
+        //     <UserContext.Provider value={userCredentials}>
+        //       <PokeLogin
+        //         handlerUser={(userLogin: UserCredentials) =>
+        //           handlerUser(userLogin)
+        //         }
+        //       />
+        //     </UserContext.Provider>
+        //   </IconComponentProvider>
+        // </View>
       )}
     </>
   );

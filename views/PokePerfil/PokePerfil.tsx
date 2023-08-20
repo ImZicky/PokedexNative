@@ -13,7 +13,6 @@ import { PokemonAbilityFull } from "../../service/api/types/PokemonAbilityFull";
 export type PokePerfilProps = {
   route: any;
   navigation: any;
-  setIsAppLoading: (value: boolean) => void;
 };
 
 function PokePerfil(props: PokePerfilProps) {
