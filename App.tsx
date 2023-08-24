@@ -11,6 +11,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import PokeLoading from "./components/loader/PokeLoading";
 import Routes from "./routes";
+import { DeviceEventEmitter } from "react-native";
 
 const UserContext = createContext<UserCredentials | undefined>({
   user: undefined,
@@ -24,6 +25,10 @@ export default function App() {
   const [userCredentials, setUserCredentials] = useState<UserCredentials>();
   const [isAppLoading, setIsAppLoading] = useState<boolean>(false);
 
+  DeviceEventEmitter.addListener("event.handleActivateNavigatorBar", (value) =>
+    setIsAppLoading(value)
+  );
+
   const handlerUser = (userCredentials: UserCredentials) => {
     setUserCredentials(userCredentials);
   };
@@ -33,13 +38,13 @@ export default function App() {
       {userCredentials && userCredentials.isLogged ? (
         <IconComponentProvider IconComponent={MaterialCommunityIcons}>
           <UserContext.Provider value={userCredentials}>
-            <Routes></Routes>
+            <Routes isAppLoading={isAppLoading}></Routes>
           </UserContext.Provider>
         </IconComponentProvider>
       ) : (
         <IconComponentProvider IconComponent={MaterialCommunityIcons}>
           <UserContext.Provider value={userCredentials}>
-            <Routes></Routes>
+            <Routes isAppLoading={isAppLoading}></Routes>
           </UserContext.Provider>
         </IconComponentProvider>
 

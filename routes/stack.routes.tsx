@@ -1,38 +1,19 @@
+import React, { useEffect } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import PokePerfil from "../views/PokePerfil/PokePerfil";
 import PokeList from "../views/PokeList/PokeList";
+import { useCommonService } from "../service/common/CommonService";
 
 const Stack = createStackNavigator();
 
 export default function StackRoutes() {
-  const headerOptions = {
-    headerStyle: {
-      backgroundColor: "#fff",
-    },
-    headerTintColor: "#ed5463",
-    headerTitleStyle: {
-      fontWeight: "bold",
-    },
-    headerTitleAlign: "center",
-  };
-
   return (
-    <Stack.Navigator>
-      <Stack.Screen
-        name="PokeList"
-        options={{
-          ...headerOptions,
-          title: "POKEDEX",
-          headerShown: false,
-        }}
-      >
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="PokeList" options={{ headerTitle: "TESTE" }}>
         {() => <PokeList />}
       </Stack.Screen>
 
-      <Stack.Screen
-        name="PokePerfil"
-        options={{ ...headerOptions, title: "DETAILS" }}
-      >
+      <Stack.Screen name="PokePerfil">
         {(props) => (
           <PokePerfil
             {...props}

@@ -2,10 +2,14 @@ import { NavigationContainer } from "@react-navigation/native";
 
 import DrawerRoutes from "./drawer.routes";
 
-export default function Routes() {
+export type RoutesProps = {
+  isAppLoading: boolean;
+};
+
+export default function Routes(props: RoutesProps) {
   return (
     <NavigationContainer>
-      <DrawerRoutes />
+      <DrawerRoutes isAppLoading={props.isAppLoading} />
     </NavigationContainer>
   );
 }

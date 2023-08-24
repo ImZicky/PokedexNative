@@ -9,6 +9,7 @@ import { useNavigation } from "@react-navigation/native";
 
 export type PokeCardProps = {
   pokemon: Pokemon;
+  navigation: any;
 };
 
 function PokeCard(props: PokeCardProps) {
@@ -25,10 +26,8 @@ function PokeCard(props: PokeCardProps) {
   });
 
   //Navigation
-  const navigation = useNavigation();
-
   const goToPokemonDetails = () => {
-    navigation.navigate("PokePerfil", { pokemon: props.pokemon });
+    props.navigation.navigate("PokePerfil", { pokemon: props.pokemon });
   };
 
   return (

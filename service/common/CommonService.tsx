@@ -1,5 +1,6 @@
-import { PokemonSprites } from "pokenode-ts";
 import React from "react";
+import { PokemonSprites } from "pokenode-ts";
+import { DeviceEventEmitter } from "react-native";
 
 export function useCommonService() {
   return {
@@ -73,6 +74,9 @@ export function useCommonService() {
         default:
           return "#a30000";
       }
+    },
+    handleInactivateNavigatorBar: (value: boolean) => {
+      DeviceEventEmitter.emit("event.handleActivateNavigatorBar", value);
     },
   };
 }

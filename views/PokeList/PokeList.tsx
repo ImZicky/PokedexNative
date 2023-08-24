@@ -12,7 +12,11 @@ import PokeCard from "../../components/cards/PokeCard";
 import PokeIconButton from "../../components/buttons/PokeIconButton";
 import PokePagination from "../../components/paginations/PokePagination";
 
-function PokeList() {
+export type PokeListProps = {
+  navigation: any;
+};
+
+export default function PokeList(cProps: PokeListProps) {
   //Consts
   const [pokemonList, setPokemonList] = useState<Pokemon[] | undefined>();
   const [pageNumber, setPageNumber] = useState<number>(0);
@@ -28,7 +32,10 @@ function PokeList() {
 
   //Fetches
   const fetchPokemonList = async () => {
-    pokemonList !== undefined ? setLoading(true) : undefined;
+    pokemonList
+      ? setLoading(true)
+      : commonService.handleInactivateNavigatorBar(true);
+
     pokemonService
       .getPokemonListPagination(pageNumber, pageSize)
       .then((data) => {
@@ -36,11 +43,14 @@ function PokeList() {
       })
       .catch((error) => console.error(error))
       .finally(() => {
-        pokemonList !== undefined ? setLoading(false) : undefined;
+        pokemonList !== undefined
+          ? setLoading(false)
+          : commonService.handleInactivateNavigatorBar(false);
       });
   };
 
   //UseEffect
+
   useEffect(() => {
     if (pokemonList === undefined || isSearchingPokemons) {
       fetchPokemonList();
@@ -94,7 +104,11 @@ function PokeList() {
               <ScrollView style={styles.scrollview}>
                 <Wrap>
                   {pokemonList.map((pokemon) => (
-                    <PokeCard key={`${pokemon.name}`} pokemon={pokemon} />
+                    <PokeCard
+                      navigation={cProps.navigation}
+                      key={`${pokemon.name}`}
+                      pokemon={pokemon}
+                    />
                   ))}
                 </Wrap>
               </ScrollView>
@@ -113,5 +127,3 @@ function PokeList() {
     </View>
   );
 }
-
-export default PokeList;

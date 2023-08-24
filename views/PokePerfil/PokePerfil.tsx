@@ -31,12 +31,10 @@ function PokePerfil(props: PokePerfilProps) {
 
   //Use Effect
   useEffect(() => {
-    if (pokemon === undefined) {
-      setIsLoading(true);
-      const { pokemon } = props.route.params;
-      setPokemon(pokemon as Pokemon);
-      setIsLoading(false);
-    }
+    setIsLoading(true);
+    const { pokemon } = props.route.params;
+    setPokemon(pokemon as Pokemon);
+    setIsLoading(false);
   }, []);
 
   useEffect(() => {
