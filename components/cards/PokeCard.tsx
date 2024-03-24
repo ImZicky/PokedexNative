@@ -22,7 +22,7 @@ function PokeCard(props: PokeCardProps) {
       alignItems: "center",
       alignContent: "center",
     },
-    cardImage: { marginTop: 20, padding: 20, width: 100, height: 100 },
+    cardImage: { marginTop: 30, padding: 20, width: 100, height: 100 },
   });
 
   //Navigation
@@ -33,9 +33,10 @@ function PokeCard(props: PokeCardProps) {
   return (
     <Box
       style={{
-        minWidth: 174,
+        minWidth: 163,
         width: "auto",
-        height: 330,
+        minHeight: 370,
+        height: "auto",
         backgroundColor: "#fff",
         borderRadius: 15,
         margin: 3,
@@ -57,7 +58,7 @@ function PokeCard(props: PokeCardProps) {
         />
       </Flex>
       <Flex style={styles.centeredDiv}>
-        <PokeText color="#000" type="card-title" text={props.pokemon.name} />
+        <PokeText color="#000" type="card-title" text={commonService.stringToCapitalLetters(props.pokemon.name)} />
         <Wrap
           spacing={5}
           style={{
@@ -69,9 +70,10 @@ function PokeCard(props: PokeCardProps) {
               key={`${props.pokemon.name}_type_${type.type.name}`}
               style={{
                 backgroundColor: commonService.getColorFromType(type.type.name),
+                alignItems: "center"
               }}
-              color="#FFF"
-              label={type.type.name.toUpperCase()}
+              color="#FFF"              
+              label={type.type.name.toUpperCase()}            
             />
           ))}
         </Wrap>

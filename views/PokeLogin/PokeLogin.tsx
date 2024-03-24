@@ -25,6 +25,7 @@ const DefaultValue = {
 type FormValues = {
   email?: string;
   password?: string;
+  navigation: any;
 };
 
 function PokeLogin(props: PokeLoginProps) {
@@ -109,10 +110,10 @@ function PokeLogin(props: PokeLoginProps) {
     view: {
       backgroundColor: pokemonTypeColor,
       width: "100%",
-      height: "100%",
+      height: "44%",
       position: "relative",
       alignItems: "center",
-      flex: 1,
+      flex: 0,
       justifyContent: "center",
     },
     header: {
@@ -128,7 +129,7 @@ function PokeLogin(props: PokeLoginProps) {
       alignItems: "center",
       alignContent: "center",
     },
-    headerImage: { width: 180, height: 180 },
+    headerImage: { width: 170, height: 170 },
   });
 
   return (

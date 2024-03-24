@@ -38,12 +38,14 @@ function PokeText(props: PokeTextProps) {
       marginTop: 5,
     },
     cardId: {
-      paddingTop: 10,
-      paddingLeft: 10,
+      padding: 3,
       position: "absolute",
-      fontSize: 20,
+      fontSize: 25,
       fontFamily: "SpaceGrotesk",
       textAlign: "left",
+      fontWeight: "800",
+      color: "#ED5463",
+      zIndex: 1000
     },
     cardIdBig: {
       paddingTop: 10,

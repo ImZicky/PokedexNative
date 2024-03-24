@@ -1,13 +1,20 @@
-import { createDrawerNavigator } from "@react-navigation/drawer";
+import { createDrawerNavigator, DrawerContentScrollView, DrawerItem, DrawerItemList } from "@react-navigation/drawer";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import StackRoutes from "./stack.routes";
 import PokeList from "../views/PokeList/PokeList";
 import PokePerfil from "../views/PokePerfil/PokePerfil";
+import React from "react";
+import { Icon, Text } from "@react-native-material/core";
+import { UserCredentials } from "../service/api/types/User";
 
 const Drawer = createDrawerNavigator();
 
 export type DrawerRoutesProps = {
   isAppLoading: boolean;
+  handlerUser: (userLogin: UserCredentials) => void;
+};
+
+export type CustomDrawerContentProps = {
+  handlerUser: (userLogin: UserCredentials) => void;
 };
 
 const headerOptions = {
@@ -21,9 +28,45 @@ const headerOptions = {
   headerTitleAlign: "center",
 };
 
-export default function DrawerRoutes(cProps: DrawerRoutesProps) {
+
+function CustomDrawerContent(cProps: any) {
+  
+  const handleLogout = () => {
+    cProps.handlerUser({
+      user: undefined,
+      token: undefined,
+      isLogged: false,
+    });
+  }
+  
   return (
+    <DrawerContentScrollView {...cProps}>
+      <DrawerItemList state={cProps.state} navigation={cProps.navigation} descriptors={cProps.descriptors} {...cProps} />
+      <DrawerItem       
+        label={() => 
+          <Text style={{ color: '#ED5463', fontWeight: '600', fontSize: 15}}>Logout</Text>
+        }
+        icon={({ focused, color, size }) => 
+          <Icon color={'#ED5463'} size={size} name={'logout'} /> 
+          }
+        style={{backgroundColor: '#fff'}} 
+        onPress={() => handleLogout()}
+      />
+    </DrawerContentScrollView>
+  );
+}
+
+export default function DrawerRoutes(cProps: DrawerRoutesProps) {
+
+  return (
+    <>
     <Drawer.Navigator
+      drawerContent={props => 
+        <CustomDrawerContent 
+          handlerUser={(userLogin: UserCredentials) => cProps.handlerUser(userLogin)}
+          {...props}
+        />
+      }
       initialRouteName="PokeList"
       screenOptions={
         { ...headerOptions, headerShown: !cProps.isAppLoading } as any
@@ -46,6 +89,7 @@ export default function DrawerRoutes(cProps: DrawerRoutesProps) {
             textTransform: "capitalize",
           },
         }}
+
       >
         {(props) => <PokeList navigation={props.navigation} />}
       </Drawer.Screen>
@@ -62,5 +106,6 @@ export default function DrawerRoutes(cProps: DrawerRoutesProps) {
         )}
       </Drawer.Screen>
     </Drawer.Navigator>
-  );
+</>
+);
 }

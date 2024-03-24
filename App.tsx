@@ -1,8 +1,7 @@
 import "react-native-gesture-handler";
 import { IconComponentProvider } from "@react-native-material/core";
-import React, { createContext, useState } from "react";
+import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { UserCredentials } from "./service/api/types/User";
 import PokeList from "./views/PokeList/PokeList";
 import PokePerfil from "./views/PokePerfil/PokePerfil";
 import PokeLogin from "./views/PokeLogin/PokeLogin";
@@ -12,53 +11,53 @@ import { createStackNavigator } from "@react-navigation/stack";
 import PokeLoading from "./components/loader/PokeLoading";
 import Routes from "./routes";
 import { DeviceEventEmitter } from "react-native";
-
-const UserContext = createContext<UserCredentials | undefined>({
-  user: undefined,
-  token: undefined,
-  isLogged: false,
-});
+import { UserCredentials } from "./service/api/types/User";
+import { UserContext } from "./contexts/UserContext";
 
 const Stack = createStackNavigator();
 
 export default function App() {
-  const [userCredentials, setUserCredentials] = useState<UserCredentials>();
   const [isAppLoading, setIsAppLoading] = useState<boolean>(false);
-
-  DeviceEventEmitter.addListener("event.handleActivateNavigatorBar", (value) =>
-    setIsAppLoading(value)
-  );
+  const [userCredentials, setUserCredentials] = useState<UserCredentials | undefined>();
 
   const handlerUser = (userCredentials: UserCredentials) => {
     setUserCredentials(userCredentials);
   };
+
+  DeviceEventEmitter.addListener("event.handleActivateNavigatorBar", (value) =>
+    setIsAppLoading(value)
+  );
 
   return (
     <>
       {userCredentials && userCredentials.isLogged ? (
         <IconComponentProvider IconComponent={MaterialCommunityIcons}>
           <UserContext.Provider value={userCredentials}>
-            <Routes isAppLoading={isAppLoading}></Routes>
+            <Routes
+                handlerUser={(userLogin: UserCredentials) =>
+                  handlerUser(userLogin)
+                }
+                isAppLoading={isAppLoading}></Routes>
           </UserContext.Provider>
         </IconComponentProvider>
       ) : (
-        <IconComponentProvider IconComponent={MaterialCommunityIcons}>
-          <UserContext.Provider value={userCredentials}>
-            <Routes isAppLoading={isAppLoading}></Routes>
-          </UserContext.Provider>
-        </IconComponentProvider>
+        // <IconComponentProvider IconComponent={MaterialCommunityIcons}>
+        //   <UserContext.Provider value={userCredentials}>
+        //     <Routes handlerUser={() => handlerUser} isAppLoading={isAppLoading}></Routes>
+        //   </UserContext.Provider>
+        // </IconComponentProvider>
 
-        // <View style={styles.container}>
-        //   <IconComponentProvider IconComponent={MaterialCommunityIcons}>
-        //     <UserContext.Provider value={userCredentials}>
-        //       <PokeLogin
-        //         handlerUser={(userLogin: UserCredentials) =>
-        //           handlerUser(userLogin)
-        //         }
-        //       />
-        //     </UserContext.Provider>
-        //   </IconComponentProvider>
-        // </View>
+        <View style={styles.container}>
+          <IconComponentProvider IconComponent={MaterialCommunityIcons}>
+            <UserContext.Provider value={userCredentials}>
+              <PokeLogin
+                handlerUser={(userLogin: UserCredentials) =>
+                  handlerUser(userLogin)
+                }
+              />
+            </UserContext.Provider>
+          </IconComponentProvider>
+        </View>
       )}
     </>
   );
