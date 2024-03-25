@@ -1,5 +1,8 @@
-import { Pokemon, PokemonClient } from "pokenode-ts";
+import { Gender, Pokemon, PokemonAbility, PokemonClient } from "pokenode-ts";
 import { useCommonService } from "../common/CommonService";
+import { PokemonForBattle, PokemonForBattleSkills } from "./types/PokemonForBattle";
+
+const pokemonService = usePokemonService();
 
 export function usePokemonService() {
   const api = new PokemonClient();
@@ -43,5 +46,40 @@ export function usePokemonService() {
       return ability.effect_entries.find((x) => x.language.name === "en")
         ?.short_effect;
     },
+    getRamdomLevelBasedOnPlayer: (playersPokemonLevel: number) : number => {    
+      const shouldBeHigher = (Math.random() * 10) > 5;
+      if(shouldBeHigher) {
+        return parseInt(`${playersPokemonLevel + (Math.random() * 5)}`)
+      }
+      return parseInt(`${playersPokemonLevel - (Math.random() * 5)}`)
+    },  
+    getPokemonSkills: (abilities: PokemonAbility[], enemyLevel: number, playersPokemonLevel: number) : PokemonForBattleSkills[] => {      
+      let pokemonSkillList : PokemonForBattleSkills[] = [];
+      abilities.forEach((a) => {
+        const pokemonSkill : PokemonForBattleSkills = {
+          name: a.ability.name,
+          damage: playersPokemonLevel > enemyLevel ? 15 - (Math.random() * 5) : 15 + (Math.random() * 5),
+          ppNow: 15,
+          ppTotal: 15
+        }
+        pokemonSkillList.push(pokemonSkill)
+      })  
+      return pokemonSkillList;
+    },
+    getPokemonEnemyForBattle : async (pokemonApi: Pokemon, playersPokemonLevel: number) => {
+      const enemyLevel = pokemonService.getRamdomLevelBasedOnPlayer(playersPokemonLevel);
+
+      const pokemonForBattle : PokemonForBattle = {
+          hp: 100,
+          id: pokemonApi.id,
+          level: enemyLevel,
+          name: pokemonApi.name,
+          type: pokemonApi.types,
+          skills: pokemonService.getPokemonSkills(pokemonApi.abilities, enemyLevel, playersPokemonLevel),
+          nickname: '',
+          sprites: pokemonApi.sprites,
+        }
+      return pokemonForBattle;
+    }
   };
 }

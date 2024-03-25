@@ -79,10 +79,10 @@ function PokeLogin(props: PokeLoginProps) {
     password: Yup.string()
       .min(6, "Minimun 6 caracters")
       .required("Required field")
-      .matches(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{6,})/,
-        "Invalid password"
-      ),
+      // .matches(
+      //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{6,})/,
+      //   "Invalid password"
+      // ),
   });
 
   //Formik

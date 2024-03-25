@@ -41,23 +41,23 @@ export default function App() {
           </UserContext.Provider>
         </IconComponentProvider>
       ) : (
-        // <IconComponentProvider IconComponent={MaterialCommunityIcons}>
-        //   <UserContext.Provider value={userCredentials}>
-        //     <Routes handlerUser={() => handlerUser} isAppLoading={isAppLoading}></Routes>
-        //   </UserContext.Provider>
-        // </IconComponentProvider>
+        <IconComponentProvider IconComponent={MaterialCommunityIcons}>
+          <UserContext.Provider value={userCredentials}>
+            <Routes handlerUser={() => handlerUser} isAppLoading={isAppLoading}></Routes>
+          </UserContext.Provider>
+        </IconComponentProvider>
 
-        <View style={styles.container}>
-          <IconComponentProvider IconComponent={MaterialCommunityIcons}>
-            <UserContext.Provider value={userCredentials}>
-              <PokeLogin
-                handlerUser={(userLogin: UserCredentials) =>
-                  handlerUser(userLogin)
-                }
-              />
-            </UserContext.Provider>
-          </IconComponentProvider>
-        </View>
+        // <View style={styles.container}>
+        //   <IconComponentProvider IconComponent={MaterialCommunityIcons}>
+        //     <UserContext.Provider value={userCredentials}>
+        //       <PokeLogin
+        //         handlerUser={(userLogin: UserCredentials) =>
+        //           handlerUser(userLogin)
+        //         }
+        //       />
+        //     </UserContext.Provider>
+        //   </IconComponentProvider>
+        // </View>
       )}
     </>
   );

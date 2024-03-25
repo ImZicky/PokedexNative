@@ -6,7 +6,8 @@ import { StyleSheet } from "react-native";
 export type PokeTextProps = {
   text: string;
   color: string;
-  type: string;
+  type: "h1" | "h2" | "card-title" | "card-title-big" | "card-id" | "card-id-big" | "card-text" 
+  | "card-text-big" | "battle-enemy-card-name" | "battle-enemy-card-level";
   hasShadow?: boolean;
 };
 
@@ -65,6 +66,16 @@ function PokeText(props: PokeTextProps) {
       fontFamily: "Heebo",
       textAlign: "left",
     },
+    battleEnemyCardName: {
+      paddingTop: 5,
+      fontFamily: "PressStart",
+      fontSize: 13,
+    },
+    battleEnemyCardLevel: {
+      fontSize: 13,
+      fontFamily: "Orbitron",
+      textAlign: "left",
+    },
   });
 
   //Fonts
@@ -85,6 +96,8 @@ function PokeText(props: PokeTextProps) {
       { name: "card-id-big", value: styles.cardIdBig },
       { name: "card-text", value: styles.cardText },
       { name: "card-text-big", value: styles.cardTextBig },
+      { name: "battle-enemy-card-name", value: styles.battleEnemyCardName },
+      { name: "battle-enemy-card-level", value: styles.battleEnemyCardLevel },
     ];
     return stylesArray.find((x) => x.name === type)?.value;
   };

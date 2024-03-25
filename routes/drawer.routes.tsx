@@ -5,6 +5,7 @@ import PokePerfil from "../views/PokePerfil/PokePerfil";
 import React from "react";
 import { Icon, Text } from "@react-native-material/core";
 import { UserCredentials } from "../service/api/types/User";
+import PokeBattle from "../views/PokeBatte/PokeBattle";
 
 const Drawer = createDrawerNavigator();
 
@@ -93,6 +94,30 @@ export default function DrawerRoutes(cProps: DrawerRoutesProps) {
       >
         {(props) => <PokeList navigation={props.navigation} />}
       </Drawer.Screen>
+
+      <Drawer.Screen
+        name="PokeBattle"
+        options={{
+          headerTitle: "POKEBATTLE",
+          drawerIcon: ({ size }) => (
+            <MaterialCommunityIcons
+              name="controller-classic"
+              color={"#ed5463"}
+              size={size}
+            />
+          ),
+          drawerLabel: "PokeBattle",
+          drawerLabelStyle: {
+            color: "#ed5463",
+            textTransform: "capitalize",
+          },
+        }}
+
+      >
+        {(props) => <PokeBattle navigation={props.navigation} />}
+      </Drawer.Screen>
+
+
 
       <Drawer.Screen
         name="PokePerfil"
