@@ -41,6 +41,28 @@ export function usePokemonService() {
       }
       return pokemonList;
     },
+    getPokemonInitials: async () => {
+      let pokemonInitialList : Pokemon[] = [];
+      await pokemonService.getPokemonById(1)
+      .then(bulba => {
+        pokemonInitialList.push(bulba);
+      });
+      await pokemonService.getPokemonById(7)
+      .then(squirtle => {
+        pokemonInitialList.push(squirtle);
+        
+      });
+      await pokemonService.getPokemonById(4)
+      .then(charmander => {
+        pokemonInitialList.push(charmander);
+      });
+      await pokemonService.getPokemonById(25)
+      .then(pikachu => {
+        pokemonInitialList.push(pikachu);    
+      });
+      return pokemonInitialList;
+    },
+
     getAbilityDescription: async (name: string) => {
       const ability = await api.getAbilityByName(name);
       return ability.effect_entries.find((x) => x.language.name === "en")
@@ -66,7 +88,7 @@ export function usePokemonService() {
       })  
       return pokemonSkillList;
     },
-    getPokemonEnemyForBattle : async (pokemonApi: Pokemon, playersPokemonLevel: number) => {
+    getPokemonEnemyForBattle : async (pokemonApi: Pokemon, playersPokemonLevel: number, nickname: string | undefined) => {
       const enemyLevel = pokemonService.getRamdomLevelBasedOnPlayer(playersPokemonLevel);
 
       const pokemonForBattle : PokemonForBattle = {
@@ -76,7 +98,7 @@ export function usePokemonService() {
           name: pokemonApi.name,
           type: pokemonApi.types,
           skills: pokemonService.getPokemonSkills(pokemonApi.abilities, enemyLevel, playersPokemonLevel),
-          nickname: '',
+          nickname: nickname ?? '',
           sprites: pokemonApi.sprites,
         }
       return pokemonForBattle;

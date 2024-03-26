@@ -13,15 +13,24 @@ import Routes from "./routes";
 import { DeviceEventEmitter } from "react-native";
 import { UserCredentials } from "./service/api/types/User";
 import { UserContext } from "./contexts/UserContext";
+import { PokemonTrainer } from "./service/api/types/PokemonTrainer";
 
 const Stack = createStackNavigator();
 
 export default function App() {
   const [isAppLoading, setIsAppLoading] = useState<boolean>(false);
   const [userCredentials, setUserCredentials] = useState<UserCredentials | undefined>();
+  const [userPokemonTrainer, setUserPokemonTrainer] = useState<PokemonTrainer>({
+    name: 'Lucas', // TODO: retirar isso dps de testar
+    pokemons: []
+  });
 
   const handlerUser = (userCredentials: UserCredentials) => {
     setUserCredentials(userCredentials);
+    setUserPokemonTrainer({
+      name: 'Lucas',
+      pokemons: []
+    })
   };
 
   DeviceEventEmitter.addListener("event.handleActivateNavigatorBar", (value) =>
@@ -34,6 +43,7 @@ export default function App() {
         <IconComponentProvider IconComponent={MaterialCommunityIcons}>
           <UserContext.Provider value={userCredentials}>
             <Routes
+                userPokemonTrainer={userPokemonTrainer}
                 handlerUser={(userLogin: UserCredentials) =>
                   handlerUser(userLogin)
                 }
@@ -41,11 +51,11 @@ export default function App() {
           </UserContext.Provider>
         </IconComponentProvider>
       ) : (
-        <IconComponentProvider IconComponent={MaterialCommunityIcons}>
-          <UserContext.Provider value={userCredentials}>
-            <Routes handlerUser={() => handlerUser} isAppLoading={isAppLoading}></Routes>
-          </UserContext.Provider>
-        </IconComponentProvider>
+          <IconComponentProvider IconComponent={MaterialCommunityIcons}>
+            <UserContext.Provider value={userCredentials}>
+              <Routes userPokemonTrainer={userPokemonTrainer} handlerUser={() => handlerUser} isAppLoading={isAppLoading}></Routes>
+            </UserContext.Provider>
+          </IconComponentProvider>
 
         // <View style={styles.container}>
         //   <IconComponentProvider IconComponent={MaterialCommunityIcons}>

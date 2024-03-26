@@ -7,7 +7,7 @@ export type PokeTextProps = {
   text: string;
   color: string;
   type: "h1" | "h2" | "card-title" | "card-title-big" | "card-id" | "card-id-big" | "card-text" 
-  | "card-text-big" | "battle-enemy-card-name" | "battle-enemy-card-level";
+  | "card-text-big" | "battle-enemy-card-name" | "battle-enemy-card-level" | "modal-title";
   hasShadow?: boolean;
 };
 
@@ -76,6 +76,12 @@ function PokeText(props: PokeTextProps) {
       fontFamily: "Orbitron",
       textAlign: "left",
     },
+    modalTitle: {
+      fontSize: 18,
+      fontFamily: "Orbitron",
+      textAlign: "center",
+      marginBottom: 20,
+    },
   });
 
   //Fonts
@@ -98,6 +104,7 @@ function PokeText(props: PokeTextProps) {
       { name: "card-text-big", value: styles.cardTextBig },
       { name: "battle-enemy-card-name", value: styles.battleEnemyCardName },
       { name: "battle-enemy-card-level", value: styles.battleEnemyCardLevel },
+      { name: "modal-title", value: styles.modalTitle },
     ];
     return stylesArray.find((x) => x.name === type)?.value;
   };

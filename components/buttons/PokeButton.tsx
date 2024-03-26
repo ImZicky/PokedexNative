@@ -14,6 +14,7 @@ export type ButtonProps = {
   isReadOnly?: boolean;
   styleType: string;
   onClick?: (event: any) => void;
+  color?: string;
 };
 
 export default function PokeButton(buttonProps: ButtonProps) {
@@ -50,6 +51,7 @@ export default function PokeButton(buttonProps: ButtonProps) {
       disabled={buttonProps.isReadOnly}
       trailing={(props) => <Icon name={buttonProps.icon} {...props} />}
       onPress={buttonProps.onClick}
+      color={commonService.getColorFromType(buttonProps.color ?? "#000000")}
     />
   ) : (
     <Button
@@ -59,6 +61,7 @@ export default function PokeButton(buttonProps: ButtonProps) {
       loading={buttonProps.loading}
       disabled={buttonProps.isReadOnly}
       onPress={buttonProps.onClick}
+      color={commonService.getColorFromType(buttonProps.color ?? "#000000")}
     />
   );
 }

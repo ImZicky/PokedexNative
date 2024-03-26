@@ -6,12 +6,14 @@ import React from "react";
 import { Icon, Text } from "@react-native-material/core";
 import { UserCredentials } from "../service/api/types/User";
 import PokeBattle from "../views/PokeBatte/PokeBattle";
+import { PokemonTrainer } from "../service/api/types/PokemonTrainer";
 
 const Drawer = createDrawerNavigator();
 
 export type DrawerRoutesProps = {
   isAppLoading: boolean;
   handlerUser: (userLogin: UserCredentials) => void;
+  userPokemonTrainer: PokemonTrainer
 };
 
 export type CustomDrawerContentProps = {
@@ -114,7 +116,7 @@ export default function DrawerRoutes(cProps: DrawerRoutesProps) {
         }}
 
       >
-        {(props) => <PokeBattle navigation={props.navigation} />}
+        {(props) => <PokeBattle userPokemonTrainer={cProps.userPokemonTrainer} navigation={props.navigation} />}
       </Drawer.Screen>
 
 

@@ -17,6 +17,16 @@ export function useCommonService() {
         ? sprites.other?.["official-artwork"].front_default
         : sprites.front_default;
     },
+    getPokemonMainImageBackForBattle: (sprites: PokemonSprites) => {
+      return sprites.versions["generation-v"]["black-white"].animated.back_default ?
+      sprites.versions["generation-v"]["black-white"].animated.back_default : 
+      sprites.other?.["official-artwork"].front_default;
+    },
+    getPokemonMainImageFrontForBattle: (sprites: PokemonSprites) => {
+      return sprites.versions["generation-v"]["black-white"].animated.front_default ?
+      sprites.versions["generation-v"]["black-white"].animated.front_default : 
+      sprites.other?.["official-artwork"].front_default;
+    },
     getPokemonHeight: (height: number) => {
       const heightCm = height * 10;
       return heightCm >= 100
@@ -31,6 +41,10 @@ export function useCommonService() {
     },
     getColorFromType: (type: string) => {
       switch (type) {
+        case "menuGreen":
+          return "#4E6648"
+        case "invisible":
+          return "#FFFFFF00"
         case "primary":
           return "#a30000";
         case "secondary":

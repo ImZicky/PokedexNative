@@ -4,12 +4,9 @@ import { usePokemonService } from "../../service/api/PokemonService";
 import UseUserService from "../../service/api/UserService";
 import { useCommonService } from "../../service/common/CommonService";
 import { Pokemon } from "pokenode-ts";
-import { Box, Chip, Flex, Wrap } from "@react-native-material/core";
+import { Wrap } from "@react-native-material/core";
 import PokeLoading from "../../components/loader/PokeLoading";
-import PokeText from "../../components/texts/PokeText";
-import PokeButton from "../../components/buttons/PokeButton";
 import PokeCard from "../../components/cards/PokeCard";
-import PokeIconButton from "../../components/buttons/PokeIconButton";
 import PokePagination from "../../components/paginations/PokePagination";
 
 export type PokeListProps = {
@@ -20,7 +17,7 @@ export default function PokeList(cProps: PokeListProps) {
   //Consts
   const [pokemonList, setPokemonList] = useState<Pokemon[] | undefined>();
   const [pageNumber, setPageNumber] = useState<number>(0);
-  const [pageSize, setPageSize] = useState<number>(30);
+  const [pageSize] = useState<number>(30);
   const [loading, setLoading] = useState<boolean>(false);
   const [isSearchingPokemons, setIsSearchingPokemons] =
     useState<boolean>(false);
@@ -28,7 +25,6 @@ export default function PokeList(cProps: PokeListProps) {
   //Services
   const pokemonService = usePokemonService();
   const commonService = useCommonService();
-  const userService = UseUserService();
 
   //Fetches
   const fetchPokemonList = async () => {
