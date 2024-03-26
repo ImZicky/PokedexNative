@@ -40,12 +40,6 @@ function PokeCardChoose(props: PokeCardProps) {
         flex: 2,
       }}
     >
-      <PokeText
-        color="#000"
-        type="card-id"
-        text={`#${props.pokemon.id.toString()}`}
-      />
-
       <Flex style={styles.centeredDiv}>
         <Image
           style={styles.cardImage}

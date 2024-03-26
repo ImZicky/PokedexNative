@@ -89,21 +89,22 @@ function PokeBattle(props: PokeBattleProps) {
       justifyContent: 'center',
     },
     enemyDiv: {
-      marginBottom: 25, 
-      marginLeft: 190,
+      position: "absolute",
+      top: 25, 
+      left: 60,
       alignItems: "center",
       alignContent: "center",
     },
     playerDiv: {
-      marginBottom: 70, 
-      marginLeft: 10,
-      alignItems: "flex-start",
-      alignContent: "flex-start",
+      position: "absolute",
+      bottom: 90, 
+      left: 10,
+      alignItems: "center",
+      alignContent: "center",
     },
-    playerInteractionsDiv: {
+    playerInteractionsDiv: {      
       bottom: 0,
-      width: 500,
-      // backgroundColor: "#4E6648",
+      width: "100%",
       position: "absolute",
       alignItems: "center",
       alignContent: "center",
@@ -113,8 +114,10 @@ function PokeBattle(props: PokeBattleProps) {
       flex: 2
     },
     enemyDivInfosBorder: {
+      zIndex: 10,
       padding: 5,
-      marginRight: 150,
+      position: "absolute",
+      left: 40,
       width: 250,
       height: 80,
       borderTopEndRadius: 10,
@@ -125,7 +128,34 @@ function PokeBattle(props: PokeBattleProps) {
     },
     enemyDivInfos: {
       padding: 10,
-      width: 240,
+      height: 70,
+      borderTopEndRadius: 10,
+      borderBottomLeftRadius: 10,
+      borderBottomRightRadius: 25,
+      borderTopStartRadius: 25,
+      alignItems: "center",
+      alignContent: "center",
+      backgroundColor: "#ECEDD0"
+    },
+    playerDivHeader: {
+      width: '100%',
+    },
+    playerDivInfosBorder: {
+      zIndex: 10,
+      position: "absolute",
+      bottom: 160,
+      left: 0,
+      padding: 5,
+      width: 250,
+      height: 80,
+      borderTopEndRadius: 10,
+      borderBottomLeftRadius: 10,
+      borderBottomRightRadius: 25,
+      borderTopStartRadius: 25,
+      backgroundColor: "#4E6648"
+    },
+    playerDivInfos: {
+      padding: 10,
       height: 70,
       borderTopEndRadius: 10,
       borderBottomLeftRadius: 10,
@@ -137,8 +167,7 @@ function PokeBattle(props: PokeBattleProps) {
     },
     playerInteractionsDivBorder: {
       padding: 5,
-      marginRight: 140,
-      width: 360,
+      width: "100%",
       height: 100,
       borderTopEndRadius: 0,
       borderBottomLeftRadius: 0,
@@ -148,7 +177,7 @@ function PokeBattle(props: PokeBattleProps) {
     },
     playerInteractionsDivInfos: {
       padding: 10,
-      width: 350,
+      width: "100%",
       height: 90,
       borderTopEndRadius: 10,
       borderBottomLeftRadius: 10,
@@ -158,7 +187,8 @@ function PokeBattle(props: PokeBattleProps) {
       alignContent: "center",
       backgroundColor: "#ECEDD0"
     },
-    enemyImage: { width: 170, height: 170 },
+    enemyImage: { position: "absolute", top: 70, left: 120, width: 170, height: 170 },
+    playerImage: { position: "absolute", bottom: 0, left: 0, width: 170, height: 170 },
   });
 
   return (
@@ -236,9 +266,9 @@ function PokeBattle(props: PokeBattleProps) {
               </Flex>
 
               <Flex style={styles.playerDiv}>
-                <View style={styles.enemyDivInfosBorder}>              
-                  <View style={styles.enemyDivInfos}>
-                    <Flex style={styles.enemyDivHeader} >
+                <View style={styles.playerDivInfosBorder}>              
+                  <View style={styles.playerDivInfos}>
+                    <Flex style={styles.playerDivHeader} >
                       <Wrap>
                         <Box w={170}>
                           <PokeText 
@@ -266,7 +296,7 @@ function PokeBattle(props: PokeBattleProps) {
                   </View>
                   </View>
                 <Image
-                  style={styles.enemyImage}
+                  style={styles.playerImage}
                   source={{
                     uri: `${commonService.getPokemonMainImageBackForBattle(
                       props.userPokemonTrainer.pokemons[0]?.sprites
@@ -278,8 +308,8 @@ function PokeBattle(props: PokeBattleProps) {
               <Flex style={styles.playerInteractionsDiv}>
                 <View style={styles.playerInteractionsDivBorder}>
                   <View style={styles.playerInteractionsDivInfos}>
-                    <Wrap w={300}>
-                      <Box w={150}>
+                    <Wrap w={"100%"}>
+                      <Box w={"50%"} style={{alignItems: "center"}}>
                         <PokeButton 
                           size="small"
                           variant="text"
@@ -290,19 +320,19 @@ function PokeBattle(props: PokeBattleProps) {
                           // onClick={() => openAttacksMenu(true)}
                         />
                       </Box>
-                      <Box w={150}>
+                      <Box w={"50%"} style={{alignItems: "center"}}>
                       <PokeButton 
                           size="small"
                           variant="text"
                           color={"menuGreen"}
-                          text="Pokemons" 
+                          text="Bag" 
                           styleType={"invisible"}
                           // onClick={() => openPokemonsMenu(true)}
                         />
                       </Box>
                     </Wrap>
-                    <Wrap w={300}>
-                      <Box w={150}>
+                    <Wrap w={"100%"}>
+                    <Box w={"50%"} style={{alignItems: "center"}}>
                         <PokeButton 
                           size="small"
                           variant="text"
@@ -312,12 +342,12 @@ function PokeBattle(props: PokeBattleProps) {
                           // onClick={() => handleCapture()}
                         />
                       </Box>
-                      <Box w={150}>
-                      <PokeButton 
+                      <Box w={"50%"} style={{alignItems: "center"}}>
+                        <PokeButton 
                           size="small"
                           variant="text"
                           color={"menuGreen"}
-                          text="Run Away" 
+                          text="Run" 
                           styleType={"invisible"}
                           onClick={() => handleRunAway()}
                         />
