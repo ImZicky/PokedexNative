@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { UserCredentials, UserCriteria } from "../../service/api/types/User";
-import { Box, Flex, Wrap } from "@react-native-material/core";
-import { StyleSheet, Image, ImageBackground, View } from "react-native";
+import { Box, Flex, Icon, Wrap } from "@react-native-material/core";
+import { StyleSheet, Image, ImageBackground, View, PanResponder, TouchableOpacity } from "react-native";
 import PokeLoading from "../../components/loader/PokeLoading";
 import PokeText from "../../components/texts/PokeText";
 import { usePokemonService } from "../../service/api/PokemonService";
@@ -11,6 +11,8 @@ import { PokemonTrainer } from "../../service/api/types/PokemonTrainer";
 import PokemonFirstChoice from "./components/PokemonFirstChoice.";
 import { Pokemon } from "pokenode-ts";
 import PokeButton from "../../components/buttons/PokeButton";
+import Animated, { Value, useAnimatedGestureHandler, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
+import { PanGestureHandler, PanGestureHandlerGestureEvent } from "react-native-gesture-handler";
 
 export type PokeBattleProps = {
   navigation: any;
@@ -81,6 +83,67 @@ function PokeBattle(props: PokeBattleProps) {
     }
     if(attacked) setAttacked(false);
   }
+
+
+
+  // ANIMATION
+  const translateX = useSharedValue(288)
+  const translateY = useSharedValue(172)
+
+  const panGestureEvent = useAnimatedGestureHandler<PanGestureHandlerGestureEvent>({
+    onStart: (event) => {
+    },
+    onActive: (event) => {
+      // console.log(`TRANSLATION: x> ${event.translationX} | y> ${event.translationY}`)
+      // console.log(`xy: x> ${event.x} | y> ${event.y}`)
+      // console.log(`ABSOLUTE: x> ${event.absoluteX} | y> ${event.absoluteY}`)
+      // translateX.value = event.x;
+      // translateY.value = event.y;
+
+      // translateX.value = event.absoluteX;
+      // translateY.value = event.absoluteY;
+      // if(event.translationX > 50 && event.translationY > 50){
+      translateX.value = event.translationX;
+      translateY.value = event.translationY;
+      // }
+    },
+    onFinish: (event) => {
+      // translateX.value = event.translationX+50;
+      // translateY.value = event.translationY-50;
+    },
+    onEnd: (event) => {
+      translateX.value = 288;
+      translateY.value = 172;
+    },    
+  }) 
+
+  const rStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          translateX: translateX.value,
+        },
+        {
+          translateY: translateY.value,
+        },
+      ]
+    };
+  });
+
+
+  // const progress = useSharedValue(1)
+
+  // const reanimatedStyle = useAnimatedStyle(() => {
+  //   return {
+  //     opacity: progress.value
+  //   }
+  // },[])
+
+  // useEffect(() => {
+  //   progress.value = withTiming(0, {duration: 5000});
+  // }, [])
+  
+
 
   //Style
   const styles = StyleSheet.create({
@@ -189,6 +252,15 @@ function PokeBattle(props: PokeBattleProps) {
     },
     enemyImage: { position: "absolute", top: 70, left: 120, width: 170, height: 170 },
     playerImage: { position: "absolute", bottom: 0, left: 0, width: 170, height: 170 },
+    circle: {
+      width: 60,
+      height: 60,
+      zIndex: 50
+    },
+    pokeballImage :{
+      width: 60,
+      height: 60,
+    }
   });
 
   return (
@@ -264,8 +336,19 @@ function PokeBattle(props: PokeBattleProps) {
                   }}
                 />
               </Flex>
+              <PanGestureHandler onGestureEvent={panGestureEvent}>
+                  <Animated.View 
+                    style={[styles.circle, rStyle]}
+                    >
+                    <ImageBackground source={
+                      require("../../assets/images/pokeball.png")}
+                      style={styles.pokeballImage}
+                      />
+                    </Animated.View>
+                </PanGestureHandler>
 
               <Flex style={styles.playerDiv}>
+  
                 <View style={styles.playerDivInfosBorder}>              
                   <View style={styles.playerDivInfos}>
                     <Flex style={styles.playerDivHeader} >
