@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { UserCredentials, UserCriteria } from "../../service/api/types/User";
-import { Box, Flex, Icon, Wrap } from "@react-native-material/core";
-import { StyleSheet, Image, ImageBackground, View, PanResponder, TouchableOpacity } from "react-native";
+import { Box, Flex, Icon, Stack, Wrap } from "@react-native-material/core";
+import { StyleSheet, Image, ImageBackground, View, PanResponder, TouchableOpacity, Modal } from "react-native";
 import PokeLoading from "../../components/loader/PokeLoading";
 import PokeText from "../../components/texts/PokeText";
 import { usePokemonService } from "../../service/api/PokemonService";
@@ -11,8 +11,9 @@ import { PokemonTrainer } from "../../service/api/types/PokemonTrainer";
 import PokemonFirstChoice from "./components/PokemonFirstChoice.";
 import { Pokemon } from "pokenode-ts";
 import PokeButton from "../../components/buttons/PokeButton";
-import Animated, { Value, useAnimatedGestureHandler, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
+import Animated, { RotateInUpLeft, Value, interpolate, runOnJS, useAnimatedGestureHandler, useAnimatedReaction, useAnimatedStyle, useDerivedValue, useSharedValue, useWorkletCallback, withDelay, withRepeat, withSequence, withTiming } from "react-native-reanimated";
 import { PanGestureHandler, PanGestureHandlerGestureEvent } from "react-native-gesture-handler";
+
 
 export type PokeBattleProps = {
   navigation: any;
@@ -27,6 +28,9 @@ function PokeBattle(props: PokeBattleProps) {
   const [haveAPokemonForBattle, setHaveAPokemonForBattle] = useState<boolean>(false);
   const [attacked, setAttacked] = useState<boolean>(false);
   const playersPokemonLevel = 10; // TODO: TRAZER DO PLAYER MESMO
+  const [openMessageModal, setOpenMessageModal] = useState<boolean>(false);
+  const [openMessageModalMessage, setOpenMessageModalMessage] = useState<string>("");
+
 
   //Services
   const pokemonService = usePokemonService();
@@ -80,69 +84,159 @@ function PokeBattle(props: PokeBattleProps) {
       setAttacked(true);
       temp.hp = temp.hp - parseInt(`${Math.random() * 15}`);
       setPokemonEnemy(temp);      
+      enemyHp.value = temp.hp;
     }
     if(attacked) setAttacked(false);
   }
 
 
 
-  // ANIMATION
-  const translateX = useSharedValue(288)
-  const translateY = useSharedValue(172)
+
+  //CAPTURE-ANIMATIONS
+  const isCapturingPokemon = useSharedValue(0);
+  const didCapturePokemon = useSharedValue(0);
+  const translateX = useSharedValue(0)
+  const translateY = useSharedValue(0)
+  const pokeballWidth = useSharedValue(60)
+  const pokeballHeight = useSharedValue(60)
+  const pokeballRotate = useSharedValue(0)
+  const pokemonOpacity = useSharedValue(1);
+  const enemyHp = useSharedValue(100);
+
+
+  const calculateIfCaptured = useWorkletCallback((hp: number) => {
+    if(hp > 50) {
+      return parseInt(`${Math.random() * 100}`) > 90;
+    }
+    else if(hp > 25 && hp <= 50) {
+      return parseInt(`${Math.random() * 100}`) > 75;
+    }
+    else if(hp <= 25) {
+      return parseInt(`${Math.random() * 100}`) > 50;
+    }
+  });
+
+  const handleCapturePokemon = useWorkletCallback((pEnemyHp: number) => {
+    if(calculateIfCaptured(pEnemyHp)){
+      didCapturePokemon.value = 1;
+      pokemonOpacity.value = withDelay(5000, withTiming(1, { duration: 500 }));
+
+      pokeballWidth.value = withTiming(60, { duration: 60 });
+      pokeballHeight.value = withTiming(60, { duration: 60 });
+      translateX.value = withTiming(0, { duration: 500 });
+      translateY.value = withTiming(0, { duration: 500 });
+
+      isCapturingPokemon.value = 0;
+      didCapturePokemon.value = 0;
+      enemyHp.value = 100;
+      runOnJS(handleRunAway)();
+    }
+    else{
+      isCapturingPokemon.value = 0;
+      didCapturePokemon.value = 0;
+    }  
+  });
+
+  const didThrowPokeball = useWorkletCallback((px: number, py: number) => {
+    if(px < 23 && px > -211 && py < -190 && py > -350) return true;
+    return false;    
+  })
 
   const panGestureEvent = useAnimatedGestureHandler<PanGestureHandlerGestureEvent>({
     onStart: (event) => {
+      pokeballRotate.value = withSequence(
+        withRepeat(withTiming(360, { duration: 300 }), 1, true)
+        );
+
     },
     onActive: (event) => {
-      // console.log(`TRANSLATION: x> ${event.translationX} | y> ${event.translationY}`)
-      // console.log(`xy: x> ${event.x} | y> ${event.y}`)
-      // console.log(`ABSOLUTE: x> ${event.absoluteX} | y> ${event.absoluteY}`)
-      // translateX.value = event.x;
-      // translateY.value = event.y;
 
-      // translateX.value = event.absoluteX;
-      // translateY.value = event.absoluteY;
-      // if(event.translationX > 50 && event.translationY > 50){
+      pokeballWidth.value = withSequence(
+        withRepeat(withTiming(70, { duration: 250 }), 100, true),
+        withTiming(50, { duration: 250 })
+      );
+
+      pokeballHeight.value = withSequence(
+        withRepeat(withTiming(70, { duration: 250 }), 100, true),
+        withTiming(50, { duration: 250 })
+      );
+
       translateX.value = event.translationX;
-      translateY.value = event.translationY;
-      // }
+      translateY.value = event.translationY;    
     },
     onFinish: (event) => {
-      // translateX.value = event.translationX+50;
-      // translateY.value = event.translationY-50;
+      if(didThrowPokeball(event.translationX, event.translationY)){
+        isCapturingPokemon.value = 1;
+        pokemonOpacity.value = withTiming(0, { duration: 500 });
+
+        handleCapturePokemon(enemyHp.value);
+        if(didCapturePokemon.value === 0) {
+          pokemonOpacity.value = withTiming(1, { duration: 500 });
+          pokeballWidth.value = withTiming(60, { duration: 60 });
+          pokeballHeight.value = withTiming(60, { duration: 60 });
+          translateX.value = withTiming(0, { duration: 500 });
+          translateY.value = withTiming(0, { duration: 500 });  
+          pokeballRotate.value = withSequence(
+            withRepeat(withTiming(0, { duration: 1000 }), 1, true)
+          );
+          runOnJS(setOpenMessageModalMessage)(`Pokémon got away!`);
+          runOnJS(setOpenMessageModal)(true);
+        }
+      }
+      else{
+        if(didCapturePokemon.value === 0) {
+          pokemonOpacity.value = withTiming(1, { duration: 500 });
+
+          pokeballWidth.value = withTiming(60, { duration: 60 });
+          pokeballHeight.value = withTiming(60, { duration: 60 });
+          translateX.value = withTiming(0, { duration: 500 });
+          translateY.value = withTiming(0, { duration: 500 });  
+        }
+      }
     },
     onEnd: (event) => {
-      translateX.value = 288;
-      translateY.value = 172;
-    },    
+    },
   }) 
 
-  const rStyle = useAnimatedStyle(() => {
+  const reanimationViewStyle = useAnimatedStyle(() => {
     return {
+      width: pokeballWidth.value,
+      height: pokeballHeight.value,
       transform: [
+        {
+          rotateZ:  `${pokeballRotate.value}deg`,
+        },
         {
           translateX: translateX.value,
         },
         {
           translateY: translateY.value,
-        },
+        }
       ]
     };
   });
 
+  const reanimationPokeballStyle = useAnimatedStyle(() => {
+    return {
+      width: pokeballWidth.value,
+      height: pokeballHeight.value,
+      transform: [
+        {
+          rotateZ:  `${pokeballRotate.value}deg`,
+        }
+      ]
+    };
+  });
 
-  // const progress = useSharedValue(1)
+  const reanimationPokemonStyle = useAnimatedStyle(() => {
+    return {
+      opacity: pokemonOpacity.value,
+    };
+  });
 
-  // const reanimatedStyle = useAnimatedStyle(() => {
-  //   return {
-  //     opacity: progress.value
-  //   }
-  // },[])
 
-  // useEffect(() => {
-  //   progress.value = withTiming(0, {duration: 5000});
-  // }, [])
-  
+
+
 
 
   //Style
@@ -181,6 +275,7 @@ function PokeBattle(props: PokeBattleProps) {
       padding: 5,
       position: "absolute",
       left: 40,
+      top: -20,
       width: 250,
       height: 80,
       borderTopEndRadius: 10,
@@ -206,7 +301,7 @@ function PokeBattle(props: PokeBattleProps) {
     playerDivInfosBorder: {
       zIndex: 10,
       position: "absolute",
-      bottom: 160,
+      bottom: 170,
       left: 0,
       padding: 5,
       width: 250,
@@ -250,8 +345,22 @@ function PokeBattle(props: PokeBattleProps) {
       alignContent: "center",
       backgroundColor: "#ECEDD0"
     },
-    enemyImage: { position: "absolute", top: 70, left: 120, width: 170, height: 170 },
-    playerImage: { position: "absolute", bottom: 0, left: 0, width: 170, height: 170 },
+    enemyImage: {
+      opacity: 1,
+      position: "absolute", 
+      top: 70, 
+      left: 120, 
+      width: 170, 
+      height: 170, 
+      display: "flex"
+    },
+    playerImage: { 
+      position: "absolute", 
+      bottom: 0, 
+      left: 0, 
+      width: 170, 
+      height: 170 
+    },
     circle: {
       width: 60,
       height: 60,
@@ -260,6 +369,46 @@ function PokeBattle(props: PokeBattleProps) {
     pokeballImage :{
       width: 60,
       height: 60,
+    },
+    pokemonPokeballDiv:{
+      position: "absolute",
+      width: 400,
+      height: 270,
+      left: 0,
+      top: 0,
+      zIndex: 200,
+      alignItems: "center",
+      alignContent: "center",
+    },
+    pokeballDiv:{
+      position: "absolute",
+      paddingTop: 430,
+      paddingLeft: 280,
+      width: 360,
+      left: 0,
+      bottom: 100,
+      zIndex: 200,
+      height: 515,
+      alignItems: "center",
+      alignContent: "center",
+    },
+    centeredViewModal: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginTop: 22,
+    },
+    modalViewModal: {
+      margin: 10,
+      backgroundColor: 'white',
+      borderRadius: 20,
+      padding: 35,
+      alignItems: 'center',
+      shadowColor: '#000',
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      }
     }
   });
 
@@ -271,28 +420,27 @@ function PokeBattle(props: PokeBattleProps) {
           <PokemonFirstChoice setHaveAPokemonForBattle={(value: boolean) => setHaveAPokemonForBattle(value)} trainer={props.userPokemonTrainer} />
         ):(
             <ImageBackground source={
-                pokemonEnemyType === 'grass' ? require(`../../assets/images/battlefields/grass.png`) :
-                pokemonEnemyType === 'rock' ? require(`../../assets/images/battlefields/rock.png`) :
-                pokemonEnemyType === 'normal' ? require(`../../assets/images/battlefields/normal.png`) :
-                pokemonEnemyType === 'fire' ? require(`../../assets/images/battlefields/fire.png`) :
-                pokemonEnemyType === 'eletric' ? require(`../../assets/images/battlefields/eletric.png`) :
-
-                pokemonEnemyType === 'flying' ? require(`../../assets/images/battlefields/eletric.png`) :
-                pokemonEnemyType === 'insect' ? require(`../../assets/images/battlefields/eletric.png`) :
-                pokemonEnemyType === 'water' ? require(`../../assets/images/battlefields/eletric.png`) :
-                pokemonEnemyType === 'ice' ? require(`../../assets/images/battlefields/eletric.png`) :
-                pokemonEnemyType === 'fighting' ? require(`../../assets/images/battlefields/eletric.png`) :
-                pokemonEnemyType === 'poison' ? require(`../../assets/images/battlefields/eletric.png`) :
-                pokemonEnemyType === 'ground' ? require(`../../assets/images/battlefields/eletric.png`) :
-                pokemonEnemyType === 'psychic' ? require(`../../assets/images/battlefields/eletric.png`) :
-                pokemonEnemyType === 'bug' ? require(`../../assets/images/battlefields/eletric.png`) :
-                pokemonEnemyType === 'ghost' ? require(`../../assets/images/battlefields/eletric.png`) :
-                pokemonEnemyType === 'dragon' ? require(`../../assets/images/battlefields/eletric.png`) :
-                pokemonEnemyType === 'dark' ? require(`../../assets/images/battlefields/eletric.png`) :
-                pokemonEnemyType === 'steel' ? require(`../../assets/images/battlefields/eletric.png`) :
-                pokemonEnemyType === 'fairy' ? require(`../../assets/images/battlefields/eletric.png`) :
-                pokemonEnemyType === 'stellar' ? require(`../../assets/images/battlefields/eletric.png`) :
-                '../../assets/images/battlefields/grass.png'
+                pokemonEnemyType === 'grass' ? require(`../../assets/images/battlefields/grass.gif`) :
+                pokemonEnemyType === 'rock' ? require(`../../assets/images/battlefields/rock.gif`) :
+                pokemonEnemyType === 'normal' ? require(`../../assets/images/battlefields/normal.gif`) :
+                pokemonEnemyType === 'fire' ? require(`../../assets/images/battlefields/fire.gif`) :
+                pokemonEnemyType === 'eletric' ? require(`../../assets/images/battlefields/eletric.gif`) :
+                pokemonEnemyType === 'flying' ? require(`../../assets/images/battlefields/flying.gif`) :
+                pokemonEnemyType === 'psychic' ? require(`../../assets/images/battlefields/psychic.gif`) :
+                pokemonEnemyType === 'water' ? require(`../../assets/images/battlefields/water.gif`) :
+                pokemonEnemyType === 'ghost' ? require(`../../assets/images/battlefields/ghost.gif`) :
+                pokemonEnemyType === 'insect' ? require(`../../assets/images/battlefields/insect.gif`) :
+                pokemonEnemyType === 'ice' ? require(`../../assets/images/battlefields/ice.gif`) :
+                pokemonEnemyType === 'fighting' ? require(`../../assets/images/battlefields/fighting.gif`) :
+                pokemonEnemyType === 'poison' ? require(`../../assets/images/battlefields/poison.gif`) :
+                pokemonEnemyType === 'dragon' ? require(`../../assets/images/battlefields/dragon.gif`) :
+                pokemonEnemyType === 'ground' ? require(`../../assets/images/battlefields/ground.gif`) :
+                pokemonEnemyType === 'stellar' ? require(`../../assets/images/battlefields/stellar.gif`) :
+                pokemonEnemyType === 'fairy' ? require(`../../assets/images/battlefields/fairy.gif`) :
+                pokemonEnemyType === 'bug' ? require(`../../assets/images/battlefields/bug.gif`) :
+                pokemonEnemyType === 'dark' ? require(`../../assets/images/battlefields/dark.gif`) :
+                pokemonEnemyType === 'steel' ? require(`../../assets/images/battlefields/steel.gif`) :
+                require('../../assets/images/battlefields/normal.gif')
               }
               style={styles.image}>
               <Flex style={styles.enemyDiv}>
@@ -327,8 +475,8 @@ function PokeBattle(props: PokeBattleProps) {
                       </Flex>
                   </View>
                   </View>
-                <Image
-                  style={styles.enemyImage}
+                <Animated.Image
+                  style={[styles.enemyImage, reanimationPokemonStyle]}
                   source={{
                     uri: `${commonService.getPokemonMainImageFrontForBattle(
                       pokemonEnemy?.sprites
@@ -336,16 +484,20 @@ function PokeBattle(props: PokeBattleProps) {
                   }}
                 />
               </Flex>
-              <PanGestureHandler onGestureEvent={panGestureEvent}>
+
+              <View style={styles.pokeballDiv}>
+              <View style={styles.pokemonPokeballDiv}></View>
+                <PanGestureHandler onGestureEvent={panGestureEvent}>
                   <Animated.View 
-                    style={[styles.circle, rStyle]}
+                    style={[styles.circle, reanimationViewStyle]}
                     >
-                    <ImageBackground source={
+                    <Animated.Image source={
                       require("../../assets/images/pokeball.png")}
-                      style={styles.pokeballImage}
+                      style={[styles.pokeballImage, reanimationPokeballStyle]}
                       />
                     </Animated.View>
                 </PanGestureHandler>
+              </View>
 
               <Flex style={styles.playerDiv}>
   
@@ -416,14 +568,14 @@ function PokeBattle(props: PokeBattleProps) {
                     </Wrap>
                     <Wrap w={"100%"}>
                     <Box w={"50%"} style={{alignItems: "center"}}>
-                        <PokeButton 
+                        {/* <PokeButton 
                           size="small"
                           variant="text"
                           color={"menuGreen"}
-                          text="Capture" 
+                          text="Capture"
                           styleType={"invisible"}
                           // onClick={() => handleCapture()}
-                        />
+                        /> */}
                       </Box>
                       <Box w={"50%"} style={{alignItems: "center"}}>
                         <PokeButton 
@@ -441,6 +593,32 @@ function PokeBattle(props: PokeBattleProps) {
               </Flex>
 
 
+              <Modal
+                animationType="slide"
+                transparent            
+                visible={openMessageModal}
+                onRequestClose={() => {
+                  setOpenMessageModal(false);
+                }}
+              >
+              <View style={styles.centeredViewModal}>
+                <View style={styles.modalViewModal}>
+                    <PokeText 
+                      text={openMessageModalMessage} 
+                      color={"#000000"} 
+                      type={"h1"}                    
+                    />
+                    <View style={{marginTop: 50}}/>
+                    <PokeButton
+                      styleType={pokemonEnemy?.type[0].type.name ?? ""}
+                      variant="contained"
+                      size="fullwidth"
+                      text="Close"
+                      onClick={() => setOpenMessageModal(false)}
+                    />
+                  </View>
+                </View>
+              </Modal>
             </ImageBackground>
           )}
         </>
@@ -452,3 +630,7 @@ function PokeBattle(props: PokeBattleProps) {
 }
 
 export default PokeBattle;
+function useComputedValue(arg0: () => any, arg1: any[]) {
+  throw new Error("Function not implemented.");
+}
+
