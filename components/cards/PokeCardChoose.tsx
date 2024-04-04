@@ -38,6 +38,9 @@ function PokeCardChoose(props: PokeCardProps) {
         borderRadius: 15,
         margin: 3,
         flex: 2,
+        borderColor: commonService.getColorFromType(props.pokemon.types[0].type.name),
+        borderStyle: "solid",
+        borderWidth: 5
       }}
     >
       <Flex style={styles.centeredDiv}>
@@ -57,15 +60,43 @@ function PokeCardChoose(props: PokeCardProps) {
           }}
         >
           {props.pokemon.types.map((type, i) => (
-            <Chip
-              key={`${props.pokemon.name}_type_${type.type.name}`}
-              style={{
-                backgroundColor: commonService.getColorFromType(type.type.name),
-                alignItems: "center"
-              }}
-              color="#FFF"              
-              label={type.type.name.toUpperCase()}            
+            <Image
+              key={`${props.pokemon.name}_type_${type.type.name}`} 
+              style={{width: 30, height: 30}} 
+              source={
+                type.type.name === 'grass' ? require(`../../assets/images/icons/grass.png`) :
+                type.type.name === 'rock' ? require(`../../assets/images/icons/rock.png`) :
+                type.type.name === 'normal' ? require(`../../assets/images/icons/normal.png`) :
+                type.type.name === 'fire' ? require(`../../assets/images/icons/fire.png`) :
+                type.type.name === 'electric' ? require(`../../assets/images/icons/electric.png`) :
+                type.type.name === 'flying' ? require(`../../assets/images/icons/flying.png`) :
+                type.type.name === 'psychic' ? require(`../../assets/images/icons/psychic.png`) :
+                type.type.name === 'water' ? require(`../../assets/images/icons/water.png`) :
+                type.type.name === 'ghost' ? require(`../../assets/images/icons/ghost.png`) :
+                type.type.name === 'insect' ? require(`../../assets/images/icons/bug.png`) :
+                type.type.name === 'ice' ? require(`../../assets/images/icons/ice.png`) :
+                type.type.name === 'fighting' ? require(`../../assets/images/icons/fighting.png`) :
+                type.type.name === 'poison' ? require(`../../assets/images/icons/poison.png`) :
+                type.type.name === 'dragon' ? require(`../../assets/images/icons/dragon.png`) :
+                type.type.name === 'ground' ? require(`../../assets/images/icons/ground.png`) :
+                type.type.name === 'stellar' ? require(`../../assets/images/icons/dark.png`) :
+                type.type.name === 'fairy' ? require(`../../assets/images/icons/fairy.png`) :
+                type.type.name === 'bug' ? require(`../../assets/images/icons/bug.png`) :
+                type.type.name === 'dark' ? require(`../../assets/images/icons/dark.png`) :
+                type.type.name === 'steel' ? require(`../../assets/images/icons/steel.png`) :
+                require('../../assets/images/icons/normal.png')
+              }
             />
+
+            // <Chip
+            //   key={`${props.pokemon.name}_type_${type.type.name}`}
+            //   style={{
+            //     backgroundColor: commonService.getColorFromType(type.type.name),
+            //     alignItems: "center"
+            //   }}
+            //   color="#FFF"              
+            //   label={type.type.name.toUpperCase()}            
+            // />
           ))}
         </Wrap>
 

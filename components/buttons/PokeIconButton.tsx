@@ -9,6 +9,7 @@ export type PokeIconButtonProps = {
   icon?: IconType;
   variant: "text" | "outlined" | "contained";
   styleType: string;
+  color: string;
   onClick?: (event: any) => void;
 };
 
@@ -21,7 +22,6 @@ export default function PokeIconButton(buttonProps: PokeIconButtonProps) {
       backgroundColor: commonService.getColorFromType(buttonProps.styleType),
       width: 40,
       height: 40,
-      color: "#FFF",
     },
   });
 
@@ -29,7 +29,7 @@ export default function PokeIconButton(buttonProps: PokeIconButtonProps) {
     <IconButton
       style={styles.button}
       icon={(props) => (
-        <Icon name={buttonProps.icon} {...props} color={"#FFF"} />
+        <Icon name={buttonProps.icon} {...props} color={buttonProps.color} />
       )}
       onPress={buttonProps.onClick}
     />

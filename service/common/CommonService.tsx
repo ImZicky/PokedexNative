@@ -36,7 +36,7 @@ export function useCommonService() {
     getPokemonWheight: (wheight: number) => {
       const wheightGram = wheight * 100;
       return wheightGram >= 1000
-        ? `${(wheightGram * 0.001).toFixed(2)} kg`
+        ? `${(wheightGram * 0.001).toFixed(1)} kg`
         : `${wheightGram} g`;
     },
     getColorFromType: (type: string) => {
@@ -50,41 +50,43 @@ export function useCommonService() {
         case "secondary":
           return "#000000";
         case "bug":
-          return "#97c220";
+          return "#1C4B26";
         case "dark":
-          return "#50495f";
+          return "#030603";
         case "dragon":
-          return "#0969c2";
+          return "#448B95";
         case "electric":
-          return "#f4d543";
+          return "#E3E32A";
         case "fairy":
-          return "#ed8fe5";
+          return "#971944";
         case "fighting":
-          return "#cf4068";
+          return "#993F23";
         case "fire":
-          return "#ffa053";
+          return "#AA1F22";
         case "flying":
-          return "#92acdf";
+          return "#49677D";
         case "ghost":
-          return "#606dbb";
+          return "#30336B";
         case "grass":
-          return "#5fba58";
+          return "#137B3C";
         case "ground":
-          return "#dc8658";
+          return "#A9702B";
         case "ice":
-          return "#6ccdbf";
+          return "#86D2F5";
         case "normal":
-          return "#959ca1";
+          return "#75515B";
         case "poison":
-          return "#a765c8";
+          return "#5E2C88";
         case "psychic":
-          return "#f86e74";
+          return "#A4296C";
         case "rock":
-          return "#cbbd8d";
+          return "#481706";
         case "steel":
-          return "#548f9f";
+          return "#5F756D";
         case "water":
-          return "#5398d8";
+          return "#1352E2";
+        case "white":
+          return "#FFFFFF";
         default:
           return "#a30000";
       }

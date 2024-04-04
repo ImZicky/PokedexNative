@@ -14,6 +14,7 @@ import { DeviceEventEmitter } from "react-native";
 import { UserCredentials } from "./service/api/types/User";
 import { UserContext } from "./contexts/UserContext";
 import { PokemonTrainer } from "./service/api/types/PokemonTrainer";
+import { PokemonForBattle } from "./service/api/types/PokemonForBattle";
 
 const Stack = createStackNavigator();
 
@@ -33,6 +34,50 @@ export default function App() {
     })
   };
 
+  const handleSetPokemonBattling = (pokemon: PokemonForBattle, position: number) => {
+    let temp = userPokemonTrainer.pokemons;
+    temp[position] = pokemon;
+    setUserPokemonTrainer((prevState) => {
+      return {
+        ...prevState,
+        pokemons: temp,
+      };
+    });
+  };
+
+  const handleCapturePokemon = (pokemon: PokemonForBattle) => {
+    let temp = userPokemonTrainer.pokemons;
+    temp.push(pokemon);
+    setUserPokemonTrainer((prevState) => {
+      return {
+        ...prevState,
+        pokemons: temp,
+      };
+    });
+  };
+
+  const handleCureBattlingPokemons = () => {
+    let temp = userPokemonTrainer.pokemons;
+
+    for(let i = 0; i < 5; i++){
+      if(temp[i] !== undefined){
+        if(temp[i].hp === 0){
+          temp[i].hp = 100;
+          temp[i].skills.forEach((s) => {
+            s.ppNow = s.ppTotal;
+          });
+        }
+      }
+    };
+
+    setUserPokemonTrainer((prevState) => {
+      return {
+        ...prevState,
+        pokemons: temp,
+      };
+    });
+  };
+
   DeviceEventEmitter.addListener("event.handleActivateNavigatorBar", (value) =>
     setIsAppLoading(value)
   );
@@ -43,17 +88,26 @@ export default function App() {
         <IconComponentProvider IconComponent={MaterialCommunityIcons}>
           <UserContext.Provider value={userCredentials}>
             <Routes
-                userPokemonTrainer={userPokemonTrainer}
-                handlerUser={(userLogin: UserCredentials) =>
-                  handlerUser(userLogin)
-                }
-                isAppLoading={isAppLoading}></Routes>
+              handleCureBattlingPokemons={() => handleCureBattlingPokemons()}
+              handleCapturePokemon={(pokemon : PokemonForBattle) => handleCapturePokemon(pokemon)}
+              handleSetPokemonBattling={(pokemon : PokemonForBattle, position : number) => handleSetPokemonBattling(pokemon, position)}
+              handlerUser={(userLogin: UserCredentials) => handlerUser(userLogin)}
+              userPokemonTrainer={userPokemonTrainer}
+              isAppLoading={isAppLoading}
+            />
           </UserContext.Provider>
         </IconComponentProvider>
       ) : (
           <IconComponentProvider IconComponent={MaterialCommunityIcons}>
             <UserContext.Provider value={userCredentials}>
-              <Routes userPokemonTrainer={userPokemonTrainer} handlerUser={() => handlerUser} isAppLoading={isAppLoading}></Routes>
+              <Routes
+                handleCureBattlingPokemons={() => handleCureBattlingPokemons()}
+                handleCapturePokemon={(pokemon : PokemonForBattle) => handleCapturePokemon(pokemon)}
+                handleSetPokemonBattling={(pokemon : PokemonForBattle, position : number) => handleSetPokemonBattling(pokemon, position)}
+                handlerUser={() => handlerUser} 
+                userPokemonTrainer={userPokemonTrainer} 
+                isAppLoading={isAppLoading}
+              />
             </UserContext.Provider>
           </IconComponentProvider>
 

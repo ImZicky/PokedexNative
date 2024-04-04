@@ -19,7 +19,8 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.imzicky.pokedexnative"
     },
     "android": {
       "adaptiveIcon": {

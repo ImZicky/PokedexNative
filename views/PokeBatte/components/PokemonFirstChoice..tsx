@@ -33,8 +33,8 @@ function PokemonFirstChoice(props: PokemonFirstChoiceProps) {
   const [pokemonList, setPokemonList] = useState<Pokemon[] | undefined>();
   const [chosenPokemon, setChosenPokemon] = useState<Pokemon | undefined>();
   const [nickname, setNickname] = useState<string | undefined>();
-  const [openChoosePokemonModal, setOpenChoosePokemonModal] =
-    useState<boolean>(false);
+  const [openChoosePokemonModal, setOpenChoosePokemonModal] = useState<boolean>(false);
+  const [openFirstPokemonProfOakTutorial, setOpenFirstPokemonProfOakTutorial] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(false);
 
   //Services
@@ -188,29 +188,71 @@ function PokemonFirstChoice(props: PokemonFirstChoiceProps) {
 
                 </Stack>
 
-                <Wrap w={220}>
-                <Box w={100} mr={20}>
-                  <PokeButton
-                    styleType=""
-                    variant="contained"
-                    size="fullwidth"
-                    text="Cancel"
-                    onClick={() => setOpenChoosePokemonModal(false)}
-                    />
-                </Box>
-                <Box w={100}>
-                  <PokeButton
-                    styleType={chosenPokemon?.types[0].type.name ?? ""}
-                    variant="contained"
-                    size="fullwidth"
-                    text="Choose"
-                    onClick={() => handleChoosePokemon(chosenPokemon, nickname)}
-                    />
-                </Box>
+                <Wrap w={240}>
+                  <Box w={110} mr={20}>
+                    <PokeButton
+                      styleType=""
+                      variant="contained"
+                      size="fullwidth"
+                      text="Cancel"
+                      onClick={() => setOpenChoosePokemonModal(false)}
+                      />
+                  </Box>
+                  <Box w={110}>
+                    <PokeButton
+                      styleType={chosenPokemon?.types[0].type.name ?? ""}
+                      variant="contained"
+                      size="fullwidth"
+                      text="Choose"
+                      onClick={() => handleChoosePokemon(chosenPokemon, nickname)}
+                      />
+                  </Box>
                 </Wrap>
               </View>
             </View>
           </Modal>
+
+          <Modal
+            animationType="slide"            
+            visible={openFirstPokemonProfOakTutorial}
+            onRequestClose={() => {
+              setOpenFirstPokemonProfOakTutorial(false);
+            }}
+          >
+          <View style={styles.centeredViewModal}>
+            <View style={styles.modalViewModal}>
+              <PokeText 
+                text={"Wellcome"}
+                color={"#000000"}
+                type={"modal-title"}
+              />
+
+              <Image 
+                style={{marginBottom: 20}} 
+                source={
+                  require(`../../../assets/images/characters/oak-prof.gif`)
+                }
+              />
+
+              <PokeText 
+                text={"This is the Pokemon World and I'm Professor Oak, The most knowing Pokemon scientist nowadays, these are Pokemons and in this world you should catch them all, to start that, you have to choose your first Pokemon! Good Luck!"}
+                color={"#000000"}
+                type={"modal-text"}
+              />
+
+              <View style={{marginTop: 20}}/>
+                <PokeButton
+                  styleType={"primary"}
+                  variant="contained"
+                  size="fullwidth"
+                  text="Start"
+                  onClick={() => setOpenFirstPokemonProfOakTutorial(false)}
+                />
+              </View>
+            </View>
+          </Modal>
+
+
         </View>
       ) : (
         <PokeLoading loadType="page" />

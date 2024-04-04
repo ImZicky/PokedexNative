@@ -11,13 +11,14 @@ import PokePagination from "../../components/paginations/PokePagination";
 
 export type PokeListProps = {
   navigation: any;
+  userPokemonIds: number[];
 };
 
 export default function PokeList(cProps: PokeListProps) {
   //Consts
   const [pokemonList, setPokemonList] = useState<Pokemon[] | undefined>();
   const [pageNumber, setPageNumber] = useState<number>(0);
-  const [pageSize] = useState<number>(30);
+  const [pageSize, setPageSize] = useState<number>(20);
   const [loading, setLoading] = useState<boolean>(false);
   const [isSearchingPokemons, setIsSearchingPokemons] =
     useState<boolean>(false);
@@ -82,6 +83,13 @@ export default function PokeList(cProps: PokeListProps) {
       alignContent: "center",
     },
     headerImage: { marginTop: 20, padding: 20, width: 100, height: 100 },
+    pagination: {
+      bottom: 0, 
+      position: "absolute", 
+      backgroundColor: "#cb3241", 
+      width: "100%", 
+      height: 60
+    }
   });
 
   const changePage = (newPageNumber: number) => {
@@ -101,6 +109,7 @@ export default function PokeList(cProps: PokeListProps) {
                 <Wrap>
                   {pokemonList.map((pokemon) => (
                     <PokeCard
+                      userPokemonIds={cProps.userPokemonIds}
                       navigation={cProps.navigation}
                       key={`${pokemon.name}`}
                       pokemon={pokemon}
@@ -108,11 +117,16 @@ export default function PokeList(cProps: PokeListProps) {
                   ))}
                 </Wrap>
               </ScrollView>
-              <PokePagination
-                changePage={(pageNumber) => changePage(pageNumber)}
-                pageNumber={pageNumber}
-              />
+              <View style={styles.pagination}>
+                <PokePagination
+                  setPageSize={(size: number) => setPageSize(size)}
+                  pageSize={pageSize}
+                  changePage={(pageNumber) => changePage(pageNumber)}
+                  pageNumber={pageNumber}
+                  />
+                </View>
             </>
+
           ) : (
             <PokeLoading loadType="list" />
           )}

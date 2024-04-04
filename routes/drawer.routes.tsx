@@ -7,13 +7,17 @@ import { Icon, Text } from "@react-native-material/core";
 import { UserCredentials } from "../service/api/types/User";
 import PokeBattle from "../views/PokeBatte/PokeBattle";
 import { PokemonTrainer } from "../service/api/types/PokemonTrainer";
+import { PokemonForBattle } from "../service/api/types/PokemonForBattle";
 
 const Drawer = createDrawerNavigator();
 
 export type DrawerRoutesProps = {
   isAppLoading: boolean;
+  userPokemonTrainer: PokemonTrainer;
+  handleCureBattlingPokemons: () => void;
   handlerUser: (userLogin: UserCredentials) => void;
-  userPokemonTrainer: PokemonTrainer
+  handleSetPokemonBattling: (pokemon: PokemonForBattle, position: number) => void;
+  handleCapturePokemon: (pokemon: PokemonForBattle) => void;
 };
 
 export type CustomDrawerContentProps = {
@@ -94,7 +98,10 @@ export default function DrawerRoutes(cProps: DrawerRoutesProps) {
         }}
 
       >
-        {(props) => <PokeList navigation={props.navigation} />}
+        {(props) => <PokeList 
+          userPokemonIds={cProps.userPokemonTrainer.pokemons.map(x=> x.id)}
+          navigation={props.navigation} 
+        />}
       </Drawer.Screen>
 
       <Drawer.Screen
@@ -116,7 +123,13 @@ export default function DrawerRoutes(cProps: DrawerRoutesProps) {
         }}
 
       >
-        {(props) => <PokeBattle userPokemonTrainer={cProps.userPokemonTrainer} navigation={props.navigation} />}
+        {(props) => <PokeBattle
+          handleCureBattlingPokemons={() => cProps.handleCureBattlingPokemons()}
+          handleCapturePokemon={(pokemon: PokemonForBattle) => cProps.handleCapturePokemon(pokemon)} 
+          handleSetPokemonBattling={(pokemon: PokemonForBattle, position: number) => cProps.handleSetPokemonBattling(pokemon, position)} 
+          userPokemonTrainer={cProps.userPokemonTrainer}
+          navigation={props.navigation} 
+        />}
       </Drawer.Screen>
 
 

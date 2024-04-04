@@ -6,7 +6,9 @@ import { StyleSheet } from "react-native";
 
 export type PokePaginationProps = {
   pageNumber: number;
+  pageSize: number;
   changePage: (pageNumber: number) => void;
+  setPageSize: (pageNumber: number) => void;
 };
 
 export default function PokePagination(props: PokePaginationProps) {
@@ -14,9 +16,9 @@ export default function PokePagination(props: PokePaginationProps) {
   const styles = StyleSheet.create({
     centeredDiv: {
       position: "absolute",
-      bottom: 0,
+      bottom: -12,
       width: "100%",
-      backgroundColor: "#ed5463",
+      // backgroundColor: "#ed5463",
       paddingTop: 10,
       alignItems: "center",
       alignContent: "center",
@@ -30,22 +32,24 @@ export default function PokePagination(props: PokePaginationProps) {
           <PokeIconButton
             onClick={() => props.changePage(props.pageNumber - 1)}
             variant="contained"
-            styleType="primary"
+            styleType="white"
+            color="#ed5463"
             icon="arrow-left"
           />
         </Box>
         <Box m={10} pt={10}>
           <PokeText
             color="#FFF"
-            type="h1"
-            text={`${props.pageNumber + 1} of ${parseInt(`${1010 / 50 + 1}`)}`}
+            type="modal-title"
+            text={`${props.pageSize} / ${props.pageNumber + 1} of ${parseInt(`${1010 / props.pageSize + 1}`)}`}
           />
         </Box>
         <Box m={10}>
           <PokeIconButton
             onClick={() => props.changePage(props.pageNumber + 1)}
             variant="contained"
-            styleType="primary"
+            styleType="white"
+            color="#ed5463"
             icon="arrow-right"
           />
         </Box>

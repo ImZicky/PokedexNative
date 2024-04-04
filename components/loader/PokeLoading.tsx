@@ -49,12 +49,12 @@ function PokeLoading(props: PokeLoadingProps) {
         <Flex fill style={styles.view}>
           <Image
             style={styles.pokeball}
-            source={require("../../assets/images/pikachu-loader.gif")}
+            source={require("../../assets/images/loaders/pikachu-loader.gif")}
           />
           <PokeText text="Loading" color={"#000"} type={"h2"} />
           <Image
             style={styles.loader}
-            source={require("../../assets/images/loader.gif")}
+            source={require("../../assets/images/loaders/loader.gif")}
           />
         </Flex>
       )}
@@ -63,7 +63,7 @@ function PokeLoading(props: PokeLoadingProps) {
           <Flex style={styles.listViewInside}>
             <Image
               style={styles.loader}
-              source={require("../../assets/images/pokeball-loader.gif")}
+              source={require("../../assets/images/loaders/pokeball-loader.gif")}
             />
             <PokeText text="Loading" color={"#000"} type={"h2"} />
           </Flex>

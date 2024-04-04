@@ -7,8 +7,10 @@ export type PokeTextProps = {
   text: string;
   color: string;
   type: "h1" | "h2" | "card-title" | "card-title-big" | "card-id" | "card-id-big" | "card-text" 
-  | "card-text-big" | "battle-enemy-card-name" | "battle-enemy-card-level" | "modal-title";
+  | "card-text-big" | "battle-enemy-card-name" | "battle-enemy-card-level" | "modal-title"
+  | "battle-card-infos" | "pp-text" | "skill-name" | "gameover-title" | "modal-text";
   hasShadow?: boolean;
+  backgroungColor?: string;
 };
 
 function PokeText(props: PokeTextProps) {
@@ -31,6 +33,21 @@ function PokeText(props: PokeTextProps) {
       marginBottom: 5,
       marginTop: 5,
     },
+    modalText: {
+      fontSize: 20,
+      fontFamily: "SpaceGrotesk",
+      textAlign: "center",
+      marginBottom: 5,
+      marginTop: 5,
+    },
+    ppText: {
+      fontSize: 15,
+      fontFamily: "SpaceGrotesk",
+      textAlign: "left",
+      marginBottom: 5,
+      marginTop: 5,
+      fontWeight: "700"
+    },
     cardTitleBig: {
       fontSize: 40,
       fontFamily: "SpaceGrotesk",
@@ -38,14 +55,22 @@ function PokeText(props: PokeTextProps) {
       marginBottom: 5,
       marginTop: 5,
     },
+    gameoverTitle: {
+      fontSize: 35,
+      fontFamily: "SpaceGrotesk",
+      textAlign: "center",
+      marginBottom: 5,
+      marginTop: -20,
+    },
     cardId: {
+      borderBottomRightRadius: 15,
       padding: 3,
       position: "absolute",
       fontSize: 25,
       fontFamily: "SpaceGrotesk",
       textAlign: "left",
       fontWeight: "800",
-      color: "#ED5463",
+      // color: "#ED5463",
       zIndex: 1000
     },
     cardIdBig: {
@@ -71,8 +96,21 @@ function PokeText(props: PokeTextProps) {
       fontFamily: "PressStart",
       fontSize: 13,
     },
+    battleCardInfos: {
+      paddingTop: 5,
+      fontFamily: "SpaceGrotesk",
+      fontSize: 18,
+      fontWeight: "700",
+      letterSpacing: 5,
+      lineHeight: 23,
+    },
     battleEnemyCardLevel: {
       fontSize: 13,
+      fontFamily: "Orbitron",
+      textAlign: "left",
+    },
+    skillName: {
+      fontSize: 20,
       fontFamily: "Orbitron",
       textAlign: "left",
     },
@@ -105,6 +143,11 @@ function PokeText(props: PokeTextProps) {
       { name: "battle-enemy-card-name", value: styles.battleEnemyCardName },
       { name: "battle-enemy-card-level", value: styles.battleEnemyCardLevel },
       { name: "modal-title", value: styles.modalTitle },
+      { name: "battle-card-infos", value: styles.battleCardInfos },
+      { name: "pp-text", value: styles.ppText },
+      { name: "skill-name", value: styles.skillName },
+      { name: "gameover-title", value: styles.gameoverTitle },
+      { name: "modal-text", value: styles.modalText },
     ];
     return stylesArray.find((x) => x.name === type)?.value;
   };
@@ -112,7 +155,17 @@ function PokeText(props: PokeTextProps) {
   return (
     <>
       {loaded && (
-        <Text style={getStyleFromType(props.type)} color={props.color}>
+        <Text 
+          style={props?.backgroungColor ? [
+            getStyleFromType(props.type), 
+            {
+              backgroundColor: props?.backgroungColor
+            }
+          ]
+          :
+          getStyleFromType(props.type)
+          } 
+          color={props.color}>
           {props.text}
         </Text>
       )}
