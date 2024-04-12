@@ -6,10 +6,15 @@ export type PokemonForBattle = {
   nickname: string | undefined;
   skills: PokemonForBattleSkills[];
   hp: number;
+  hpTotal: number;
   level: number;
   type: PokemonType[];
   sprites: PokemonSprites,
+  pokeball?: PokeballTypeEnum | undefined
 };
+
+
+export type PokeballTypeEnum = "Pokeball" | "Great Ball" | "Ultra Ball" | "Master Ball";
 
 export type PokemonForBattleSkills = {
   name: string;

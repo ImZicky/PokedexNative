@@ -4,23 +4,27 @@ import DrawerRoutes from "./drawer.routes";
 import React from "react";
 import { UserCredentials } from "../service/api/types/User";
 import { PokemonTrainer } from "../service/api/types/PokemonTrainer";
-import { PokemonForBattle } from "../service/api/types/PokemonForBattle";
+import { PokeballTypeEnum, PokemonForBattle } from "../service/api/types/PokemonForBattle";
 
 export type RoutesProps = {
   handlerUser: (userLogin: UserCredentials) => void;
-  handleCureBattlingPokemons: () => void;
+  handleHealBattlingPokemons: () => void;
+  handleUsePokeball: (pokeballName : string) => void;
   handleSetPokemonBattling: (pokemon: PokemonForBattle, position: number) => void;
-  handleCapturePokemon: (pokemon: PokemonForBattle) => void;
+  handleHealPokemon: (position: number, potionName: string) => void;  
+  handleCapturePokemon: (pokemon: PokemonForBattle, moneyReward: number, chosenPokeball: PokeballTypeEnum) => void;
   isAppLoading: boolean;
   userPokemonTrainer: PokemonTrainer
 };
 
 export default function Routes(props: RoutesProps) {
   return (
-    <NavigationContainer >
+    <NavigationContainer>
       <DrawerRoutes
-        handleCureBattlingPokemons={() => props.handleCureBattlingPokemons()}
-        handleCapturePokemon={(pokemon: PokemonForBattle) => props.handleCapturePokemon(pokemon)} 
+        handleHealBattlingPokemons={() => props.handleHealBattlingPokemons()}
+        handleCapturePokemon={(pokemon: PokemonForBattle, moneyReward: number, chosenPokeball: PokeballTypeEnum) => props.handleCapturePokemon(pokemon, moneyReward, chosenPokeball)} 
+        handleHealPokemon={(position: number, potionName: string) => props.handleHealPokemon(position, potionName)} 
+        handleUsePokeball={(pokeballName: string) => props.handleUsePokeball(pokeballName)}
         handleSetPokemonBattling={(pokemon: PokemonForBattle, position: number) => props.handleSetPokemonBattling(pokemon, position)} 
         handlerUser={(userLogin: UserCredentials) => props.handlerUser(userLogin)} 
         userPokemonTrainer={props.userPokemonTrainer} 

@@ -7,17 +7,19 @@ import { Icon, Text } from "@react-native-material/core";
 import { UserCredentials } from "../service/api/types/User";
 import PokeBattle from "../views/PokeBatte/PokeBattle";
 import { PokemonTrainer } from "../service/api/types/PokemonTrainer";
-import { PokemonForBattle } from "../service/api/types/PokemonForBattle";
+import { PokeballTypeEnum, PokemonForBattle } from "../service/api/types/PokemonForBattle";
 
 const Drawer = createDrawerNavigator();
 
 export type DrawerRoutesProps = {
   isAppLoading: boolean;
   userPokemonTrainer: PokemonTrainer;
-  handleCureBattlingPokemons: () => void;
+  handleHealBattlingPokemons: () => void;
   handlerUser: (userLogin: UserCredentials) => void;
+  handleUsePokeball: (pokeballName : string) => void;
   handleSetPokemonBattling: (pokemon: PokemonForBattle, position: number) => void;
-  handleCapturePokemon: (pokemon: PokemonForBattle) => void;
+  handleHealPokemon: (position : number, potionName: string) => void;
+  handleCapturePokemon: (pokemon: PokemonForBattle, moneyReward: number, chosenPokeball: PokeballTypeEnum) => void;
 };
 
 export type CustomDrawerContentProps = {
@@ -99,6 +101,7 @@ export default function DrawerRoutes(cProps: DrawerRoutesProps) {
 
       >
         {(props) => <PokeList 
+          userPokemons={cProps.userPokemonTrainer.pokemons}
           userPokemonIds={cProps.userPokemonTrainer.pokemons.map(x=> x.id)}
           navigation={props.navigation} 
         />}
@@ -123,13 +126,17 @@ export default function DrawerRoutes(cProps: DrawerRoutesProps) {
         }}
 
       >
-        {(props) => <PokeBattle
-          handleCureBattlingPokemons={() => cProps.handleCureBattlingPokemons()}
-          handleCapturePokemon={(pokemon: PokemonForBattle) => cProps.handleCapturePokemon(pokemon)} 
-          handleSetPokemonBattling={(pokemon: PokemonForBattle, position: number) => cProps.handleSetPokemonBattling(pokemon, position)} 
-          userPokemonTrainer={cProps.userPokemonTrainer}
-          navigation={props.navigation} 
-        />}
+        {(props) => 
+          <PokeBattle        
+            handleHealBattlingPokemons={() => cProps.handleHealBattlingPokemons()}
+            handleCapturePokemon={(pokemon: PokemonForBattle, moneyReward: number, chosenPokeball: PokeballTypeEnum) => cProps.handleCapturePokemon(pokemon, moneyReward, chosenPokeball)} 
+            handleUsePokeball={(pokeballName: string) => cProps.handleUsePokeball(pokeballName)} 
+            handleHealPokemon={(position: number, potionName: string) => cProps.handleHealPokemon(position, potionName)} 
+            handleSetPokemonBattling={(pokemon: PokemonForBattle, position: number) => cProps.handleSetPokemonBattling(pokemon, position)} 
+            userPokemonTrainer={cProps.userPokemonTrainer}
+            navigation={props.navigation} 
+          />
+        }
       </Drawer.Screen>
 
 

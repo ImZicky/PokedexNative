@@ -6,11 +6,13 @@ import { StyleSheet, Image } from "react-native";
 import { useCommonService } from "../../service/common/CommonService";
 import PokeButton from "../buttons/PokeButton";
 import { useNavigation } from "@react-navigation/native";
+import { PokemonForBattle } from "../../service/api/types/PokemonForBattle";
 
 export type PokeCardProps = {
   pokemon: Pokemon;
   navigation: any;
   userPokemonIds?: number[];
+  userPokemons: PokemonForBattle[];
 };
 
 function PokeCard(props: PokeCardProps) {
@@ -34,6 +36,8 @@ function PokeCard(props: PokeCardProps) {
 
   //Navigation
   const goToPokemonDetails = () => {
+    console.log(props.userPokemons.find(x => x.id === props.pokemon.id).pokeball);
+    console.log(props.userPokemons.find(x => x.id === props.pokemon.id).name);
     props.navigation.navigate("PokePerfil", { pokemon: props.pokemon });
   };
 
@@ -61,7 +65,11 @@ function PokeCard(props: PokeCardProps) {
       />
       {props.userPokemonIds && props.userPokemonIds.includes(props.pokemon.id) &&
         <Image source={
-          require("../../assets/images/pokeball.png")}
+          props.userPokemons.find(x => x.id === props.pokemon.id).pokeball === "Great Ball" ? require("../../assets/images/pokeballs/greatBall.png") : 
+          props.userPokemons.find(x => x.id === props.pokemon.id).pokeball === "Ultra Ball" ? require("../../assets/images/pokeballs/ultraBall.png") : 
+          props.userPokemons.find(x => x.id === props.pokemon.id).pokeball === "Master Ball" ? require("../../assets/images/pokeballs/masterBall.png") : 
+          require("../../assets/images/pokeballs/pokeball.png")           
+        }
           style={styles.pokeballImage}
         />
       }

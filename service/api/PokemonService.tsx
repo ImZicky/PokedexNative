@@ -25,7 +25,7 @@ export function usePokemonService() {
       const initialPokemonIdPages: number[] = [1];
 
       for (let i = 1; i <= 1010; i++) {
-        if (i % 50 === 0) initialPokemonIdPages.push(i);
+        if (i % (pageSize + 1) === 0) initialPokemonIdPages.push(i);
       }
 
       let initialPokemonId = initialPokemonIdPages[pageNumber];
@@ -93,18 +93,20 @@ export function usePokemonService() {
       })  
       return pokemonSkillList;
     },
-    getPokemonEnemyForBattle : async (pokemonApi: Pokemon, playersPokemonLevel: number, nickname: string | undefined) => {
-      const enemyLevel = pokemonService.getRamdomLevelBasedOnPlayer(playersPokemonLevel);
+    getPokemonForBattle : async (pokemonApi: Pokemon, playersPokemonLevel: number, nickname: string | undefined) => {
+      const pokemonLevel = pokemonService.getRamdomLevelBasedOnPlayer(playersPokemonLevel);
 
       const pokemonForBattle : PokemonForBattle = {
-          hp: 100,
+          hp: pokemonLevel * 10,
+          hpTotal: pokemonLevel * 10,
           id: pokemonApi.id,
-          level: enemyLevel,
+          level: pokemonLevel,
           name: pokemonApi.name,
           type: pokemonApi.types,
           skills: pokemonService.getPokemonSkills(pokemonApi.abilities),
           nickname: nickname ?? '',
           sprites: pokemonApi.sprites,
+          pokeball: undefined
         }
       return pokemonForBattle;
     }

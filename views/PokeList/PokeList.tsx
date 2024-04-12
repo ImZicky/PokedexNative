@@ -8,17 +8,19 @@ import { Wrap } from "@react-native-material/core";
 import PokeLoading from "../../components/loader/PokeLoading";
 import PokeCard from "../../components/cards/PokeCard";
 import PokePagination from "../../components/paginations/PokePagination";
+import { PokemonForBattle } from "../../service/api/types/PokemonForBattle";
 
 export type PokeListProps = {
   navigation: any;
   userPokemonIds: number[];
+  userPokemons: PokemonForBattle[];
 };
 
 export default function PokeList(cProps: PokeListProps) {
   //Consts
   const [pokemonList, setPokemonList] = useState<Pokemon[] | undefined>();
   const [pageNumber, setPageNumber] = useState<number>(0);
-  const [pageSize, setPageSize] = useState<number>(20);
+  const [pageSize, setPageSize] = useState<number>(30);
   const [loading, setLoading] = useState<boolean>(false);
   const [isSearchingPokemons, setIsSearchingPokemons] =
     useState<boolean>(false);
@@ -94,8 +96,9 @@ export default function PokeList(cProps: PokeListProps) {
 
   const changePage = (newPageNumber: number) => {
     setIsSearchingPokemons(true);
+    const totalPages = (parseInt(`${1010 / (pageSize + 1)}`));
     if (newPageNumber < 0) newPageNumber = 0;
-    if (newPageNumber > 20) newPageNumber = 20;
+    if (newPageNumber > totalPages) newPageNumber = 20;
     setPageNumber(newPageNumber);
   };
 
@@ -109,6 +112,7 @@ export default function PokeList(cProps: PokeListProps) {
                 <Wrap>
                   {pokemonList.map((pokemon) => (
                     <PokeCard
+                      userPokemons={cProps.userPokemons}
                       userPokemonIds={cProps.userPokemonIds}
                       navigation={cProps.navigation}
                       key={`${pokemon.name}`}
