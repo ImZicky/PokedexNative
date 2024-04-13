@@ -99,20 +99,18 @@ function PokeBattle(props: PokeBattleProps) {
       });
   }
 
-  
   const handleAttackModal = (value: boolean) => {
     setOpenPokemonAttackModal(value);
   }
 
   const handleAttack = (skill: PokemonForBattleSkills) => {
-    // console.log(props.userPokemonTrainer.pokemons.map(x => x.name));
-    // console.log(props.userPokemonTrainer.money);
     if(props.userPokemonTrainer.pokemons[pokemonFightingIndex].hp > 0){
       setOpenPokemonAttackModal(false);
       if(attacked) setAttacked(false);
 
-      let temp = pokemonEnemy;
-      if(temp){
+      let tempHp = pokemonEnemy.hp;
+      let tempHpTotal = pokemonEnemy.hpTotal;
+      if(tempHp){
         setAttacked(true);
         const damagePlus = parseInt(`${Math.random() * 5}`);
         const totalDamage = props.userPokemonTrainer.pokemons[pokemonFightingIndex].level > pokemonEnemy.level ? 
@@ -120,7 +118,7 @@ function PokeBattle(props: PokeBattleProps) {
           ((skill.damage + damagePlus) -  (pokemonEnemy.level - props.userPokemonTrainer.pokemons[pokemonFightingIndex].level));
 
         if(totalDamage >= 19 && damagePlus !== 0) {
-          temp.hp = temp.hp - totalDamage;
+          tempHp = (tempHp - totalDamage);
           setPokemonAttackInfoModalMessage(`${props.userPokemonTrainer.pokemons[pokemonFightingIndex].name} used ${skill.name} and got a critical hit!`);
           setOpenPokemonAttackInfoModal(true);
           skill.ppNow = skill.ppNow - 1;
@@ -131,15 +129,21 @@ function PokeBattle(props: PokeBattleProps) {
           skill.ppNow = skill.ppNow - 1;
         }
         if(totalDamage > 0 && totalDamage < 19 && damagePlus !== 0) {
-          temp.hp = temp.hp - totalDamage;
+          tempHp = (tempHp - totalDamage);
           setPokemonAttackInfoModalMessage(`${props.userPokemonTrainer.pokemons[pokemonFightingIndex].name} used ${skill.name} and sucessfully attacked!`);
           setOpenPokemonAttackInfoModal(true);
           skill.ppNow = skill.ppNow - 1;
         }
 
-        setPokemonEnemy(temp);      
-        enemyHp.value = temp.hp;
-        enemyHpTotal.value = temp.hpTotal;
+        enemyHp.value = tempHp;
+        enemyHpTotal.value = tempHpTotal;
+
+        setPokemonEnemy((prevState) => {
+          return {
+            ...prevState,
+            hp: tempHp,
+          };
+        });    
       }
       if(attacked) setAttacked(false);
     }
@@ -344,7 +348,7 @@ function PokeBattle(props: PokeBattleProps) {
       translateY.value = withTiming(0, { duration: 500 });
 
       isCapturingPokemon.value = 0;
-      enemyHp.value = 100;
+      enemyHp.value = 0;
       runOnJS(setOpenPokemonCaughtModal)(true);
     }
     else{
@@ -768,8 +772,9 @@ function PokeBattle(props: PokeBattleProps) {
                                     />
                                 </View>
                                 <Box borderStyle="solid" borderColor={"#4E6648"} border={1} radius={3} 
-                                  w={attacked ? getHpWidth(pokemonEnemy.hp, pokemonEnemy.hpTotal) : getHpWidth(pokemonEnemy.hp, pokemonEnemy.hpTotal)} 
-                                  h={13} 
+                                  // w={getHpWidth(pokemonEnemy.hp, pokemonEnemy.hpTotal)} 
+                                  w={attacked ? Math.ceil((pokemonEnemy.hp * 200) / pokemonEnemy.hpTotal) : Math.ceil((pokemonEnemy.hp * 200) / pokemonEnemy.hpTotal) } 
+                                  h={13}
                                   style={{backgroundColor: getHpBackgroundColor(pokemonEnemy.hp, pokemonEnemy.hpTotal)}}
                                   />
                               </>
@@ -825,7 +830,7 @@ function PokeBattle(props: PokeBattleProps) {
                         <View style={styles.pokeballQuantityInfo}>
                           <PokeText 
                             color="#4E6648"
-                            backgroungColor="#ffffff"
+                            backgroungColor="#ECEDD0"
                             type="skill-name"
                             text={`${props.userPokemonTrainer.items.find(x  => x.name === chosenPokeball).quantity}`}
                           />

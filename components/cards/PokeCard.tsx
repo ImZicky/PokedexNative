@@ -36,8 +36,8 @@ function PokeCard(props: PokeCardProps) {
 
   //Navigation
   const goToPokemonDetails = () => {
-    console.log(props.userPokemons.find(x => x.id === props.pokemon.id).pokeball);
-    console.log(props.userPokemons.find(x => x.id === props.pokemon.id).name);
+    // console.log(props.userPokemons.find(x => x.id === props.pokemon.id).pokeball);
+    // console.log(props.userPokemons.find(x => x.id === props.pokemon.id).name);
     props.navigation.navigate("PokePerfil", { pokemon: props.pokemon });
   };
 
@@ -63,7 +63,7 @@ function PokeCard(props: PokeCardProps) {
         type="card-id"
         text={`#${props.pokemon.id.toString()}`}
       />
-      {props.userPokemonIds && props.userPokemonIds.includes(props.pokemon.id) &&
+      {props.userPokemonIds.length > 0 && props.userPokemonIds.includes(props.pokemon.id) &&
         <Image source={
           props.userPokemons.find(x => x.id === props.pokemon.id).pokeball === "Great Ball" ? require("../../assets/images/pokeballs/greatBall.png") : 
           props.userPokemons.find(x => x.id === props.pokemon.id).pokeball === "Ultra Ball" ? require("../../assets/images/pokeballs/ultraBall.png") : 
