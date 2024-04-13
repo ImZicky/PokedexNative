@@ -321,10 +321,6 @@ function PokeBattle(props: PokeBattleProps) {
 
     const probability = parseInt(`${Math.random() * 100}`) + probabilityIncrease;
     let hpPercentage = Math.ceil((hp * 100) / hpTotal)
-    // console.log('chosenPokeball: ', chosenPokeball);
-    // console.log('probability: ', probability);
-    // console.log('caughtOn: ', caughtOn);
-    // console.log('hpPercentage: ', hpPercentage);
 
     if(hpPercentage > 50) {
       return  probability > caughtOn - 5;
@@ -383,8 +379,6 @@ function PokeBattle(props: PokeBattleProps) {
 
       translateX.value = event.translationX;
       translateY.value = event.translationY;
-      // console.log("X:",event.translationX)
-      // console.log("Y:",event.translationY)
     },
     onFinish: (event) => {
       if(didThrowPokeball(event.translationX, event.translationY)){
