@@ -65,10 +65,10 @@ function PokeCard(props: PokeCardProps) {
       />
       {props.userPokemonIds.length > 0 && props.userPokemonIds.includes(props.pokemon.id) &&
         <Image source={
-          props.userPokemons.find(x => x.id === props.pokemon.id).pokeball === "Great Ball" ? require("../../assets/images/pokeballs/greatBall.png") : 
-          props.userPokemons.find(x => x.id === props.pokemon.id).pokeball === "Ultra Ball" ? require("../../assets/images/pokeballs/ultraBall.png") : 
-          props.userPokemons.find(x => x.id === props.pokemon.id).pokeball === "Master Ball" ? require("../../assets/images/pokeballs/masterBall.png") : 
-          require("../../assets/images/pokeballs/pokeball.png")           
+          props.userPokemons.find(x => x.id === props.pokemon.id).pokeball === "Great Ball" ? require("../../assets/images/pokeballs/greatBall-mini.png") : 
+          props.userPokemons.find(x => x.id === props.pokemon.id).pokeball === "Ultra Ball" ? require("../../assets/images/pokeballs/ultraBall-mini.png") : 
+          props.userPokemons.find(x => x.id === props.pokemon.id).pokeball === "Master Ball" ? require("../../assets/images/pokeballs/masterBall-mini.png") : 
+          require("../../assets/images/pokeballs/pokeball-mini.png")
         }
           style={styles.pokeballImage}
         />
