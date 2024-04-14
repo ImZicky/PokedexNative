@@ -17,25 +17,22 @@ export type PokePerfilProps = {
 
 function PokePerfil(props: PokePerfilProps) {
   //States
-  const [pokemon, setPokemon] = useState<Pokemon>();
+  const [pokemon, setPokemon] = useState<Pokemon | undefined>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [pokemonAbilities, setPokemonAbilities] = useState<
-    PokemonAbilityFull[]
-  >([]);
+  const [pokemonAbilities, setPokemonAbilities] = useState<PokemonAbilityFull[]>([]);
 
   // Services
   const commonService = useCommonService();
   const pokemonService = usePokemonService();
 
-  //Navigation
-
   //Use Effect
   useEffect(() => {
     setIsLoading(true);
     const { pokemon } = props.route.params;
+
     setPokemon(pokemon as Pokemon);
     setIsLoading(false);
-  }, []);
+  }, [props.route.params.pokemon]);
 
   useEffect(() => {
     (async function () {
