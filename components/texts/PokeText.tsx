@@ -74,12 +74,14 @@ function PokeText(props: PokeTextProps) {
       zIndex: 1000
     },
     cardIdBig: {
-      paddingTop: 10,
-      paddingLeft: 10,
+      borderBottomRightRadius: 15,
+      padding: 5,
       position: "absolute",
       fontSize: 40,
       fontFamily: "SpaceGrotesk",
-      textAlign: "left",
+      textAlign: "center",
+      fontWeight: "800",
+      zIndex: 500
     },
     cardText: {
       fontSize: 15,

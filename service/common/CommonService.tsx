@@ -56,7 +56,7 @@ export function useCommonService() {
         case "dragon":
           return "#448B95";
         case "electric":
-          return "#E3E32A";
+          return "#F7AD2B";
         case "fairy":
           return "#971944";
         case "fighting":

@@ -1,9 +1,8 @@
-import { Box, Chip, Divider, Flex, Wrap } from "@react-native-material/core";
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import { Box, Flex, Wrap } from "@react-native-material/core";
+import React, { useEffect, useState } from "react";
 import PokeText from "../../components/texts/PokeText";
 import { StyleSheet, Image, View, ScrollView } from "react-native";
 import { Pokemon, PokemonAbility } from "pokenode-ts";
-import { useNavigation } from "@react-navigation/native";
 import PokeButton from "../../components/buttons/PokeButton";
 import { useCommonService } from "../../service/common/CommonService";
 import PokeLoading from "../../components/loader/PokeLoading";
@@ -59,15 +58,19 @@ function PokePerfil(props: PokePerfilProps) {
       width: "100%",
       height: "100%",
       backgroundColor: "#ed5463",
+      padding: 5
     },
     centeredDiv: {
       alignItems: "center",
       alignContent: "center",
     },
-    cardImage: { marginTop: 20, padding: 20, width: 200, height: 200 },
+    cardImage: {
+      marginTop: 10,
+      width: 230, 
+      height: 200,
+    },
     infosGrid: {
-      margin: 10,
-      padding: 20,
+      padding: 10,
       borderColor: "#ed5463",
       borderStyle: "solid",
       borderWidth: 4,
@@ -76,7 +79,7 @@ function PokePerfil(props: PokePerfilProps) {
   });
 
   return (
-    <View style={styles.view}>
+    <View style={[styles.view, { backgroundColor: pokemon ? commonService.getColorFromType(pokemon.types[0].type.name) : "#000"}]}>
       {pokemon ? (
         <Box
           style={{
@@ -89,18 +92,19 @@ function PokePerfil(props: PokePerfilProps) {
             flex: 1,
           }}
         >
-          <PokeText
-            color="#000"
-            type="card-id-big"
-            text={`#${pokemon?.id.toString()}`}
-          />
           <ScrollView>
             <Flex>
+              <PokeText
+                backgroungColor={pokemon ? commonService.getColorFromType(pokemon.types[0].type.name) : "#000"}
+                color={"#ffffff"}
+                type="card-id-big"
+                text={`#${pokemon.id.toString()} `}
+              />
               <Flex style={styles.centeredDiv}>
                 <Image
                   style={styles.cardImage}
                   source={{
-                    uri: `${commonService.getPokemonMainPerfil(
+                    uri: `${commonService.getPokemonMainImageFrontForBattle(
                       pokemon.sprites
                     )}`,
                   }}
@@ -110,7 +114,8 @@ function PokePerfil(props: PokePerfilProps) {
                 <PokeText
                   color="#000"
                   type="card-title-big"
-                  text={pokemon.name}
+                  // text={`${commonService.stringToCapitalLetters(pokemon.name)} #${pokemon.id.toString()}`}
+                  text={`${commonService.stringToCapitalLetters(pokemon.name)}`}
                 />
                 <Wrap
                   spacing={5}
@@ -118,18 +123,40 @@ function PokePerfil(props: PokePerfilProps) {
                     marginHorizontal: 2,
                   }}
                 >
-                  {pokemon.types.map(
+                  {pokemon && pokemon.types.map(
                     (type: { type: { name: string } }, i: number) => (
-                      <Chip
-                        key={`${pokemon.name}_type_${type.type.name}`}
-                        style={{
-                          backgroundColor: commonService.getColorFromType(
-                            type.type.name
-                          ),
-                        }}
-                        color="#FFF"
-                        label={type.type.name.toUpperCase()}
-                      />
+                      <View key={`${pokemon.name}_icon_type_${type.type.name}_item`} style={{backgroundColor: commonService.getColorFromType(type.type.name), width: "35%", height: 40, padding: 5, flexDirection: "row", borderRadius: 50}}>
+                        <View style={{flexDirection: "row"}}>
+                          <Image key={`${pokemon.name}_icon_type_${type.type.name}`} style={{width: 30, height: 30}}
+                            source={
+                              type.type.name === 'grass' ? require(`../../assets/images/icons/grass.png`) :
+                              type.type.name === 'rock' ? require(`../../assets/images/icons/rock.png`) :
+                              type.type.name === 'normal' ? require(`../../assets/images/icons/normal.png`) :
+                              type.type.name === 'fire' ? require(`../../assets/images/icons/fire.png`) :
+                              type.type.name === 'electric' ? require(`../../assets/images/icons/electric.png`) :
+                              type.type.name === 'flying' ? require(`../../assets/images/icons/flying.png`) :
+                              type.type.name === 'psychic' ? require(`../../assets/images/icons/psychic.png`) :
+                              type.type.name === 'water' ? require(`../../assets/images/icons/water.png`) :
+                              type.type.name === 'ghost' ? require(`../../assets/images/icons/ghost.png`) :
+                              type.type.name === 'insect' ? require(`../../assets/images/icons/bug.png`) :
+                              type.type.name === 'ice' ? require(`../../assets/images/icons/ice.png`) :
+                              type.type.name === 'fighting' ? require(`../../assets/images/icons/fighting.png`) :
+                              type.type.name === 'poison' ? require(`../../assets/images/icons/poison.png`) :
+                              type.type.name === 'dragon' ? require(`../../assets/images/icons/dragon.png`) :
+                              type.type.name === 'ground' ? require(`../../assets/images/icons/ground.png`) :
+                              type.type.name === 'stellar' ? require(`../../assets/images/icons/dark.png`) :
+                              type.type.name === 'fairy' ? require(`../../assets/images/icons/fairy.png`) :
+                              type.type.name === 'bug' ? require(`../../assets/images/icons/bug.png`) :
+                              type.type.name === 'dark' ? require(`../../assets/images/icons/dark.png`) :
+                              type.type.name === 'steel' ? require(`../../assets/images/icons/steel.png`) :
+                              require('../../assets/images/icons/normal.png')
+                            }
+                          />
+                        </View>
+                        <View style={{flexDirection: "row", marginTop: 5, marginLeft: 5}}>
+                          <PokeText text={type.type.name.toUpperCase()} color="#ffffff" backgroungColor={commonService.getColorFromType(type.type.name)} type={"card-text"}/>
+                        </View>
+                      </View>
                     )
                   )}
                 </Wrap>

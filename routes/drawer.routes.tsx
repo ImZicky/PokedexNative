@@ -110,21 +110,20 @@ export default function DrawerRoutes(cProps: DrawerRoutesProps) {
       <Drawer.Screen
         name="PokeBattle"
         options={{
-          headerTitle: "POKEBATTLE",
+          headerTitle: "BATTLE",
           drawerIcon: ({ size }) => (
             <MaterialCommunityIcons
-              name="controller-classic"
+              name="controller-classic-outline"
               color={"#ed5463"}
               size={size}
             />
           ),
-          drawerLabel: "PokeBattle",
+          drawerLabel: "Battle",
           drawerLabelStyle: {
             color: "#ed5463",
             textTransform: "capitalize",
           },
         }}
-
       >
         {(props) => 
           <PokeBattle        
@@ -138,8 +137,6 @@ export default function DrawerRoutes(cProps: DrawerRoutesProps) {
           />
         }
       </Drawer.Screen>
-
-
 
       <Drawer.Screen
         name="PokePerfil"

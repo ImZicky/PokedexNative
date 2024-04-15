@@ -59,7 +59,7 @@ function PokeCard(props: PokeCardProps) {
         backgroungColor={commonService.getColorFromType(props.pokemon.types[0].type.name)}
         color={"#ffffff"}
         type="card-id"
-        text={`#${props.pokemon.id.toString()}`}
+        text={`#${props.pokemon.id.toString()} `}
       />
       {props.userPokemonIds.length > 0 && props.userPokemonIds.includes(props.pokemon.id) &&
         <Image source={
