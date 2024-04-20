@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Box, Flex, Wrap } from "@react-native-material/core";
-import { StyleSheet, Image, ImageBackground, View, Modal } from "react-native";
+import { StyleSheet, Image, ImageBackground, View, Modal, Button } from "react-native";
 import PokeLoading from "../../components/loader/PokeLoading";
 import PokeText from "../../components/texts/PokeText";
 import { usePokemonService } from "../../service/api/PokemonService";
@@ -12,7 +12,7 @@ import { Pokemon } from "pokenode-ts";
 import PokeButton from "../../components/buttons/PokeButton";
 import Animated, { runOnJS, useAnimatedGestureHandler, useAnimatedStyle, useSharedValue, useWorkletCallback, withDelay, withRepeat, withSequence, withTiming } from "react-native-reanimated";
 import { PanGestureHandler, PanGestureHandlerGestureEvent } from "react-native-gesture-handler";
-
+import { Audio } from 'expo-av';
 
 export type PokeBattleProps = {
   navigation: any;
@@ -60,7 +60,117 @@ function PokeBattle(props: PokeBattleProps) {
   const pokemonService = usePokemonService();
   const commonService = useCommonService();
 
-  //Methods
+
+
+  //SOUNDS
+
+  const [soundBackground, setSoundBackground] = useState<any>();
+  const [soundHealPokemons, setSoundHealPokemons] = useState<any>();
+  const [soundFaintPokemon, setSoundFaintPokemon] = useState<any>();
+  const [soundAttackPokemon, setSoundAttackPokemon] = useState<any>();
+  const [soundDodgePokemon, setSoundDodgePokemon] = useState<any>();
+
+  const playSoundBackground = async () => {
+    const { sound } = await Audio.Sound.createAsync(require('../../assets/musics/battle.mp3'));
+    sound.setVolumeAsync(0.5);
+    setSoundBackground(sound);
+    await sound.playAsync();
+  }
+
+  const stopSoundBackground = async () => {
+    const { sound } = await Audio.Sound.createAsync(require('../../assets/musics/battle.mp3'));
+    sound.setVolumeAsync(0.5);
+    setSoundBackground(sound);
+    await sound.stopAsync();
+  }
+
+  useEffect(() => {
+    return soundBackground
+    ? () => {
+      soundBackground.unloadAsync();
+    }
+    : undefined;
+  }, [soundBackground]);
+
+
+
+  const playSoundFaintPokemon = async () => {
+    stopSoundBackground();
+    const { sound } = await Audio.Sound.createAsync(require('../../assets/musics/faint.mp3'));
+    setSoundFaintPokemon(sound);
+    await sound.playAsync();
+  }
+
+  useEffect(() => {
+    return soundFaintPokemon
+    ? () => {
+      soundFaintPokemon.unloadAsync();
+    }
+    : undefined;
+  }, [soundFaintPokemon]);
+
+
+  const playSoundHealPokemons = async () => {
+    stopSoundBackground();
+    const { sound } = await Audio.Sound.createAsync(require('../../assets/musics/healPokemons.mp3'));
+    setSoundHealPokemons(sound);
+    await sound.playAsync();
+  }
+
+  useEffect(() => {
+    return soundHealPokemons
+    ? () => {
+      soundHealPokemons.unloadAsync();
+    }
+    : undefined;
+  }, [soundHealPokemons]);
+
+
+
+  const playAttackPokemon = async () => {
+    const randInt = parseInt(`${Math.random() * 4}`);
+    const { sound } = await Audio.Sound.createAsync(
+      randInt === 1 ? require('../../assets/musics/attack-1.mp3') :
+      randInt === 2 ? require('../../assets/musics/attack-2.mp3') :
+      randInt === 3 ? require('../../assets/musics/attack-3.mp3') :
+      require('../../assets/musics/attack-4.mp3')
+    );
+    setSoundAttackPokemon(sound);
+    await sound.playAsync();
+  }
+
+  useEffect(() => {
+    return soundAttackPokemon
+    ? () => {
+      soundAttackPokemon.unloadAsync();
+    }
+    : undefined;
+  }, [soundAttackPokemon]);
+
+  const playDodgePokemon = async () => {
+    const { sound } = await Audio.Sound.createAsync(
+      require('../../assets/musics/dodge.mp3')
+    );
+    setSoundDodgePokemon(sound);
+    await sound.playAsync();
+  }
+
+  useEffect(() => {
+    return soundDodgePokemon
+    ? () => {
+      soundDodgePokemon.unloadAsync();
+    }
+    : undefined;
+  }, [soundDodgePokemon]);
+
+
+
+
+  useEffect(() => {
+    if(haveAPokemonForBattle) playSoundBackground();
+  }, [haveAPokemonForBattle]);
+
+
 
   //UseEffect
   useEffect(() => {
@@ -89,6 +199,7 @@ function PokeBattle(props: PokeBattleProps) {
       .then((pokemonApi: Pokemon) => {
         pokemonService.getPokemonForBattle(pokemonApi, playersPokemonLevel, undefined).then(pokeEnemy => {
           setPokemonEnemy(pokeEnemy);
+          playSoundBackground();
         });
         setPokemonEnemyType((pokemonApi?.types[0].type.name ?? "grass"));
         setAttacked(false);
@@ -122,17 +233,20 @@ function PokeBattle(props: PokeBattleProps) {
           setPokemonAttackInfoModalMessage(`${props.userPokemonTrainer.pokemons[pokemonFightingIndex].name} used ${skill.name} and got a critical hit!`);
           setOpenPokemonAttackInfoModal(true);
           skill.ppNow = skill.ppNow - 1;
+          playAttackPokemon();
         }
         if(damagePlus === 0) {
           setPokemonAttackInfoModalMessage(`${props.userPokemonTrainer.pokemons[pokemonFightingIndex].name} used ${skill.name} and missed the attack!`);
           setOpenPokemonAttackInfoModal(true);
           skill.ppNow = skill.ppNow - 1;
+          playDodgePokemon();
         }
         if(totalDamage > 0 && totalDamage < 19 && damagePlus !== 0) {
           tempHp = (tempHp - totalDamage);
           setPokemonAttackInfoModalMessage(`${props.userPokemonTrainer.pokemons[pokemonFightingIndex].name} used ${skill.name} and sucessfully attacked!`);
           setOpenPokemonAttackInfoModal(true);
           skill.ppNow = skill.ppNow - 1;
+          playAttackPokemon();
         }
 
         enemyHp.value = tempHp;
@@ -168,13 +282,16 @@ function PokeBattle(props: PokeBattleProps) {
         if(totalDamage >= 19 && damagePlus !== 0) {
           temp.hp = temp.hp - totalDamage;
           setPokemonAttackedInfoModalMessage(`${pokemonEnemy.name} used ${skill.name} and got a critical hit!`);
+          playAttackPokemon();
         }
         if(damagePlus === 0) {
           setPokemonAttackedInfoModalMessage(`${pokemonEnemy.name} used ${skill.name} and missed the attack!`);
+          playDodgePokemon();
         }
         if(totalDamage > 0 && totalDamage < 19 && damagePlus !== 0) {
           temp.hp = temp.hp - totalDamage;
           setPokemonAttackedInfoModalMessage(`${pokemonEnemy.name} used ${skill.name} and sucessfully attacked!`);
+          playAttackPokemon();
         }
 
         temp.hp = temp.hp <= 0 ? 0 : temp.hp;
@@ -258,10 +375,11 @@ function PokeBattle(props: PokeBattleProps) {
   }
 
   const handleHealAllPokemons = () => {
+    playSoundHealPokemons();
     setPokemonFightingIndex(0);
     props.handleHealBattlingPokemons()
-    handleRunAway();
     setGameOver(false);
+    handleRunAway();
   }
 
   const getHpWidth = (hp: number, hpTotal : number) => {
@@ -732,6 +850,8 @@ function PokeBattle(props: PokeBattleProps) {
                   require('../../assets/images/battlefields/normal.gif')
                 }
                 style={styles.image}>
+
+
                 <Flex style={styles.enemyDiv}>
                   <View style={styles.enemyDivInfosBorder}>              
                     <View style={styles.enemyDivInfos}>
@@ -908,28 +1028,29 @@ function PokeBattle(props: PokeBattleProps) {
 
                   <View style={[styles.playerDivGround, {backgroundColor: commonService.getColorFromType(props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name)}]}>
                     <Image style={{width: "90%", height: "90%", margin: 10}} source={
-                      props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name === 'grass' ? require(`../../assets/images/icons/grass.png`) :
-                      props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name === 'rock' ? require(`../../assets/images/icons/rock.png`) :
-                      props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name === 'normal' ? require(`../../assets/images/icons/normal.png`) :
-                      props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name === 'fire' ? require(`../../assets/images/icons/fire.png`) :
-                      props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name === 'electric' ? require(`../../assets/images/icons/electric.png`) :
-                      props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name === 'flying' ? require(`../../assets/images/icons/flying.png`) :
-                      props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name === 'psychic' ? require(`../../assets/images/icons/psychic.png`) :
-                      props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name === 'water' ? require(`../../assets/images/icons/water.png`) :
-                      props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name === 'ghost' ? require(`../../assets/images/icons/ghost.png`) :
-                      props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name === 'insect' ? require(`../../assets/images/icons/bug.png`) :
-                      props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name === 'ice' ? require(`../../assets/images/icons/ice.png`) :
-                      props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name === 'fighting' ? require(`../../assets/images/icons/fighting.png`) :
-                      props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name === 'poison' ? require(`../../assets/images/icons/poison.png`) :
-                      props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name === 'dragon' ? require(`../../assets/images/icons/dragon.png`) :
-                      props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name === 'ground' ? require(`../../assets/images/icons/ground.png`) :
-                      props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name === 'stellar' ? require(`../../assets/images/icons/dark.png`) :
-                      props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name === 'fairy' ? require(`../../assets/images/icons/fairy.png`) :
-                      props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name === 'bug' ? require(`../../assets/images/icons/bug.png`) :
-                      props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name === 'dark' ? require(`../../assets/images/icons/dark.png`) :
-                      props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name === 'steel' ? require(`../../assets/images/icons/steel.png`) :
-                      require('../../assets/images/icons/normal.png')
-                }/>
+                        props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name === 'grass' ? require(`../../assets/images/icons/grass.png`) :
+                        props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name === 'rock' ? require(`../../assets/images/icons/rock.png`) :
+                        props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name === 'normal' ? require(`../../assets/images/icons/normal.png`) :
+                        props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name === 'fire' ? require(`../../assets/images/icons/fire.png`) :
+                        props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name === 'electric' ? require(`../../assets/images/icons/electric.png`) :
+                        props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name === 'flying' ? require(`../../assets/images/icons/flying.png`) :
+                        props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name === 'psychic' ? require(`../../assets/images/icons/psychic.png`) :
+                        props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name === 'water' ? require(`../../assets/images/icons/water.png`) :
+                        props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name === 'ghost' ? require(`../../assets/images/icons/ghost.png`) :
+                        props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name === 'insect' ? require(`../../assets/images/icons/bug.png`) :
+                        props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name === 'ice' ? require(`../../assets/images/icons/ice.png`) :
+                        props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name === 'fighting' ? require(`../../assets/images/icons/fighting.png`) :
+                        props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name === 'poison' ? require(`../../assets/images/icons/poison.png`) :
+                        props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name === 'dragon' ? require(`../../assets/images/icons/dragon.png`) :
+                        props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name === 'ground' ? require(`../../assets/images/icons/ground.png`) :
+                        props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name === 'stellar' ? require(`../../assets/images/icons/dark.png`) :
+                        props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name === 'fairy' ? require(`../../assets/images/icons/fairy.png`) :
+                        props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name === 'bug' ? require(`../../assets/images/icons/bug.png`) :
+                        props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name === 'dark' ? require(`../../assets/images/icons/dark.png`) :
+                        props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name === 'steel' ? require(`../../assets/images/icons/steel.png`) :
+                        require('../../assets/images/icons/normal.png')
+                      }                    
+                    />
                   </View>
                 </Flex>
 
@@ -1156,6 +1277,8 @@ function PokeBattle(props: PokeBattleProps) {
                           text="Close"
                           onClick={() => { 
                             setOpenModalGameOver(false);
+                            stopSoundBackground();
+                            playSoundFaintPokemon();
                             setGameOver(true)
                           }}
                         />
@@ -1330,7 +1453,4 @@ function PokeBattle(props: PokeBattleProps) {
 }
 
 export default PokeBattle;
-function useComputedValue(arg0: () => any, arg1: any[]) {
-  throw new Error("Function not implemented.");
-}
 

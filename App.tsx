@@ -37,6 +37,11 @@ export default function App() {
         quantity: 5,
       },
       {
+        name: 'Death Potion',
+        category: "Heal",
+        quantity: 5,
+      },
+      {
         name: 'Pokeball',
         category: "Pokeball",
         quantity: 10,
@@ -129,21 +134,39 @@ export default function App() {
   };
 
   const handleHealPokemon = (position: number, potionName: string) => {
-    let tempPokemons = userPokemonTrainer.pokemons;
-    const hpUp = potionName === 'High Potion' ? 60 : 30;
-    tempPokemons[position].hp = 
+    if(potionName === 'Death Potion') { // APENAS PRA DEBUG
+      let tempPokemons = userPokemonTrainer.pokemons;
+      tempPokemons[position].hp = 1;
+  
+      let tempItems = userPokemonTrainer.items;
+      tempItems[tempItems.findIndex(x=> x.name === potionName)].quantity -= 1;
+  
+      setUserPokemonTrainer((prevState) => {
+        return {
+          ...prevState,
+          pokemons: tempPokemons,
+          items: tempItems
+        };
+      });  
+    }
+    else{
+
+      let tempPokemons = userPokemonTrainer.pokemons;
+      const hpUp = potionName === 'High Potion' ? 60 : 30;
+      tempPokemons[position].hp = 
       tempPokemons[position].hp + hpUp < tempPokemons[position].hpTotal ? tempPokemons[position].hp + hpUp : tempPokemons[position].hpTotal;
-
-    let tempItems = userPokemonTrainer.items;
-    tempItems[tempItems.findIndex(x=> x.name === potionName)].quantity -= 1;
-
-    setUserPokemonTrainer((prevState) => {
-      return {
-        ...prevState,
-        pokemons: tempPokemons,
-        items: tempItems
-      };
-    });
+      
+      let tempItems = userPokemonTrainer.items;
+      tempItems[tempItems.findIndex(x=> x.name === potionName)].quantity -= 1;
+      
+      setUserPokemonTrainer((prevState) => {
+        return {
+          ...prevState,
+          pokemons: tempPokemons,
+          items: tempItems
+        };
+      });
+    }
   };
 
   const handleUsePokeball = (pokeballName: string) => {

@@ -3,11 +3,6 @@ import { PokemonTrainer } from "../../../service/api/types/PokemonTrainer";
 import { Pokemon } from "pokenode-ts";
 import { usePokemonService } from "../../../service/api/PokemonService";
 import {
-  Text,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogHeader,
   Stack,
   Wrap,
   Box,
@@ -20,8 +15,7 @@ import PokeButton from "../../../components/buttons/PokeButton";
 import PokeText from "../../../components/texts/PokeText";
 import { useCommonService } from "../../../service/common/CommonService";
 import PokeTextField from "../../../components/textfields/PokeTextField";
-import { FormikProvider, useFormik } from "formik";
-import * as Yup from "yup";
+import { Audio } from 'expo-av';
 
 export type PokemonFirstChoiceProps = {
   trainer: PokemonTrainer;
@@ -47,6 +41,7 @@ function PokemonFirstChoice(props: PokemonFirstChoiceProps) {
     pokemonService
       .getPokemonInitials()
       .then((data) => {
+        playSoundChoosePokemon()
         setPokemonList(data);
         setLoading(false);
       })
@@ -55,6 +50,25 @@ function PokemonFirstChoice(props: PokemonFirstChoiceProps) {
         setLoading(false);
       });
   };
+
+
+  const [soundChoosePokemon, setSoundChoosePokemon] = useState<any>();
+
+  const playSoundChoosePokemon = async () => {
+      const { sound } = await Audio.Sound.createAsync(require('../../../assets/musics/choosePokemon.mp3'));
+      sound.setVolumeAsync(0.5);
+      setSoundChoosePokemon(sound);
+      await sound.playAsync();
+  }
+
+  useEffect(() => {
+    return soundChoosePokemon
+    ? () => {
+      soundChoosePokemon.unloadAsync();
+    }
+    : undefined;
+  }, [soundChoosePokemon]);
+
 
   const handleChoosePokemon = (
     pokemonApi: Pokemon | undefined,

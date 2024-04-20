@@ -17,6 +17,7 @@
     "axios": "^1.6.8",
     "axios-cache-interceptor": "^1.5.1",
     "expo": "~47.0.9",
+    "expo-av": "~13.0.3",
     "expo-status-bar": "~1.4.2",
     "expo-updates": "~0.15.6",
     "formik": "^2.4.3",

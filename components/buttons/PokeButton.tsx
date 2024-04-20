@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@react-native-material/core";
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import { IconType } from "../icons/types/IconType";
 import { StyleSheet } from "react-native";
 import { useCommonService } from "../../service/common/CommonService";
+import { Audio } from 'expo-av';
 
 export type ButtonProps = {
   text?: string;
@@ -42,6 +43,28 @@ export default function PokeButton(buttonProps: ButtonProps) {
     },
   });
 
+
+  const [soundSelectButton, setSoundSelectButton] = useState<any>();
+  const playSoundSelectButton = async () => {
+    const { sound } = await Audio.Sound.createAsync(require('../../assets/musics/selectButton.mp3'));
+    setSoundSelectButton(sound);
+    await sound.playAsync();
+  }
+
+  useEffect(() => {
+    return soundSelectButton
+    ? () => {
+      soundSelectButton.unloadAsync();
+    }
+    : undefined;
+  }, [soundSelectButton]);
+
+
+  const handleClick = (e: any) => {
+    playSoundSelectButton();
+    buttonProps.onClick(e);
+  }
+
   return buttonProps.icon ? (
     <Button
       style={styles.button}
@@ -50,17 +73,18 @@ export default function PokeButton(buttonProps: ButtonProps) {
       loading={buttonProps.loading}
       disabled={buttonProps.isReadOnly}
       trailing={(props) => <Icon name={buttonProps.icon} {...props} />}
-      onPress={buttonProps.onClick}
+      onPress={(e) => handleClick(e)}
       color={commonService.getColorFromType(buttonProps.color ?? "#000000")}
-    />
-  ) : (
-    <Button
+      />
+    ) : (
+      <Button
       style={styles.button}
       title={buttonProps.text}
       variant={buttonProps.variant}
       loading={buttonProps.loading}
       disabled={buttonProps.isReadOnly}
-      onPress={buttonProps.onClick}
+      onPress={(e) => handleClick(e)}
+      // onPress={buttonProps.onClick}
       color={commonService.getColorFromType(buttonProps.color ?? "#000000")}
     />
   );
