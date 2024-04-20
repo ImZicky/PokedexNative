@@ -1,4 +1,4 @@
-import { Box, Flex, Wrap } from "@react-native-material/core";
+import { Backdrop, Box, Flex, Icon, Wrap } from "@react-native-material/core";
 import React, { useEffect, useState } from "react";
 import PokeText from "../../components/texts/PokeText";
 import { StyleSheet, Image, View, ScrollView } from "react-native";
@@ -8,6 +8,7 @@ import { useCommonService } from "../../service/common/CommonService";
 import PokeLoading from "../../components/loader/PokeLoading";
 import { usePokemonService } from "../../service/api/PokemonService";
 import { PokemonAbilityFull } from "../../service/api/types/PokemonAbilityFull";
+import PokeIconButton from "../../components/buttons/PokeIconButton";
 
 export type PokePerfilProps = {
   route: any;
@@ -20,6 +21,8 @@ function PokePerfil(props: PokePerfilProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [pokemonAbilities, setPokemonAbilities] = useState<PokemonAbilityFull[]>([]);
 
+  const [showSkills, setShowSkills] = useState<boolean>(false);
+  
   // Services
   const commonService = useCommonService();
   const pokemonService = usePokemonService();
@@ -65,16 +68,16 @@ function PokePerfil(props: PokePerfilProps) {
       alignContent: "center",
     },
     cardImage: {
-      marginTop: 10,
+      marginTop: 60,
       width: 230, 
       height: 200,
     },
     infosGrid: {
-      padding: 10,
-      borderColor: "#ed5463",
-      borderStyle: "solid",
-      borderWidth: 4,
-      borderRadius: 10,
+      padding: 25,
+      // borderColor: "#ed5463",
+      // borderStyle: "solid",
+      // borderWidth: 4,
+      // borderRadius: 10,
     },
   });
 
@@ -176,7 +179,6 @@ function PokePerfil(props: PokePerfilProps) {
                 <Wrap
                   style={{
                     marginTop: 10,
-                    marginBottom: 20,
                   }}
                 >
                   <PokeText
@@ -192,37 +194,48 @@ function PokePerfil(props: PokePerfilProps) {
                 </Wrap>
               </Flex>
 
+            {/* SKILLS */}
               <Flex style={styles.infosGrid}>
-                <Wrap
-                  style={{
-                    marginTop: 10,
-                    marginBottom: 20,
-                  }}
-                >
+                <Wrap>
                   {pokemonAbilities && (
                     <>
-                      <PokeText
-                        color="#000"
-                        type="card-text-big"
-                        text="Habilidades"
+                      <Backdrop
+                        revealed={showSkills}
+                        header={
+                          <>
+                            <View
+                              style={{
+                                backgroundColor: commonService.getColorFromType(pokemon.types[0].type.name),
+                                width: "100%",
+                                height: 35,
+                                flexDirection: "row",
+                                borderRadius: 5,
+                                padding: 5,
+                                marginBottom: 20
+                              }}
+                              >
+                              <Icon
+                                name={"arrow-right"}
+                                color={"#fff"}
+                                size={25} />
+                              <PokeText
+                                color="#fff"
+                                type="card-text-big"
+                                text=" Skills" />
+                              </View><View style={{ display: showSkills ? "flex" : "none" }}>
+                                {pokemonAbilities?.map((a, i) => (
+                                  <PokeText
+                                    key={`ability_name_${i}`}
+                                    color="#000"
+                                    type="card-text-big"
+                                    text={`${a.name.toUpperCase()}: ${a.description}`} />
+                                ))}
+                              </View>
+                            </>
+                          }
+                        backLayer={<View style={{ height: 120 }} />}
                       />
-                      <View
-                        style={{
-                          width: "100%",
-                          marginTop: 5,
-                          marginBottom: 5,
-                          borderBottomColor: "red",
-                          borderBottomWidth: 3,
-                        }}
-                      />
-                      {pokemonAbilities?.map((a, i) => (
-                        <PokeText
-                          key={`ability_name_${i}`}
-                          color="#000"
-                          type="card-text-big"
-                          text={`${a.name.toUpperCase()}: ${a.description}`}
-                        />
-                      ))}
+
                     </>
                   )}
                 </Wrap>
