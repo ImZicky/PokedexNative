@@ -50,7 +50,6 @@ export function usePokemonService() {
       await pokemonService.getPokemonById(7)
       .then(squirtle => {
         pokemonInitialList.push(squirtle);
-        
       });
       await pokemonService.getPokemonById(4)
       .then(charmander => {
@@ -58,7 +57,15 @@ export function usePokemonService() {
       });
       await pokemonService.getPokemonById(25)
       .then(pikachu => {
-        pokemonInitialList.push(pikachu);    
+        pokemonInitialList.push(pikachu);
+      });
+      await pokemonService.getPokemonById(133)
+      .then(eevee => {
+        pokemonInitialList.push(eevee);
+      });
+      await pokemonService.getPokemonById(52)
+      .then(meowth => {
+        pokemonInitialList.push(meowth);
       });
       return pokemonInitialList;
     },
@@ -101,6 +108,7 @@ export function usePokemonService() {
           hpTotal: pokemonLevel * 10,
           id: pokemonApi.id,
           level: pokemonLevel,
+          levelXp: (pokemonLevel * 100),
           name: pokemonApi.name,
           type: pokemonApi.types,
           skills: pokemonService.getPokemonSkills(pokemonApi.abilities),

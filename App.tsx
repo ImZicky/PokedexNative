@@ -1,6 +1,6 @@
 import "react-native-gesture-handler";
 import { IconComponentProvider } from "@react-native-material/core";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import PokeList from "./views/PokeList/PokeList";
 import PokePerfil from "./views/PokePerfil/PokePerfil";
@@ -15,6 +15,8 @@ import { UserCredentials } from "./service/api/types/User";
 import { UserContext } from "./contexts/UserContext";
 import { PokemonTrainer } from "./service/api/types/PokemonTrainer";
 import { PokeballTypeEnum, PokemonForBattle } from "./service/api/types/PokemonForBattle";
+import { Audio } from 'expo-av';
+import { MusicName } from "./service/api/types/Music";
 
 const Stack = createStackNavigator();
 
@@ -32,15 +34,20 @@ export default function App() {
         quantity: 6,
       },
       {
-        name: 'High Potion',
+        name: 'Super Potion',
         category: "Heal",
-        quantity: 5,
+        quantity: 8,
       },
       {
-        name: 'Death Potion',
+        name: 'Hyper Potion',
         category: "Heal",
         quantity: 5,
       },
+      // {
+      //   name: 'Death Potion',
+      //   category: "Heal",
+      //   quantity: 5,
+      // },
       {
         name: 'Pokeball',
         category: "Pokeball",
@@ -94,6 +101,7 @@ export default function App() {
       hp: pokemon.hp,
       hpTotal: pokemon.hpTotal,
       level: pokemon.level,
+      levelXp: pokemon.level * 100,
       name: pokemon.name,
       nickname: pokemon.nickname,
       skills: pokemon.skills,
@@ -152,7 +160,11 @@ export default function App() {
     else{
 
       let tempPokemons = userPokemonTrainer.pokemons;
-      const hpUp = potionName === 'High Potion' ? 60 : 30;
+      const hpUp = 
+        potionName === 'Hyper Potion' ? tempPokemons[position].hpTotal * 1 :
+        potionName === 'Super Potion' ? tempPokemons[position].hpTotal * 0.60  : 
+        tempPokemons[position].hpTotal * 0.30;
+
       tempPokemons[position].hp = 
       tempPokemons[position].hp + hpUp < tempPokemons[position].hpTotal ? tempPokemons[position].hp + hpUp : tempPokemons[position].hpTotal;
       
@@ -181,6 +193,40 @@ export default function App() {
     });
   };
 
+
+  const [soundDefault, setSoundDefault] = useState<any>();
+
+  const playSoundDefault = async (name: MusicName) => {    
+
+    const { sound } = await Audio.Sound.createAsync(
+      name === 'battle' ? require('./assets/musics/battle.mp3') :
+      name === 'chooseFirstPokemon' ? require('./assets/musics/researchLab.mp3') :
+      name === 'pokedex' ? require('./assets/musics/defaultPalletTown.mp3')
+      : require('./assets/musics/defaultPalletTown.mp3'));
+
+    if(name === 'turnOff'){
+      setSoundDefault(sound);
+      await sound.stopAsync();
+    } 
+    else {
+      sound.setVolumeAsync(0.5);
+      sound.setIsLoopingAsync(true);
+      setSoundDefault(sound);
+      await sound.playAsync();
+    }   
+  }
+
+  useEffect(() => {
+    return soundDefault
+    ? () => {
+      soundDefault.unloadAsync();
+    }
+    : undefined;
+  }, [soundDefault]);
+
+
+
+
   DeviceEventEmitter.addListener("event.handleActivateNavigatorBar", (value) =>
     setIsAppLoading(value)
   );
@@ -191,7 +237,7 @@ export default function App() {
         <IconComponentProvider IconComponent={MaterialCommunityIcons}>
           <UserContext.Provider value={userCredentials}>
             <Routes
-
+              playSoundDefault={(name: MusicName) => playSoundDefault(name)}
               handleHealBattlingPokemons={() => handleHealBattlingPokemons()}
               handleUsePokeball={(pokeballName: string) => handleUsePokeball(pokeballName)}
               handleHealPokemon={(position: number, potionName: string) => handleHealPokemon(position, potionName)}
@@ -207,6 +253,7 @@ export default function App() {
           <IconComponentProvider IconComponent={MaterialCommunityIcons}>
             <UserContext.Provider value={userCredentials}>
               <Routes
+                playSoundDefault={(name: MusicName) => playSoundDefault(name)}
                 handleHealBattlingPokemons={() => handleHealBattlingPokemons()}
                 handleUsePokeball={(pokeballName: string) => handleUsePokeball(pokeballName)}
                 handleHealPokemon={(position: number, potionName: string) => handleHealPokemon(position, potionName)}

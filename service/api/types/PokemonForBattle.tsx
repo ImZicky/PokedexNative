@@ -8,6 +8,7 @@ export type PokemonForBattle = {
   hp: number;
   hpTotal: number;
   level: number;
+  levelXp: number;
   type: PokemonType[];
   sprites: PokemonSprites,
   pokeball?: PokeballTypeEnum | undefined

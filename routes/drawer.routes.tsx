@@ -8,12 +8,14 @@ import { UserCredentials } from "../service/api/types/User";
 import PokeBattle from "../views/PokeBatte/PokeBattle";
 import { PokemonTrainer } from "../service/api/types/PokemonTrainer";
 import { PokeballTypeEnum, PokemonForBattle } from "../service/api/types/PokemonForBattle";
+import { MusicName } from "../service/api/types/Music";
 
 const Drawer = createDrawerNavigator();
 
 export type DrawerRoutesProps = {
   isAppLoading: boolean;
   userPokemonTrainer: PokemonTrainer;
+  playSoundDefault: (name: MusicName) => void;
   handleHealBattlingPokemons: () => void;
   handlerUser: (userLogin: UserCredentials) => void;
   handleUsePokeball: (pokeballName : string) => void;
@@ -100,7 +102,8 @@ export default function DrawerRoutes(cProps: DrawerRoutesProps) {
         }}
 
       >
-        {(props) => <PokeList 
+        {(props) => <PokeList
+          playSoundDefault={(name: MusicName) => cProps.playSoundDefault(name)}
           userPokemons={cProps.userPokemonTrainer.pokemons}
           userPokemonIds={cProps.userPokemonTrainer.pokemons.map(x=> x.id)}
           navigation={props.navigation} 
@@ -126,7 +129,8 @@ export default function DrawerRoutes(cProps: DrawerRoutesProps) {
         }}
       >
         {(props) => 
-          <PokeBattle        
+          <PokeBattle
+            playSoundDefault={(name: MusicName) => cProps.playSoundDefault(name)}
             handleHealBattlingPokemons={() => cProps.handleHealBattlingPokemons()}
             handleCapturePokemon={(pokemon: PokemonForBattle, moneyReward: number, chosenPokeball: PokeballTypeEnum) => cProps.handleCapturePokemon(pokemon, moneyReward, chosenPokeball)} 
             handleUsePokeball={(pokeballName: string) => cProps.handleUsePokeball(pokeballName)} 

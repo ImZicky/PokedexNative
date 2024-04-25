@@ -16,10 +16,12 @@ import PokeText from "../../../components/texts/PokeText";
 import { useCommonService } from "../../../service/common/CommonService";
 import PokeTextField from "../../../components/textfields/PokeTextField";
 import { Audio } from 'expo-av';
+import { MusicName } from "../../../service/api/types/Music";
 
 export type PokemonFirstChoiceProps = {
   trainer: PokemonTrainer;
   setHaveAPokemonForBattle: (value: boolean) => void;
+  playSoundDefault: (name: MusicName) => void;
 };
 
 function PokemonFirstChoice(props: PokemonFirstChoiceProps) {
@@ -52,23 +54,9 @@ function PokemonFirstChoice(props: PokemonFirstChoiceProps) {
   };
 
 
-  const [soundChoosePokemon, setSoundChoosePokemon] = useState<any>();
-
   const playSoundChoosePokemon = async () => {
-      const { sound } = await Audio.Sound.createAsync(require('../../../assets/musics/choosePokemon.mp3'));
-      sound.setVolumeAsync(0.5);
-      setSoundChoosePokemon(sound);
-      await sound.playAsync();
+    props.playSoundDefault('chooseFirstPokemon');
   }
-
-  useEffect(() => {
-    return soundChoosePokemon
-    ? () => {
-      soundChoosePokemon.unloadAsync();
-    }
-    : undefined;
-  }, [soundChoosePokemon]);
-
 
   const handleChoosePokemon = (
     pokemonApi: Pokemon | undefined,
@@ -183,7 +171,7 @@ function PokemonFirstChoice(props: PokemonFirstChoiceProps) {
                       <Image
                         style={styles.cardImageModal}
                         source={{
-                          uri: `${commonService.getPokemonMainImage(chosenPokemon?.sprites)}`
+                          uri: `${commonService.getPokemonMainImageFrontForBattle(chosenPokemon?.sprites)}`
                         }}
                         />
                       <PokeTextField

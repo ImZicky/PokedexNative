@@ -9,11 +9,13 @@ import PokeLoading from "../../components/loader/PokeLoading";
 import PokeCard from "../../components/cards/PokeCard";
 import PokePagination from "../../components/paginations/PokePagination";
 import { PokemonForBattle } from "../../service/api/types/PokemonForBattle";
+import { MusicName } from "../../service/api/types/Music";
 
 export type PokeListProps = {
   navigation: any;
   userPokemonIds: number[];
   userPokemons: PokemonForBattle[];
+  playSoundDefault: (name: MusicName) => void;
 };
 
 export default function PokeList(cProps: PokeListProps) {
@@ -52,10 +54,15 @@ export default function PokeList(cProps: PokeListProps) {
 
   useEffect(() => {
     if (pokemonList === undefined || isSearchingPokemons) {
+      cProps.playSoundDefault("pokedex");
       fetchPokemonList();
       setIsSearchingPokemons(false);
     }
   }, [pageNumber]);
+
+
+
+
 
   //Style
   const styles = StyleSheet.create({

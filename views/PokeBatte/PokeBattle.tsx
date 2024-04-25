@@ -13,6 +13,8 @@ import PokeButton from "../../components/buttons/PokeButton";
 import Animated, { runOnJS, useAnimatedGestureHandler, useAnimatedStyle, useSharedValue, useWorkletCallback, withDelay, withRepeat, withSequence, withTiming } from "react-native-reanimated";
 import { PanGestureHandler, PanGestureHandlerGestureEvent } from "react-native-gesture-handler";
 import { Audio } from 'expo-av';
+import { MusicName } from "../../service/api/types/Music";
+import PokeIconButton from "../../components/buttons/PokeIconButton";
 
 export type PokeBattleProps = {
   navigation: any;
@@ -22,6 +24,7 @@ export type PokeBattleProps = {
   handleHealPokemon: (position : number, potionName: string) => void;
   handleUsePokeball: (pokeballName : string) => void;
   handleHealBattlingPokemons: () => void;
+  playSoundDefault: (name: MusicName) => void;
 };
 
 function PokeBattle(props: PokeBattleProps) {
@@ -36,16 +39,18 @@ function PokeBattle(props: PokeBattleProps) {
   const [gameOver, setGameOver] = useState<boolean>(false);
   const playersPokemonLevel = 10; // TODO: TRAZER DO PLAYER MESMO
   const [chosenPokeball, setChosenPokeball] = useState<PokeballTypeEnum>("Pokeball");
+  const [healPokemonText, setHealPokemonText] = useState<string>("Heal Pokemons");
 
   //MODALS
   const [openPokemonDidntCaughtModal, setOpenPokemonDidntCaughtModal] = useState<boolean>(false);
   const [openPokemonCaughtModal, setOpenPokemonCaughtModal] = useState<boolean>(false);
 
   const [openPokemonAttackInfoModal, setOpenPokemonAttackInfoModal] = useState<boolean>(false);
-  const [pokemonAttackInfoModalMessage, setPokemonAttackInfoModalMessage] = useState<string>("");0
+  const [pokemonAttackInfoModalMessage, setPokemonAttackInfoModalMessage] = useState<string>("");
   const [openPokemonAttackModal, setOpenPokemonAttackModal] = useState<boolean>(false);
 
-  
+  const [openLevelUpModal, setOpenLevelUpModal] = useState<boolean>(false);
+
   const [openPokemonAttackedInfoModal, setOpenPokemonAttackedInfoModal] = useState<boolean>(false);
   const [pokemonAttackedInfoModalMessage, setPokemonAttackedInfoModalMessage] = useState<string>("");
   
@@ -64,35 +69,22 @@ function PokeBattle(props: PokeBattleProps) {
 
   //SOUNDS
 
-  const [soundBackground, setSoundBackground] = useState<any>();
   const [soundHealPokemons, setSoundHealPokemons] = useState<any>();
+  const [soundHealPokemon, setSoundHealPokemon] = useState<any>();
   const [soundFaintPokemon, setSoundFaintPokemon] = useState<any>();
   const [soundAttackPokemon, setSoundAttackPokemon] = useState<any>();
   const [soundDodgePokemon, setSoundDodgePokemon] = useState<any>();
+  const [soundLevelUpPokemon, setSoundLevelUpPokemon] = useState<any>();
+  const [soundWinPokemon, setSoundWinPokemon] = useState<any>();
+  const [soundCapturePokemon, setSoundCapturePokemon] = useState<any>();
 
   const playSoundBackground = async () => {
-    const { sound } = await Audio.Sound.createAsync(require('../../assets/musics/battle.mp3'));
-    sound.setVolumeAsync(0.5);
-    setSoundBackground(sound);
-    await sound.playAsync();
+    props.playSoundDefault('battle');
   }
 
   const stopSoundBackground = async () => {
-    const { sound } = await Audio.Sound.createAsync(require('../../assets/musics/battle.mp3'));
-    sound.setVolumeAsync(0.5);
-    setSoundBackground(sound);
-    await sound.stopAsync();
+    props.playSoundDefault('turnOff');
   }
-
-  useEffect(() => {
-    return soundBackground
-    ? () => {
-      soundBackground.unloadAsync();
-    }
-    : undefined;
-  }, [soundBackground]);
-
-
 
   const playSoundFaintPokemon = async () => {
     stopSoundBackground();
@@ -126,6 +118,20 @@ function PokeBattle(props: PokeBattleProps) {
   }, [soundHealPokemons]);
 
 
+  const playSoundHealPokemon = async () => {
+    const { sound } = await Audio.Sound.createAsync(require('../../assets/musics/heal.mp3'));
+    setSoundHealPokemon(sound);
+    await sound.playAsync();
+  }
+
+  useEffect(() => {
+    return soundHealPokemon
+    ? () => {
+      soundHealPokemon.unloadAsync();
+    }
+    : undefined;
+  }, [soundHealPokemon]);
+
 
   const playAttackPokemon = async () => {
     const randInt = parseInt(`${Math.random() * 4}`);
@@ -148,8 +154,10 @@ function PokeBattle(props: PokeBattleProps) {
   }, [soundAttackPokemon]);
 
   const playDodgePokemon = async () => {
+    const randInt = parseInt(`${Math.random() * 2}`);
     const { sound } = await Audio.Sound.createAsync(
-      require('../../assets/musics/dodge.mp3')
+      randInt === 1 ? require('../../assets/musics/dodge-1.mp3') :
+      require('../../assets/musics/dodge-2.mp3')
     );
     setSoundDodgePokemon(sound);
     await sound.playAsync();
@@ -164,6 +172,64 @@ function PokeBattle(props: PokeBattleProps) {
   }, [soundDodgePokemon]);
 
 
+  const playSoundLevelUp = async () => {
+    const { sound } = await Audio.Sound.createAsync(
+      require('../../assets/musics/levelUp.mp3')
+    );
+    setSoundLevelUpPokemon(sound);
+    await sound.playAsync();
+  }
+
+  useEffect(() => {
+    return soundLevelUpPokemon
+    ? () => {
+      soundLevelUpPokemon.unloadAsync();
+    }
+    : undefined;
+  }, [soundLevelUpPokemon]);
+
+
+  const playSoundWin = async () => {
+    const { sound } = await Audio.Sound.createAsync(
+      require('../../assets/musics/win.mp3')
+    );
+    setSoundWinPokemon(sound);
+    await sound.playAsync();
+  }
+
+  useEffect(() => {
+    return soundWinPokemon
+    ? () => {
+      soundWinPokemon.unloadAsync();
+    }
+    : undefined;
+  }, [soundWinPokemon]);
+
+
+  const playCaptureSound = async () => {
+    const { sound } = await Audio.Sound.createAsync(
+      require('../../assets/musics/capture.mp3')
+    );
+    setSoundCapturePokemon(sound);
+    await sound.playAsync();
+  }
+
+  useEffect(() => {
+    return soundCapturePokemon
+    ? () => {
+      soundCapturePokemon.unloadAsync();
+    }
+    : undefined;
+  }, [soundCapturePokemon]);
+
+  useEffect(() => {
+    if(openPokemonCaughtModal) {      
+      props.playSoundDefault("turnOff")
+      playCaptureSound();
+    }
+  }, [openPokemonCaughtModal]);
+
+
 
 
   useEffect(() => {
@@ -175,6 +241,7 @@ function PokeBattle(props: PokeBattleProps) {
   //UseEffect
   useEffect(() => {
     const fetchPokemon = async () => {
+      handleStartBattleAnimation('start');
       setLoading(true);
       pokemonService.getRamdomPokemon().then((pokemonApi: Pokemon) => {
           pokemonService.getPokemonForBattle(pokemonApi, playersPokemonLevel, undefined).then(pokeEnemy => {
@@ -182,24 +249,47 @@ function PokeBattle(props: PokeBattleProps) {
           });
           setPokemonEnemyType((pokemonApi?.types[0].type.name ?? "grass"));          
           setAttacked(false);
+          handleStartBattleAnimation('animate');
         })
         .catch((error) => console.error(error))
         .finally(() => {
           setLoading(false);
         });
+        handleStartBattleAnimation('fade');
     };
     if (pokemonEnemy === undefined) fetchPokemon();
   });
 
   //Methods
+  const handleStartBattleAnimation = (value: string) => {
+    if(value === 'start'){
+      battleStartDivTop.value = 0;
+      battleStartDivBottom.value = 0;
+      battleStartEnemyDivLeft.value = 250;
+      battleStartPokemonDivLeft.value = -250;
+    }
+    if(value === 'animate'){
+      battleStartDivTop.value = withTiming(-700, { duration: 6000 });
+      battleStartDivBottom.value = withTiming(700, { duration: 6000 });
+      battleStartEnemyDivLeft.value = withTiming(60, { duration: 3000 });
+      battleStartPokemonDivLeft.value = withTiming(10, { duration: 3000 });
+    }
+  }
+
   const handleRunAway = () => {
+    props.playSoundDefault("turnOff");
     setLoading(true);
+    handleStartBattleAnimation('start');
     pokemonService
       .getRamdomPokemon()
       .then((pokemonApi: Pokemon) => {
         pokemonService.getPokemonForBattle(pokemonApi, playersPokemonLevel, undefined).then(pokeEnemy => {
-          setPokemonEnemy(pokeEnemy);
+          setPokemonEnemy(pokeEnemy);          
           playSoundBackground();
+          setTimeout(() => {
+            handleStartBattleAnimation('animate');
+
+          }, 1500);
         });
         setPokemonEnemyType((pokemonApi?.types[0].type.name ?? "grass"));
         setAttacked(false);
@@ -208,6 +298,7 @@ function PokeBattle(props: PokeBattleProps) {
       .finally(() => {
         setLoading(false);
       });
+    handleStartBattleAnimation('fade');
   }
 
   const handleAttackModal = (value: boolean) => {
@@ -317,13 +408,48 @@ function PokeBattle(props: PokeBattleProps) {
       }
       if(wasAttacked) setWasAttacked(false);
     }
-    else{
-      handleRunAway();
+    else{      
+      props.playSoundDefault("turnOff");
+      playSoundWin();
+      handleIncreaseLevelXp(10);
+      setTimeout(()=> {
+        handleRunAway();
+      }, 5000)
     }
     if(wasAttacked) setWasAttacked(false);
   }
 
 
+
+
+  const handleIncreaseLevelXp = (value: number) => {
+    let temp = props.userPokemonTrainer.pokemons[pokemonFightingIndex];
+    temp.levelXp = temp.levelXp + value;
+
+    if(Math.floor(temp.levelXp / 100) > temp.level){ // passed level
+      playSoundLevelUp();
+      temp.level = Math.floor(temp.levelXp / 100);
+      temp.hpTotal = temp.level * 10;
+      temp.hp = temp.hpTotal;
+      setOpenLevelUpModal(true);
+    }
+
+    handleSetPlayerPokemon(temp);
+  }
+
+  const handleImprooveAttack = (skill: PokemonForBattleSkills) => {
+
+    let temp = props.userPokemonTrainer.pokemons[pokemonFightingIndex];
+    let skillToImproove = temp.skills.find(x => x.name === skill.name) 
+    skillToImproove.damage += 2;
+    skillToImproove.ppTotal += 1;
+    skillToImproove.ppNow = skillToImproove.ppTotal;
+
+    temp.skills.splice(temp.skills.findIndex(x => x.name === skill.name), 1);
+    temp.skills.push(skillToImproove);
+    handleSetPlayerPokemon(temp);
+    setOpenLevelUpModal(false);
+  }
 
   const handleBagModal = (value: boolean) => {
     setOpenBagModal(value);
@@ -331,6 +457,7 @@ function PokeBattle(props: PokeBattleProps) {
 
   const handleUseItem = (item: PokemonTrainerItem) => {
     if(item.category === "Heal"){
+      playSoundHealPokemon();
       props.handleHealPokemon(pokemonFightingIndex, item.name);
     }
     if(item.category === "Pokeball"){
@@ -364,8 +491,8 @@ function PokeBattle(props: PokeBattleProps) {
   }
 
   const handleCaptureEnemy = (pokemon : PokemonForBattle) => {
+    handleIncreaseLevelXp(30);
     const moneyReward = parseInt(`${Math.random() * 1000}`) + 300;
-    // console.log(chosenPokeball);
     props.handleCapturePokemon(pokemon, moneyReward, chosenPokeball);
   }
 
@@ -374,18 +501,37 @@ function PokeBattle(props: PokeBattleProps) {
     setOpenPokemonDidntCaughtModal(false)
   }
 
-  const handleHealAllPokemons = () => {
+  const handleHealAllPokemons = async () => {
+    props.playSoundDefault('turnOff');
     playSoundHealPokemons();
     setPokemonFightingIndex(0);
     props.handleHealBattlingPokemons()
-    setGameOver(false);
-    handleRunAway();
+    setHealPokemonText("Healing . . .")
+    setTimeout(()=> {
+      handleRunAway()
+      setGameOver(false);
+      setHealPokemonText("Heal Pokemons")
+    }, 5000);
   }
 
   const getHpWidth = (hp: number, hpTotal : number) => {
     const maxValue =  200;
     return Math.ceil((hp * maxValue) / hpTotal);
   }
+
+  const getLevelWidth = (levelXp : number) => {
+    const levelBase = Math.floor((levelXp / 100));
+    const nextLevel = (levelBase * 100) + 100;
+    const diffToNext = nextLevel - (levelXp);
+    
+    // console.log("levelXp: ", levelXp);
+    // console.log("level base: ", levelBase * 10);
+    // console.log("next level: ", nextLevel);
+    // console.log("quanto falta diff: ", diffToNext);
+    // console.log("width: ", 200 - (diffToNext * 2));
+    return Math.floor(200 - (diffToNext * 2));
+  }
+
 
   const getHpBackgroundColor = (hp: number, hpTotal : number) : string => {
     const maxValue =  200;
@@ -413,6 +559,10 @@ function PokeBattle(props: PokeBattleProps) {
   const pokeballHeight = useSharedValue(80)
   const pokeballRotate = useSharedValue(0)
   const pokemonOpacity = useSharedValue(1);
+  const battleStartDivTop = useSharedValue(0);
+  const battleStartDivBottom = useSharedValue(0);
+  const battleStartPokemonDivLeft = useSharedValue(-120);
+  const battleStartEnemyDivLeft = useSharedValue(120);
   let enemyHp = useSharedValue(0);
   let enemyHpTotal = useSharedValue(0);
   let chosenPokeballValue = useSharedValue('Pokeball');
@@ -584,6 +734,29 @@ function PokeBattle(props: PokeBattleProps) {
     };
   });
 
+  const animationBattleStartTopDivStyle = useAnimatedStyle(() => {
+    return {
+      top: battleStartDivTop.value,
+    };
+  });
+  const animationBattleStartBottomDivStyle = useAnimatedStyle(() => {
+    return {
+      top: battleStartDivBottom.value,
+    };
+  });
+
+  const animationBattleStartEnemyDivStyle = useAnimatedStyle(() => {
+    return {
+      left: battleStartEnemyDivLeft.value,
+    };
+  });
+
+  const animationBattleStartPokemonDivStyle = useAnimatedStyle(() => {
+    return {
+      left: battleStartPokemonDivLeft.value,
+    };
+  });
+
 
 
 
@@ -598,14 +771,14 @@ function PokeBattle(props: PokeBattleProps) {
     enemyDiv: {
       position: "absolute",
       top: 25, 
-      left: 60,
+      left: 120,
       alignItems: "center",
       alignContent: "center",
     },
     playerDiv: {
       position: "absolute",
       bottom: 80,
-      left: 10,
+      left: -120,
       alignItems: "center",
       alignContent: "center",
     },
@@ -776,7 +949,7 @@ function PokeBattle(props: PokeBattleProps) {
     pokeballDiv:{
       position: "absolute",
       paddingTop: 430,
-      paddingLeft: 280,
+      paddingLeft: 270,
       width: 360,
       left: 0,
       bottom: 100,
@@ -805,8 +978,8 @@ function PokeBattle(props: PokeBattleProps) {
     },
     pokeballQuantityInfo:{
       position: "absolute", 
-      right: 65, 
-      bottom: 105, 
+      right: "21%", 
+      bottom: "18%", 
       zIndex: 300, 
       padding: 5, 
       backgroundColor: "#ECEDD0", 
@@ -822,7 +995,10 @@ function PokeBattle(props: PokeBattleProps) {
       {pokemonEnemy && !loading ? (
         <>
         {!haveAPokemonForBattle ? (
-          <PokemonFirstChoice setHaveAPokemonForBattle={(value: boolean) => setHaveAPokemonForBattle(value)} trainer={props.userPokemonTrainer} />
+          <PokemonFirstChoice 
+            playSoundDefault={(name: MusicName) => props.playSoundDefault(name)}
+            setHaveAPokemonForBattle={(value: boolean) => setHaveAPokemonForBattle(value)} trainer={props.userPokemonTrainer} 
+          />
         ):(
           <>
             {!gameOver ? (
@@ -851,8 +1027,25 @@ function PokeBattle(props: PokeBattleProps) {
                 }
                 style={styles.image}>
 
+                {/* POKEMON BATTLE START ANIMATION */}
+                <Animated.View style={[{zIndex: 2000, width: "100%", height: "65%", backgroundColor: "#FFF", top: -10}, animationBattleStartTopDivStyle]}>
+                  <View style={{width: "100%", top: 290, left: 50 }}>
+                    <PokeText 
+                      color="#FFF"
+                      text=" > BATTLE "
+                      backgroungColor={`${commonService.getColorFromType(pokemonEnemy.type[0].type.name)}`}
+                      type="battle-enemy-card-level"
+                    />
+                    <PokeText 
+                      color={`${commonService.getColorFromType(pokemonEnemy.type[0].type.name)}`}
+                      text=" A POKEMON APPEARED!     "
+                      type="modal-title"
+                    />
+                  </View>
+                </Animated.View>
+                <Animated.View style={[{zIndex: 2000, width: "100%", height: "50%", backgroundColor: "#FFF", top: 10}, animationBattleStartBottomDivStyle]} />
 
-                <Flex style={styles.enemyDiv}>
+                <Animated.View style={[styles.enemyDiv, animationBattleStartEnemyDivStyle]}>
                   <View style={styles.enemyDivInfosBorder}>              
                     <View style={styles.enemyDivInfos}>
                       <Flex style={styles.enemyDivHeader} >
@@ -875,7 +1068,7 @@ function PokeBattle(props: PokeBattleProps) {
                             </Box>
                         </Wrap>
                         <Wrap mt={15}>
-                          <Box radius={3} w={202} h={15} style={{backgroundColor: "#4E6648"}} >
+                          <Box radius={3} w={202} h={16} style={{backgroundColor: "#4E6648"}} >
                             {pokemonEnemy.hp > 0 && 
                               <>
                                 <View style={{position: "absolute", zIndex: 200, bottom: 0, left: 2}}>
@@ -888,7 +1081,7 @@ function PokeBattle(props: PokeBattleProps) {
                                 <Box borderStyle="solid" borderColor={"#4E6648"} border={1} radius={3} 
                                   // w={getHpWidth(pokemonEnemy.hp, pokemonEnemy.hpTotal)} 
                                   w={attacked ? Math.ceil((pokemonEnemy.hp * 200) / pokemonEnemy.hpTotal) : Math.ceil((pokemonEnemy.hp * 200) / pokemonEnemy.hpTotal) } 
-                                  h={13}
+                                  h={15}
                                   style={{backgroundColor: getHpBackgroundColor(pokemonEnemy.hp, pokemonEnemy.hpTotal)}}
                                   />
                               </>
@@ -936,41 +1129,40 @@ function PokeBattle(props: PokeBattleProps) {
                       }
                     />
                   </View>
-                </Flex>
+                </Animated.View>
 
-                      {
-                      props.userPokemonTrainer.items.find(x => x.category === "Pokeball") && props.userPokemonTrainer.items.find(x  => x.name === chosenPokeball).quantity > 0 &&
-                      <>
-                        <View style={styles.pokeballQuantityInfo}>
-                          <PokeText 
-                            color="#4E6648"
-                            backgroungColor="#ECEDD0"
-                            type="skill-name"
-                            text={`${props.userPokemonTrainer.items.find(x  => x.name === chosenPokeball).quantity}`}
-                          />
-                        </View>
-                        <View style={styles.pokeballDiv}>
-                          <View style={styles.pokemonPokeballDiv}></View>
-                          <PanGestureHandler onGestureEvent={panGestureEvent}>
-                            <Animated.View 
-                              style={[styles.circle, reanimationViewStyle]}
-                              >
-                              <Animated.Image source={
-                                chosenPokeball === "Master Ball" ? require("../../assets/images/pokeballs/masterBall.png") :
-                                chosenPokeball === "Ultra Ball" ? require("../../assets/images/pokeballs/ultraBall.png") :
-                                chosenPokeball === "Great Ball" ? require("../../assets/images/pokeballs/greatBall.png") :
-                                require("../../assets/images/pokeballs/pokeball.png")
-                              }
-                                style={[styles.pokeballImage, reanimationPokeballStyle]}
-                                />
-                              </Animated.View>
-                          </PanGestureHandler>
-                        </View>
-                      </>
-                      }
+                {
+                  props.userPokemonTrainer.items.find(x => x.category === "Pokeball") && props.userPokemonTrainer.items.find(x  => x.name === chosenPokeball).quantity > 0 &&
+                  <>
+                    <View style={styles.pokeballQuantityInfo}>
+                      <PokeText 
+                        color="#4E6648"
+                        backgroungColor="#ECEDD0"
+                        type="skill-name"
+                        text={`${props.userPokemonTrainer.items.find(x  => x.name === chosenPokeball).quantity}`}
+                      />
+                    </View>
+                    <View style={styles.pokeballDiv}>
+                      <View style={styles.pokemonPokeballDiv}></View>
+                      <PanGestureHandler onGestureEvent={panGestureEvent}>
+                        <Animated.View 
+                          style={[styles.circle, reanimationViewStyle]}
+                          >
+                          <Animated.Image source={
+                            chosenPokeball === "Master Ball" ? require("../../assets/images/pokeballs/masterBall.png") :
+                            chosenPokeball === "Ultra Ball" ? require("../../assets/images/pokeballs/ultraBall.png") :
+                            chosenPokeball === "Great Ball" ? require("../../assets/images/pokeballs/greatBall.png") :
+                            require("../../assets/images/pokeballs/pokeball.png")
+                          }
+                            style={[styles.pokeballImage, reanimationPokeballStyle]}
+                            />
+                          </Animated.View>
+                      </PanGestureHandler>
+                    </View>
+                  </>
+                }
 
-                <Flex style={styles.playerDiv}>
-    
+                <Animated.View style={[styles.playerDiv, animationBattleStartPokemonDivStyle]}>    
                   <View style={styles.playerDivInfosBorder}>              
                     <View style={styles.playerDivInfos}>
                       <Flex style={styles.playerDivHeader} >
@@ -987,13 +1179,24 @@ function PokeBattle(props: PokeBattleProps) {
                             <Box>
                           <PokeText 
                             color="#000000" 
-                            text={`Lv ${props.userPokemonTrainer.pokemons[pokemonFightingIndex].level}`} 
+                            text={`Lv ${Math.floor(props.userPokemonTrainer.pokemons[pokemonFightingIndex].levelXp / 100)}`} 
                             type={"battle-enemy-card-level"}
                             />
                             </Box>
                         </Wrap>
-                        <Wrap mt={15}>
-                          <Box radius={3} w={202} h={15} style={{backgroundColor: "#4E6648"}}>
+                        <Wrap mt={5}>
+                          <Box radius={5} w={202} h={5} style={{backgroundColor: "#4E6648", marginBottom: 5}}>
+                            <Box 
+                              borderStyle="solid" borderColor={"#4E6648"} border={1} radius={3} 
+                              w={wasAttacked ? getLevelWidth(props.userPokemonTrainer.pokemons[pokemonFightingIndex].levelXp) 
+                                          : getLevelWidth(props.userPokemonTrainer.pokemons[pokemonFightingIndex].levelXp) 
+                              } 
+                              h={5}
+                              style={{backgroundColor: "#6BF6A7"}}
+                            />
+                          </Box>
+
+                          <Box radius={3} w={202} h={16} style={{backgroundColor: "#4E6648"}}>
                             <View style={{position: "absolute", zIndex: 200, bottom: 0, left: 2}}>
                               <PokeText
                                 color={props.userPokemonTrainer.pokemons[pokemonFightingIndex].hp > 25 ? "#4E6648" : "#000000"}
@@ -1003,7 +1206,7 @@ function PokeBattle(props: PokeBattleProps) {
                             </View>
                             <Box borderStyle="solid" borderColor={"#4E6648"} border={1} radius={3} 
                               w={wasAttacked ? getHpWidth(props.userPokemonTrainer.pokemons[pokemonFightingIndex].hp, props.userPokemonTrainer.pokemons[pokemonFightingIndex].hpTotal) : getHpWidth(props.userPokemonTrainer.pokemons[pokemonFightingIndex].hp, props.userPokemonTrainer.pokemons[pokemonFightingIndex].hpTotal)} 
-                              h={13} 
+                              h={15} 
                               style={{backgroundColor: getHpBackgroundColor(props.userPokemonTrainer.pokemons[pokemonFightingIndex].hp, props.userPokemonTrainer.pokemons[pokemonFightingIndex].hpTotal)}}
                             />
                           </Box>
@@ -1052,7 +1255,7 @@ function PokeBattle(props: PokeBattleProps) {
                       }                    
                     />
                   </View>
-                </Flex>
+                </Animated.View>
 
                 <Flex style={styles.playerInteractionsDiv}>
                   <View style={styles.playerInteractionsDivBorder}>
@@ -1082,14 +1285,15 @@ function PokeBattle(props: PokeBattleProps) {
                       </Wrap>
                       <Wrap w={"100%"}>
                       <Box w={"50%"} style={{alignItems: "center"}}>
-                          {/* <PokeButton 
+                          <PokeButton 
                             size="small"
                             variant="text"
                             color={"menuGreen"}
-                            text="Capture"
+                            text="Pokemon"
                             styleType={"invisible"}
-                            // onClick={() => handleCapture()}
-                          /> */}
+                            // onClick={() => handlePokemonsModal()}
+                            onClick={() => alert("Not implemented yet...")}
+                          />
                         </Box>
                         <Box w={"50%"} style={{alignItems: "center"}}>
                           <PokeButton 
@@ -1108,20 +1312,28 @@ function PokeBattle(props: PokeBattleProps) {
 
 
 
-                {/* Pokemon attack modal */}
+                {/* Pokemon level up modal */}
                 <Modal
                   animationType="slide"
                   transparent
-                  visible={openPokemonAttackModal}
+                  visible={openLevelUpModal}
                   onRequestClose={() => {
-                    setOpenPokemonAttackModal(false);
+                    setOpenLevelUpModal(false);
                   }}
                 >
                   <View style={styles.centeredViewModal}>
-                    <View style={styles.modalViewModal}>
+                    <View style={[styles.modalViewModal, {overflow: "scroll", borderColor: "#4E6648", borderStyle: "solid", borderWidth: 5}]}>
+                      <View style={{marginBottom: 30}}>
+                        <PokeText
+                          text={'Level Up'}
+                          color={"#000000"}
+                          type={"h2"}
+                        />
+                      </View>
+
                       {props.userPokemonTrainer.pokemons[pokemonFightingIndex].skills.map((skill, i) => (
                         <Wrap w="100%" key={`skill-${i}`}>
-                          <Box w="60%" mb={20}>
+                          <Box w="80%" mb={20}>
                             <PokeText 
                               text={`${commonService.stringToCapitalLetters(skill.name)}`}
                               color={"#000000"}
@@ -1133,13 +1345,54 @@ function PokeBattle(props: PokeBattleProps) {
                               type={"pp-text"}
                             />
                           </Box>
-                          <Box w="40%">
-                            <PokeButton
+                          <Box w="20%">
+                            <PokeIconButton
+                              styleType={props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name ?? ""}
+                              variant="contained"
+                              color="#FFF"
+                              icon="arrow-up-thick"
+                              onClick={() => handleImprooveAttack(skill)}
+                              />
+                          </Box>
+                        </Wrap>
+                        ))}
+                      </View>
+                    </View>
+                  </Modal>
+
+
+                {/* Pokemon attack modal */}
+                <Modal
+                  animationType="slide"
+                  transparent
+                  visible={openPokemonAttackModal}
+                  onRequestClose={() => {
+                    setOpenPokemonAttackModal(false);
+                  }}
+                >
+                  <View style={styles.centeredViewModal}>
+                    <View style={[styles.modalViewModal, {overflow: "scroll", borderColor: "#4E6648", borderStyle: "solid", borderWidth: 5}]}>
+                      {props.userPokemonTrainer.pokemons[pokemonFightingIndex].skills.map((skill, i) => (
+                        <Wrap w="100%" key={`skill-${i}`}>
+                          <Box w="80%" mb={20}>
+                            <PokeText 
+                              text={`${commonService.stringToCapitalLetters(skill.name)}`}
+                              color={"#000000"}
+                              type={"skill-name"}
+                            />
+                            <PokeText 
+                              text={`pp: ${skill.ppNow}/${skill.ppTotal} | dmg: ${skill.damage}`}
+                              color={"#000000"}
+                              type={"pp-text"}
+                            />
+                          </Box>
+                          <Box w="20%">
+                            <PokeIconButton
+                              color="#fff"
                               isReadOnly={skill.ppNow === 0}
                               styleType={props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name ?? ""}
                               variant="contained"
-                              size="fullwidth"
-                              text="Use"
+                              icon="arrow-right"
                               onClick={() => handleAttack(skill)}
                               />
                           </Box>
@@ -1169,12 +1422,28 @@ function PokeBattle(props: PokeBattleProps) {
                   }}
                 >
                   <View style={styles.centeredViewModal}>
-                    <View style={styles.modalViewModal}>
+                    <View style={[styles.modalViewModal, {overflow: "scroll", borderColor: "#4E6648", borderStyle: "solid", borderWidth: 5}]}>
                       {props.userPokemonTrainer.items.find(x => x.quantity > 0) ? (                      
                         props.userPokemonTrainer.items.map((item, i) => (
                           item.quantity > 0 && (
                             <Wrap w="100%" key={`item-${i}`}>
-                              <Box w="60%" mb={20}>
+                              <Box w="20%">
+                                <Image 
+                                  source={
+                                    item.name === "Potion" ? require('../../assets/images/icons/potion-mini.png') :
+                                    item.name === "Super Potion" ? require('../../assets/images/icons/super-potion-mini.png') :
+                                    item.name === "Hyper Potion" ? require('../../assets/images/icons/hyper-potion-mini.png') :
+                                    item.name === "Death Potion" ? require('../../assets/images/icons/death-potion-mini.png') :
+                                    item.name === "Pokeball" ? require('../../assets/images/pokeballs/pokeball-mini.png') :
+                                    item.name === "Great Ball" ? require('../../assets/images/pokeballs/greatBall-mini.png') :
+                                    item.name === "Master Ball" ? require('../../assets/images/pokeballs/masterBall-mini.png') :
+                                    item.name === "Ultra Ball" ? require('../../assets/images/pokeballs/ultraBall-mini.png') :
+                                    require('../../assets/images/pokeballs/pokeball-mini.png')
+                                  } 
+                                  style={{width: 35, height: 35}}
+                                />
+                              </Box>
+                              <Box w="70%" mb={20}>
                                 <PokeText 
                                   text={`${commonService.stringToCapitalLetters(item.name)}`}
                                   color={"#000000"}
@@ -1186,14 +1455,14 @@ function PokeBattle(props: PokeBattleProps) {
                                 type={"pp-text"}
                               />
                               </Box>
-                              <Box w="40%">
-                                <PokeButton
+                              <Box w="10%">
+                                <PokeIconButton
+                                  color="#fff"
                                   styleType={props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name ?? ""}
                                   variant="contained"
-                                  size="fullwidth"
-                                  text="Use"
+                                  icon="arrow-right"
                                   onClick={() => handleUseItem(item)}
-                                  />
+                                />
                               </Box>
                             </Wrap>
                           )
@@ -1233,7 +1502,7 @@ function PokeBattle(props: PokeBattleProps) {
                   }}
                 >
                   <View style={styles.centeredViewModal}>
-                    <View style={styles.modalViewModal}>
+                    <View style={[styles.modalViewModal, {overflow: "scroll", borderColor: "#4E6648", borderStyle: "solid", borderWidth: 5}]}>
                       <PokeText 
                         text={openModalChangingPokemonInfo}
                         color={"#000000"}
@@ -1263,7 +1532,7 @@ function PokeBattle(props: PokeBattleProps) {
                   }}
                 >
                   <View style={styles.centeredViewModal}>
-                    <View style={styles.modalViewModal}>
+                    <View style={[styles.modalViewModal, {overflow: "scroll", borderColor: "#4E6648", borderStyle: "solid", borderWidth: 5}]}>
                       <PokeText 
                         text={"Game Over!!! You have no pokemons left to battle!"}
                         color={"#000000"}
@@ -1297,7 +1566,7 @@ function PokeBattle(props: PokeBattleProps) {
                   }}
                 >
                   <View style={styles.centeredViewModal}>
-                    <View style={styles.modalViewModal}>
+                    <View style={[styles.modalViewModal, {overflow: "scroll", borderColor: "#4E6648", borderStyle: "solid", borderWidth: 5}]}>
                       <PokeText 
                         text={pokemonAttackedInfoModalMessage}
                         color={"#000000"}
@@ -1329,7 +1598,7 @@ function PokeBattle(props: PokeBattleProps) {
                   }}
                 >
                   <View style={styles.centeredViewModal}>
-                    <View style={styles.modalViewModal}>
+                    <View style={[styles.modalViewModal, {overflow: "scroll", borderColor: "#4E6648", borderStyle: "solid", borderWidth: 5}]}>
                       <PokeText 
                         text={pokemonAttackInfoModalMessage}
                         color={"#000000"}
@@ -1362,7 +1631,7 @@ function PokeBattle(props: PokeBattleProps) {
                   }}
                 >
                 <View style={styles.centeredViewModal}>
-                  <View style={styles.modalViewModal}>
+                  <View style={[styles.modalViewModal, {overflow: "scroll", borderColor: "#4E6648", borderStyle: "solid", borderWidth: 5}]}>
                       <PokeText 
                         text={"Pokemon couldn't be caught"}
                         color={"#000000"}
@@ -1393,9 +1662,9 @@ function PokeBattle(props: PokeBattleProps) {
                   }}
                 >
                 <View style={styles.centeredViewModal}>
-                  <View style={styles.modalViewModal}>
+                  <View style={[styles.modalViewModal, {overflow: "scroll", borderColor: "#4E6648", borderStyle: "solid", borderWidth: 5}]}>
                       <PokeText 
-                        text={`${commonService.stringToCapitalLetters(pokemonEnemy.name)} caught !!!`}
+                        text={`${commonService.stringToCapitalLetters(pokemonEnemy.name)} was caught !!!`}
                         color={"#000000"}
                         type={"battle-card-infos"}
                       />
@@ -1410,7 +1679,7 @@ function PokeBattle(props: PokeBattleProps) {
                           handleCaptureEnemy(pokemonEnemy);
                           handleRunAway();
                           didCapturePokemon.value = 0;
-                          pokemonOpacity.value = withTiming(1, { duration: 500 });
+                          pokemonOpacity.value = withTiming(1, { duration: 3000 });
                         }}
                       />
                     </View>
@@ -1436,8 +1705,8 @@ function PokeBattle(props: PokeBattleProps) {
                       size="fullwidth"
                       variant="contained"
                       color="#4E6648"
-                      text="Heal Pokemons"
-                      onClick={handleHealAllPokemons}
+                      text={healPokemonText}
+                      onClick={() => handleHealAllPokemons()}
                     />
                     </View>
                   </ImageBackground>

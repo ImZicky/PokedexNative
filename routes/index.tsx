@@ -5,9 +5,11 @@ import React from "react";
 import { UserCredentials } from "../service/api/types/User";
 import { PokemonTrainer } from "../service/api/types/PokemonTrainer";
 import { PokeballTypeEnum, PokemonForBattle } from "../service/api/types/PokemonForBattle";
+import { MusicName } from "../service/api/types/Music";
 
 export type RoutesProps = {
   handlerUser: (userLogin: UserCredentials) => void;
+  playSoundDefault: (name: MusicName) => void;
   handleHealBattlingPokemons: () => void;
   handleUsePokeball: (pokeballName : string) => void;
   handleSetPokemonBattling: (pokemon: PokemonForBattle, position: number) => void;
@@ -21,6 +23,7 @@ export default function Routes(props: RoutesProps) {
   return (
     <NavigationContainer>
       <DrawerRoutes
+        playSoundDefault={(name: MusicName) => props.playSoundDefault(name)}
         handleHealBattlingPokemons={() => props.handleHealBattlingPokemons()}
         handleCapturePokemon={(pokemon: PokemonForBattle, moneyReward: number, chosenPokeball: PokeballTypeEnum) => props.handleCapturePokemon(pokemon, moneyReward, chosenPokeball)} 
         handleHealPokemon={(position: number, potionName: string) => props.handleHealPokemon(position, potionName)} 

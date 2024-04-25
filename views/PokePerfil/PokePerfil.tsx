@@ -39,28 +39,37 @@ function PokePerfil(props: PokePerfilProps) {
   useEffect(() => {
     (async function () {
       if (pokemon) {
+        console.log('skills: ', pokemon.abilities.map(x => x.ability.name)); // ja usei
+        console.log('moves: ',pokemon.moves.map(x => x.move.name)); // usavel e usavel em batalhas
+        console.log('gameIndices_name: ',pokemon.game_indices[0].version.name); //usavel jogo q apareceu
+        console.log('area_encounters: ',pokemon.location_area_encounters); //usavel "location_area":{"name"
+
+
+        setShowSkills(false);
         let temp: PokemonAbilityFull[] = [];
         pokemon?.abilities.forEach((a: PokemonAbility) => {
           pokemonService.getAbilityDescription(a.ability.name).then((resp) => {
-            if (!pokemonAbilities.find((x) => x.name === a.ability.name)) {
-              temp.push({
-                name: a.ability.name,
-                description: resp ?? "--",
-              });
-            }
-            setPokemonAbilities([...pokemonAbilities, ...temp]);
+            temp.push({
+              name: a.ability.name,
+              description: resp ?? "--",
+            });
+            setPokemonAbilities(temp);
           });
         });
       }
     })();
   }, [pokemon]);
 
+  useEffect(() => {
+    setShowSkills(false);
+  }, [])
+  
+
   //Style
   const styles = StyleSheet.create({
     view: {
       width: "100%",
       height: "100%",
-      backgroundColor: "#ed5463",
       padding: 5
     },
     centeredDiv: {
@@ -74,15 +83,20 @@ function PokePerfil(props: PokePerfilProps) {
     },
     infosGrid: {
       padding: 25,
-      // borderColor: "#ed5463",
-      // borderStyle: "solid",
-      // borderWidth: 4,
-      // borderRadius: 10,
     },
   });
 
   return (
-    <View style={[styles.view, { backgroundColor: pokemon ? commonService.getColorFromType(pokemon.types[0].type.name) : "#000"}]}>
+    <View
+      style={[
+        styles.view,
+        {
+          backgroundColor: pokemon
+            ? commonService.getColorFromType(pokemon.types[0].type.name)
+            : "#000",
+        },
+      ]}
+    >
       {pokemon ? (
         <Box
           style={{
@@ -98,7 +112,11 @@ function PokePerfil(props: PokePerfilProps) {
           <ScrollView>
             <Flex>
               <PokeText
-                backgroungColor={pokemon ? commonService.getColorFromType(pokemon.types[0].type.name) : "#000"}
+                backgroungColor={
+                  pokemon
+                    ? commonService.getColorFromType(pokemon.types[0].type.name)
+                    : "#000"
+                }
                 color={"#ffffff"}
                 type="card-id-big"
                 text={`#${pokemon.id.toString()} `}
@@ -126,42 +144,90 @@ function PokePerfil(props: PokePerfilProps) {
                     marginHorizontal: 2,
                   }}
                 >
-                  {pokemon && pokemon.types.map(
-                    (type: { type: { name: string } }, i: number) => (
-                      <View key={`${pokemon.name}_icon_type_${type.type.name}_item`} style={{backgroundColor: commonService.getColorFromType(type.type.name), width: "35%", height: 40, padding: 5, flexDirection: "row", borderRadius: 50}}>
-                        <View style={{flexDirection: "row"}}>
-                          <Image key={`${pokemon.name}_icon_type_${type.type.name}`} style={{width: 30, height: 30}}
-                            source={
-                              type.type.name === 'grass' ? require(`../../assets/images/icons/grass.png`) :
-                              type.type.name === 'rock' ? require(`../../assets/images/icons/rock.png`) :
-                              type.type.name === 'normal' ? require(`../../assets/images/icons/normal.png`) :
-                              type.type.name === 'fire' ? require(`../../assets/images/icons/fire.png`) :
-                              type.type.name === 'electric' ? require(`../../assets/images/icons/electric.png`) :
-                              type.type.name === 'flying' ? require(`../../assets/images/icons/flying.png`) :
-                              type.type.name === 'psychic' ? require(`../../assets/images/icons/psychic.png`) :
-                              type.type.name === 'water' ? require(`../../assets/images/icons/water.png`) :
-                              type.type.name === 'ghost' ? require(`../../assets/images/icons/ghost.png`) :
-                              type.type.name === 'insect' ? require(`../../assets/images/icons/bug.png`) :
-                              type.type.name === 'ice' ? require(`../../assets/images/icons/ice.png`) :
-                              type.type.name === 'fighting' ? require(`../../assets/images/icons/fighting.png`) :
-                              type.type.name === 'poison' ? require(`../../assets/images/icons/poison.png`) :
-                              type.type.name === 'dragon' ? require(`../../assets/images/icons/dragon.png`) :
-                              type.type.name === 'ground' ? require(`../../assets/images/icons/ground.png`) :
-                              type.type.name === 'stellar' ? require(`../../assets/images/icons/dark.png`) :
-                              type.type.name === 'fairy' ? require(`../../assets/images/icons/fairy.png`) :
-                              type.type.name === 'bug' ? require(`../../assets/images/icons/bug.png`) :
-                              type.type.name === 'dark' ? require(`../../assets/images/icons/dark.png`) :
-                              type.type.name === 'steel' ? require(`../../assets/images/icons/steel.png`) :
-                              require('../../assets/images/icons/normal.png')
-                            }
-                          />
+                  {pokemon &&
+                    pokemon.types.map(
+                      (type: { type: { name: string } }, i: number) => (
+                        <View
+                          key={`${pokemon.name}_icon_type_${type.type.name}_item_${i}`}
+                          style={{
+                            backgroundColor: commonService.getColorFromType(
+                              type.type.name
+                            ),
+                            width: "35%",
+                            height: 40,
+                            padding: 5,
+                            flexDirection: "row",
+                            borderRadius: 50,
+                          }}
+                        >
+                          <View style={{ flexDirection: "row" }}>
+                            <Image
+                              key={`${pokemon.name}_icon_type_${type.type.name}`}
+                              style={{ width: 30, height: 30 }}
+                              source={
+                                type.type.name === "grass"
+                                  ? require(`../../assets/images/icons/grass.png`)
+                                  : type.type.name === "rock"
+                                  ? require(`../../assets/images/icons/rock.png`)
+                                  : type.type.name === "normal"
+                                  ? require(`../../assets/images/icons/normal.png`)
+                                  : type.type.name === "fire"
+                                  ? require(`../../assets/images/icons/fire.png`)
+                                  : type.type.name === "electric"
+                                  ? require(`../../assets/images/icons/electric.png`)
+                                  : type.type.name === "flying"
+                                  ? require(`../../assets/images/icons/flying.png`)
+                                  : type.type.name === "psychic"
+                                  ? require(`../../assets/images/icons/psychic.png`)
+                                  : type.type.name === "water"
+                                  ? require(`../../assets/images/icons/water.png`)
+                                  : type.type.name === "ghost"
+                                  ? require(`../../assets/images/icons/ghost.png`)
+                                  : type.type.name === "insect"
+                                  ? require(`../../assets/images/icons/bug.png`)
+                                  : type.type.name === "ice"
+                                  ? require(`../../assets/images/icons/ice.png`)
+                                  : type.type.name === "fighting"
+                                  ? require(`../../assets/images/icons/fighting.png`)
+                                  : type.type.name === "poison"
+                                  ? require(`../../assets/images/icons/poison.png`)
+                                  : type.type.name === "dragon"
+                                  ? require(`../../assets/images/icons/dragon.png`)
+                                  : type.type.name === "ground"
+                                  ? require(`../../assets/images/icons/ground.png`)
+                                  : type.type.name === "stellar"
+                                  ? require(`../../assets/images/icons/dark.png`)
+                                  : type.type.name === "fairy"
+                                  ? require(`../../assets/images/icons/fairy.png`)
+                                  : type.type.name === "bug"
+                                  ? require(`../../assets/images/icons/bug.png`)
+                                  : type.type.name === "dark"
+                                  ? require(`../../assets/images/icons/dark.png`)
+                                  : type.type.name === "steel"
+                                  ? require(`../../assets/images/icons/steel.png`)
+                                  : require("../../assets/images/icons/normal.png")
+                              }
+                            />
+                          </View>
+                          <View
+                            style={{
+                              flexDirection: "row",
+                              marginTop: 5,
+                              marginLeft: 5,
+                            }}
+                          >
+                            <PokeText
+                              text={type.type.name.toUpperCase()}
+                              color="#ffffff"
+                              backgroungColor={commonService.getColorFromType(
+                                type.type.name
+                              )}
+                              type={"card-text"}
+                            />
+                          </View>
                         </View>
-                        <View style={{flexDirection: "row", marginTop: 5, marginLeft: 5}}>
-                          <PokeText text={type.type.name.toUpperCase()} color="#ffffff" backgroungColor={commonService.getColorFromType(type.type.name)} type={"card-text"}/>
-                        </View>
-                      </View>
-                    )
-                  )}
+                      )
+                    )}
                 </Wrap>
 
                 <Wrap
@@ -194,48 +260,64 @@ function PokePerfil(props: PokePerfilProps) {
                 </Wrap>
               </Flex>
 
-            {/* SKILLS */}
+              {/* SKILLS */}
               <Flex style={styles.infosGrid}>
                 <Wrap>
                   {pokemonAbilities && (
                     <>
                       <Backdrop
+                        style={{backgroundColor: "#ffffff"}}
                         revealed={showSkills}
                         header={
                           <>
                             <View
+                              onTouchEnd={() => setShowSkills(!showSkills)}
                               style={{
-                                backgroundColor: commonService.getColorFromType(pokemon.types[0].type.name),
+                                backgroundColor: commonService.getColorFromType(
+                                  pokemon.types[0].type.name
+                                ),
                                 width: "100%",
                                 height: 35,
                                 flexDirection: "row",
                                 borderRadius: 5,
                                 padding: 5,
-                                marginBottom: 20
+                                marginBottom: -3,
                               }}
-                              >
+                            >
                               <Icon
-                                name={"arrow-right"}
+                                name={showSkills ? "arrow-down" : "arrow-right"}
                                 color={"#fff"}
-                                size={25} />
+                                size={25}
+                              />
                               <PokeText
                                 color="#fff"
                                 type="card-text-big"
-                                text=" Skills" />
-                              </View><View style={{ display: showSkills ? "flex" : "none" }}>
-                                {pokemonAbilities?.map((a, i) => (
+                                text=" Skills"
+                              />
+                            </View>
+                            <View
+                              style={{ display: showSkills ? "flex" : "none", 
+                              borderBottomStartRadius: 5,
+                              borderBottomEndRadius: 5,
+                              backgroundColor: commonService.getLighterColorFromType(pokemon.types[0].type.name)
+                              }}
+                            >
+                              {pokemonAbilities?.map((a, i) => (
+                                <View style={{margin: 5}}>
                                   <PokeText
-                                    key={`ability_name_${i}`}
-                                    color="#000"
-                                    type="card-text-big"
-                                    text={`${a.name.toUpperCase()}: ${a.description}`} />
-                                ))}
-                              </View>
-                            </>
-                          }
-                        backLayer={<View style={{ height: 120 }} />}
+                                    key={`ability_name_${a.name}_${i}`}
+                                    color="#fff"
+                                    type="card-text"
+                                    text={`${a.name.toUpperCase()}: ${
+                                      a.description
+                                    }`}
+                                  />
+                                </View>
+                              ))}
+                            </View>
+                          </>
+                        }
                       />
-
                     </>
                   )}
                 </Wrap>

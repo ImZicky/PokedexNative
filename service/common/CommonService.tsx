@@ -91,6 +91,58 @@ export function useCommonService() {
           return "#a30000";
       }
     },
+    getLighterColorFromType: (type: string) => {
+      switch (type) {
+        case "menuGreen":
+          return "#758f6e"
+        case "invisible":
+          return "#FFFFFF00"
+        case "primary":
+          return "#a32e2e";
+        case "secondary":
+          return "#000000";
+        case "bug":
+          return "#3e6d48";
+        case "dark":
+          return "#252825";
+        case "dragon":
+          return "#66adb7";
+        case "electric":
+          return "#f9ce4d";
+        case "fairy":
+          return "#b93b66";
+        case "fighting":
+          return "#bb5f45";
+        case "fire":
+          return "#cc2f44";
+        case "flying":
+          return "#6b899f";
+        case "ghost":
+          return "#52558d";
+        case "grass":
+          return "#359d5f";
+        case "ground":
+          return "#cb924d";
+        case "ice":
+          return "#a8f4f7";
+        case "normal":
+          return "#97737d";
+        case "poison":
+          return "#7f4eaa";
+        case "psychic":
+          return "#c64b8f";
+        case "rock":
+          return "#6a3928";
+        case "steel":
+          return "#7f978f";
+        case "water":
+          return "#3574f4";
+        case "white":
+          return "#FFFFFF";
+        default:
+          return "#c52222";
+      }
+    },
     handleInactivateNavigatorBar: (value: boolean) => {
       DeviceEventEmitter.emit("event.handleActivateNavigatorBar", value);
     },
