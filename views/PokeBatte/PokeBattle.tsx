@@ -278,6 +278,8 @@ function PokeBattle(props: PokeBattleProps) {
 
   const handleRunAway = () => {
     props.playSoundDefault("turnOff");
+    pokemonEnemyOpacity.value = withTiming(1, { duration: 1000 });
+    pokemonOpacity.value = withTiming(1, { duration: 1000 });
     setLoading(true);
     handleStartBattleAnimation('start');
     pokemonService
@@ -402,13 +404,15 @@ function PokeBattle(props: PokeBattleProps) {
           };
           if(!canFight) {
             setOpenPokemonAttackedInfoModal(false);
+            pokemonOpacity.value = withTiming(0, { duration: 1000 });
             handleGameOver()
           };
         }
       }
       if(wasAttacked) setWasAttacked(false);
     }
-    else{      
+    else{
+      pokemonEnemyOpacity.value = withTiming(0, { duration: 1000 });
       props.playSoundDefault("turnOff");
       playSoundWin();
       handleIncreaseLevelXp(10);
@@ -558,6 +562,7 @@ function PokeBattle(props: PokeBattleProps) {
   const pokeballWidth = useSharedValue(80)
   const pokeballHeight = useSharedValue(80)
   const pokeballRotate = useSharedValue(0)
+  const pokemonEnemyOpacity = useSharedValue(1);
   const pokemonOpacity = useSharedValue(1);
   const battleStartDivTop = useSharedValue(0);
   const battleStartDivBottom = useSharedValue(0);
@@ -604,7 +609,7 @@ function PokeBattle(props: PokeBattleProps) {
   const handleCapturePokemon = useWorkletCallback((pEnemyHp: number, pEnemyHpTotal: number, pChosenPokeball: string) => {
     if(calculateIfCaptured(pEnemyHp, pEnemyHpTotal, pChosenPokeball)) {
       didCapturePokemon.value = 1;
-      pokemonOpacity.value = withDelay(5000, withTiming(1, { duration: 500 }));
+      pokemonEnemyOpacity.value = withDelay(5000, withTiming(1, { duration: 500 }));
 
       pokeballWidth.value = withTiming(80, { duration: 60 });
       pokeballHeight.value = withTiming(80, { duration: 60 });
@@ -659,11 +664,11 @@ function PokeBattle(props: PokeBattleProps) {
         runOnJS(handleUsePokeball)();
 
         isCapturingPokemon.value = 1;
-        pokemonOpacity.value = withTiming(0, { duration: 500 });
+        pokemonEnemyOpacity.value = withTiming(0, { duration: 500 });
 
         handleCapturePokemon(enemyHp.value, enemyHpTotal.value, chosenPokeballValue.value);
         if(didCapturePokemon.value === 0) {
-          pokemonOpacity.value = withTiming(1, { duration: 500 });
+          pokemonEnemyOpacity.value = withTiming(1, { duration: 500 });
           pokeballWidth.value = withTiming(80, { duration: 60 });
           pokeballHeight.value = withTiming(80, { duration: 60 });
           translateX.value = withTiming(0, { duration: 500 });
@@ -674,7 +679,7 @@ function PokeBattle(props: PokeBattleProps) {
           runOnJS(setOpenPokemonDidntCaughtModal)(true);
         }else
         {
-          pokemonOpacity.value = withTiming(0, { duration: 500 });
+          pokemonEnemyOpacity.value = withTiming(0, { duration: 500 });
         }
       }
       else{
@@ -684,7 +689,7 @@ function PokeBattle(props: PokeBattleProps) {
             withRepeat(withTiming(0, { duration: 1000 }), 1, true)
           );
           
-          pokemonOpacity.value = withTiming(1, { duration: 500 });
+          pokemonEnemyOpacity.value = withTiming(1, { duration: 500 });
 
           pokeballWidth.value = withTiming(80, { duration: 60 });
           pokeballHeight.value = withTiming(80, { duration: 60 });
@@ -725,6 +730,12 @@ function PokeBattle(props: PokeBattleProps) {
           rotateZ:  `${pokeballRotate.value}deg`,
         }
       ]
+    };
+  });
+
+  const reanimationPokemonEnemyStyle = useAnimatedStyle(() => {
+    return {
+      opacity: pokemonEnemyOpacity.value,
     };
   });
 
@@ -1045,6 +1056,7 @@ function PokeBattle(props: PokeBattleProps) {
                 </Animated.View>
                 <Animated.View style={[{zIndex: 2000, width: "100%", height: "50%", backgroundColor: "#FFF", top: 10}, animationBattleStartBottomDivStyle]} />
 
+              {/* ENEMY DIV */}
                 <Animated.View style={[styles.enemyDiv, animationBattleStartEnemyDivStyle]}>
                   <View style={styles.enemyDivInfosBorder}>              
                     <View style={styles.enemyDivInfos}>
@@ -1092,7 +1104,7 @@ function PokeBattle(props: PokeBattleProps) {
                     </View>
                     </View>
                     <Animated.View 
-                        style={[styles.enemyImageDiv, reanimationPokemonStyle]}
+                        style={[styles.enemyImageDiv, reanimationPokemonEnemyStyle]}
                       >
                       <Image
                         style={[styles.enemyImage]}
@@ -1131,6 +1143,7 @@ function PokeBattle(props: PokeBattleProps) {
                   </View>
                 </Animated.View>
 
+                {/* POKEBALL THROWING */}
                 {
                   props.userPokemonTrainer.items.find(x => x.category === "Pokeball") && props.userPokemonTrainer.items.find(x  => x.name === chosenPokeball).quantity > 0 &&
                   <>
@@ -1162,6 +1175,7 @@ function PokeBattle(props: PokeBattleProps) {
                   </>
                 }
 
+                {/* TRAINER POKEMON DIV */}
                 <Animated.View style={[styles.playerDiv, animationBattleStartPokemonDivStyle]}>    
                   <View style={styles.playerDivInfosBorder}>              
                     <View style={styles.playerDivInfos}>
@@ -1216,7 +1230,7 @@ function PokeBattle(props: PokeBattleProps) {
                   </View>
 
                   <Animated.View 
-                    style={[styles.playerImageDiv]}
+                    style={[styles.playerImageDiv, reanimationPokemonStyle]}
                   >
                     <Image
                       style={[styles.playerImage]}
@@ -1257,6 +1271,7 @@ function PokeBattle(props: PokeBattleProps) {
                   </View>
                 </Animated.View>
 
+                {/* INTERACTIONS DIV */}
                 <Flex style={styles.playerInteractionsDiv}>
                   <View style={styles.playerInteractionsDivBorder}>
                     <View style={styles.playerInteractionsDivInfos}>
@@ -1311,7 +1326,6 @@ function PokeBattle(props: PokeBattleProps) {
                 </Flex>
 
 
-
                 {/* Pokemon level up modal */}
                 <Modal
                   animationType="slide"
@@ -1350,7 +1364,7 @@ function PokeBattle(props: PokeBattleProps) {
                               styleType={props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name ?? ""}
                               variant="contained"
                               color="#FFF"
-                              icon="arrow-up-thick"
+                              icon="chevron-double-up"
                               onClick={() => handleImprooveAttack(skill)}
                               />
                           </Box>
@@ -1658,7 +1672,7 @@ function PokeBattle(props: PokeBattleProps) {
                     setOpenPokemonCaughtModal(false);
                     handleRunAway();
                     didCapturePokemon.value = 0;
-                    pokemonOpacity.value = withTiming(1, { duration: 500 });
+                    pokemonEnemyOpacity.value = withTiming(1, { duration: 500 });
                   }}
                 >
                 <View style={styles.centeredViewModal}>
@@ -1679,7 +1693,7 @@ function PokeBattle(props: PokeBattleProps) {
                           handleCaptureEnemy(pokemonEnemy);
                           handleRunAway();
                           didCapturePokemon.value = 0;
-                          pokemonOpacity.value = withTiming(1, { duration: 3000 });
+                          pokemonEnemyOpacity.value = withTiming(1, { duration: 3000 });
                         }}
                       />
                     </View>

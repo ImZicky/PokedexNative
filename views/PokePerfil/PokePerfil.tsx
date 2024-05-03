@@ -20,8 +20,14 @@ function PokePerfil(props: PokePerfilProps) {
   const [pokemon, setPokemon] = useState<Pokemon | undefined>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [pokemonAbilities, setPokemonAbilities] = useState<PokemonAbilityFull[]>([]);
+  const [pokemonMoves, setPokemonMoves] = useState<string[]>([]);
+  const [pokemonGameAppearences, setPokemonGameAppearences] = useState<string[]>([]);
+  const [areaEnconters, setAreaEnconters] = useState<string[]>([]);
 
   const [showSkills, setShowSkills] = useState<boolean>(false);
+  const [showMoves, setShowMoves] = useState<boolean>(false);
+  const [showAppearences, setShowAppearences] = useState<boolean>(false);
+  const [showAreaEnconters, setShowAreaEnconters] = useState<boolean>(false);
   
   // Services
   const commonService = useCommonService();
@@ -39,10 +45,10 @@ function PokePerfil(props: PokePerfilProps) {
   useEffect(() => {
     (async function () {
       if (pokemon) {
-        console.log('skills: ', pokemon.abilities.map(x => x.ability.name)); // ja usei
-        console.log('moves: ',pokemon.moves.map(x => x.move.name)); // usavel e usavel em batalhas
-        console.log('gameIndices_name: ',pokemon.game_indices[0].version.name); //usavel jogo q apareceu
-        console.log('area_encounters: ',pokemon.location_area_encounters); //usavel "location_area":{"name"
+        // console.log('skills: ', pokemon.abilities.map(x => x.ability.name)); // ja usei
+        // console.log('moves: ', pokemon.moves.map(x => x.move.name)); // usavel e usavel em batalhas
+        // console.log('gameIndices_name: ',pokemon.game_indices[0].version.name); //usavel jogo q apareceu
+        //console.log('area_encounters: ',pokemon.location_area_encounters); //usavel "location_area":{"name"
 
 
         setShowSkills(false);
@@ -54,6 +60,11 @@ function PokePerfil(props: PokePerfilProps) {
               description: resp ?? "--",
             });
             setPokemonAbilities(temp);
+            setPokemonMoves(pokemon.moves.map(x => x.move.name));
+            setPokemonGameAppearences(pokemon.game_indices.map(x => x.version.name));
+            pokemonService.getAreaEnconters(pokemon.id).then((enconters)=> {
+              if(enconters) setAreaEnconters(enconters);
+            })
           });
         });
       }
@@ -160,9 +171,9 @@ function PokePerfil(props: PokePerfilProps) {
                             borderRadius: 50,
                           }}
                         >
-                          <View style={{ flexDirection: "row" }}>
+                          <View style={{ flexDirection: "row" }} key={`${pokemon.name}_icon_type_${type.type.name}_view_${i}`}>
                             <Image
-                              key={`${pokemon.name}_icon_type_${type.type.name}`}
+                              key={`${pokemon.name}_icon_type_${type.type.name}_${i}`}
                               style={{ width: 30, height: 30 }}
                               source={
                                 type.type.name === "grass"
@@ -210,6 +221,7 @@ function PokePerfil(props: PokePerfilProps) {
                             />
                           </View>
                           <View
+                            key={`${pokemon.name}_icon_type_${type.type.name}_view_2_${i}`}
                             style={{
                               flexDirection: "row",
                               marginTop: 5,
@@ -217,6 +229,7 @@ function PokePerfil(props: PokePerfilProps) {
                             }}
                           >
                             <PokeText
+                              key={`${pokemon.name}_icon_type_${type.type.name}_view_2_text_${i}`}
                               text={type.type.name.toUpperCase()}
                               color="#ffffff"
                               backgroungColor={commonService.getColorFromType(
@@ -277,7 +290,7 @@ function PokePerfil(props: PokePerfilProps) {
                                   pokemon.types[0].type.name
                                 ),
                                 width: "100%",
-                                height: 35,
+                                height: 40,
                                 flexDirection: "row",
                                 borderRadius: 5,
                                 padding: 5,
@@ -297,13 +310,13 @@ function PokePerfil(props: PokePerfilProps) {
                             </View>
                             <View
                               style={{ display: showSkills ? "flex" : "none", 
-                              borderBottomStartRadius: 5,
-                              borderBottomEndRadius: 5,
+                              borderBottomStartRadius: showSkills ? 0 : 5,
+                              borderBottomEndRadius: showSkills ? 0 : 5,
                               backgroundColor: commonService.getLighterColorFromType(pokemon.types[0].type.name)
                               }}
                             >
                               {pokemonAbilities?.map((a, i) => (
-                                <View style={{margin: 5}}>
+                                <View style={{margin: 5}} key={`view_ability_name_${a.name}_${i}`}>
                                   <PokeText
                                     key={`ability_name_${a.name}_${i}`}
                                     color="#fff"
@@ -322,7 +335,193 @@ function PokePerfil(props: PokePerfilProps) {
                   )}
                 </Wrap>
               </Flex>
+            
+              {/* MOVES */}
+              <Flex style={[styles.infosGrid, {top: -50}]}>
+                <Wrap>
+                  {pokemonMoves && (
+                    <>
+                      <Backdrop
+                        style={{backgroundColor: "#ffffff"}}
+                        revealed={showMoves}
+                        header={
+                          <>
+                            <View
+                              onTouchEnd={() => setShowMoves(!showMoves)}
+                              style={{
+                                backgroundColor: commonService.getColorFromType(
+                                  pokemon.types[0].type.name
+                                ),
+                                width: "100%",
+                                height: 40,
+                                flexDirection: "row",
+                                padding: 5,
+                                marginBottom: -3,
+                              }}
+                            >
+                              <Icon
+                                name={showSkills ? "arrow-down" : "arrow-right"}
+                                color={"#fff"}
+                                size={25}
+                              />
+                              <PokeText
+                                color="#fff"
+                                type="card-text-big"
+                                text=" Moves"
+                              />
+                            </View>
+                            <View
+                              style={{ display: showMoves ? "flex" : "none", 
+                              backgroundColor: commonService.getLighterColorFromType(pokemon.types[0].type.name)
+                              }}
+                            >
+                              {pokemonMoves?.map((m, i) => (
+                                <View style={{margin: 5}} key={`view_ability_name_${m}_${i}`}>
+                                  <PokeText
+                                    key={`ability_name_${m}_${i}`}
+                                    color="#fff"
+                                    type="card-text"
+                                    text={`${m.toUpperCase()}`}
+                                  />
+                                </View>
+                              ))}
+                            </View>
+                          </>
+                        }
+                      />
+                    </>
+                  )}
+                </Wrap>
+              </Flex>
+
+
+              {/* GAME APPEARENCES */}
+              <Flex style={[styles.infosGrid, {top: -100}]}>
+                <Wrap>
+                  {pokemonGameAppearences && (
+                    <>
+                      <Backdrop
+                        style={{backgroundColor: "#ffffff"}}
+                        revealed={showAppearences}
+                        header={
+                          <>
+                            <View
+                              onTouchEnd={() => setShowAppearences(!showAppearences)}
+                              style={{
+                                backgroundColor: commonService.getColorFromType(
+                                  pokemon.types[0].type.name
+                                ),
+                                width: "100%",
+                                height: 40,
+                                flexDirection: "row",
+                                padding: 5,
+                                marginBottom: -3,
+                              }}
+                            >
+                              <Icon
+                                name={showAppearences ? "arrow-down" : "arrow-right"}
+                                color={"#fff"}
+                                size={25}
+                              />
+                              <PokeText
+                                color="#fff"
+                                type="card-text-big"
+                                text=" Games"
+                              />
+                            </View>
+                            <View
+                              style={{ 
+                                display: showAppearences ? "flex" : "none", 
+                                backgroundColor: commonService.getLighterColorFromType(pokemon.types[0].type.name)
+                              }}
+                            >
+                              {pokemonGameAppearences?.map((m, i) => (
+                                <View style={{margin: 5}} key={`view_games_name_${m}_${i}`}>
+                                  <PokeText
+                                    key={`games${m}_${i}`}
+                                    color="#fff"
+                                    type="card-text"
+                                    text={`POKEMON: ${m.toUpperCase()}`}
+                                  />
+                                </View>
+                              ))}
+                            </View>
+                          </>
+                        }
+                      />
+                    </>
+                  )}
+                </Wrap>
+              </Flex>
+
+
+              {/* AREA ENCONTERS */}
+              <Flex style={[styles.infosGrid, {top: -150}]}>
+                <Wrap>
+                  {areaEnconters && (
+                    <>
+                      <Backdrop
+                        style={{backgroundColor: "#ffffff"}}
+                        revealed={showAreaEnconters}
+                        header={
+                          <>
+                            <View
+                              onTouchEnd={() => setShowAreaEnconters(!showAreaEnconters)}
+                              style={{
+                                backgroundColor: commonService.getColorFromType(
+                                  pokemon.types[0].type.name
+                                ),
+                                width: "100%",
+                                height: 40,
+                                flexDirection: "row",
+                                borderBottomEndRadius: showAreaEnconters ? 0 : 10,
+                                borderBottomStartRadius: showAreaEnconters ? 0 : 10,
+                                padding: 5,
+                                marginBottom: -3,
+                              }}
+                            >
+                              <Icon
+                                name={showAreaEnconters ? "arrow-down" : "arrow-right"}
+                                color={"#fff"}
+                                size={25}
+                              />
+                              <PokeText
+                                color="#fff"
+                                type="card-text-big"
+                                text=" Enconters"
+                              />
+                            </View>
+                            <View
+                              style={{ 
+                                display: showAreaEnconters ? "flex" : "none", 
+                                borderBottomStartRadius: 5,
+                                borderBottomEndRadius: 5,
+                                backgroundColor: commonService.getLighterColorFromType(pokemon.types[0].type.name)
+                              }}
+                            >
+                              {areaEnconters?.map((a, i) => (
+                                <View style={{margin: 5}} key={`view_enconters_name_${a}_${i}`}>
+                                  <PokeText
+                                    key={`enconters${a}_${i}`}
+                                    color="#fff"
+                                    type="card-text"
+                                    text={`${a.toUpperCase().replace('-', ' ').replace('-', ' ').replace('-', ' ')}`}
+                                  />
+                                </View>
+                              ))}
+                            </View>
+                          </>
+                        }
+                      />
+                    </>
+                  )}
+                </Wrap>
+              </Flex>
+
             </Flex>
+
+
+
           </ScrollView>
         </Box>
       ) : (

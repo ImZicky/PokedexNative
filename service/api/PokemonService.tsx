@@ -1,22 +1,23 @@
-import { Gender, Pokemon, PokemonAbility, PokemonClient } from "pokenode-ts";
+import { Gender, LocationAreaEncounter, Pokemon, PokemonAbility, PokemonClient, PokemonEncounter } from "pokenode-ts";
 import { useCommonService } from "../common/CommonService";
 import { PokemonForBattle, PokemonForBattleSkills } from "./types/PokemonForBattle";
+import { apiPokemon } from "../common/Api";
 
 const pokemonService = usePokemonService();
 
 export function usePokemonService() {
-  const api = new PokemonClient();
+  const apiPokemonLib = new PokemonClient();
   const commonService = useCommonService();
 
   return {
     getRamdomPokemon: async () => {
       const ramdomId = commonService.getRandomInt(1010);
-      const result = await api.getPokemonById(ramdomId);
+      const result = await apiPokemonLib.getPokemonById(ramdomId);
       if (result === undefined) throw new Error("something went wrong");
       return result;
     },
     getPokemonById: async (id: number) => {
-      const result = await api.getPokemonById(id);
+      const result = await apiPokemonLib.getPokemonById(id);
       if (result === undefined) throw new Error("something went wrong");
       return result;
     },
@@ -34,7 +35,7 @@ export function usePokemonService() {
 
       for (let id = initialPokemonId; id < finalPokemonId; id++) {
         if (id <= 1010) {
-          const result = await api.getPokemonById(id);
+          const result = await apiPokemonLib.getPokemonById(id);
           if (result === undefined) throw new Error("something went wrong");
           else pokemonList.push(result);
         }
@@ -71,7 +72,7 @@ export function usePokemonService() {
     },
 
     getAbilityDescription: async (name: string) => {
-      const ability = await api.getAbilityByName(name);
+      const ability = await apiPokemonLib.getAbilityByName(name);
       return ability.effect_entries.find((x) => x.language.name === "en")
         ?.short_effect;
     },
@@ -117,6 +118,14 @@ export function usePokemonService() {
           pokeball: undefined
         }
       return pokemonForBattle;
+    },
+    getAreaEnconters: async (pokemonId : number) : Promise<string[]> => {
+      const result = await apiPokemon.get(`pokemon/${pokemonId}/encounters`)
+      if(result !== undefined){
+        const enconters : LocationAreaEncounter[] = result.data;
+        return enconters.map(x => x.location_area.name);
+      }
+      return ["Not a single place"];
     }
   };
 }

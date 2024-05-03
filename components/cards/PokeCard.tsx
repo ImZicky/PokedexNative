@@ -7,12 +7,14 @@ import { useCommonService } from "../../service/common/CommonService";
 import PokeButton from "../buttons/PokeButton";
 import { useNavigation } from "@react-navigation/native";
 import { PokemonForBattle } from "../../service/api/types/PokemonForBattle";
+import { MusicName } from "../../service/api/types/Music";
 
 export type PokeCardProps = {
   pokemon: Pokemon;
   navigation: any;
   userPokemonIds?: number[];
   userPokemons: PokemonForBattle[];
+  playSoundDefault: (name: MusicName) => void;
 };
 
 function PokeCard(props: PokeCardProps) {
@@ -36,6 +38,7 @@ function PokeCard(props: PokeCardProps) {
 
   //Navigation
   const goToPokemonDetails = () => {
+    props.playSoundDefault('pokedex');
     props.navigation.navigate("PokePerfil", { pokemon: props.pokemon });
   };
 

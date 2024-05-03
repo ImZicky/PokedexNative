@@ -3,6 +3,7 @@ import { PokemonSprites } from "pokenode-ts";
 import { DeviceEventEmitter } from "react-native";
 
 export function useCommonService() {
+
   return {
     getRandomInt: (max: number) => {
       return Math.floor(Math.random() * max);
@@ -146,8 +147,8 @@ export function useCommonService() {
     handleInactivateNavigatorBar: (value: boolean) => {
       DeviceEventEmitter.emit("event.handleActivateNavigatorBar", value);
     },
-    stringToCapitalLetters: (text: string) => {
+    stringToCapitalLetters: (text: string) =>  {
       return `${text[0].toUpperCase()}${text.substring(1, text.length)}`
-    }
+    },
   };
 }

@@ -119,6 +119,7 @@ export default function PokeList(cProps: PokeListProps) {
                 <Wrap>
                   {pokemonList.map((pokemon) => (
                     <PokeCard
+                      playSoundDefault={cProps.playSoundDefault}
                       userPokemons={cProps.userPokemons}
                       userPokemonIds={cProps.userPokemonIds}
                       navigation={cProps.navigation}
