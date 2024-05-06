@@ -64,7 +64,7 @@ function PokemonFirstChoice(props: PokemonFirstChoiceProps) {
   ) => {
     if (pokemonApi) {
       pokemonService
-        .getPokemonForBattle(pokemonApi, 10, nickname ?? "", true)
+        .getPokemonForBattle(pokemonApi, props.trainer.level, nickname ?? "", true)
         .then((pokeForBattle) => {
           setOpenChoosePokemonModal(false);
           props.trainer.pokemons.push(pokeForBattle);

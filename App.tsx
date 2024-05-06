@@ -79,7 +79,8 @@ export default function App() {
       name: 'Lucas',
       pokemons: [],
       items:[],
-      money: 0
+      money: 0,
+      level: 1
     })
   };
 
@@ -108,7 +109,8 @@ export default function App() {
       skills: pokemon.skills,
       sprites: pokemon.sprites,
       type: pokemon.type,
-      pokeball: chosenPokeball
+      pokeball: chosenPokeball,
+      shiny : pokemon.shiny
     });
 
     setUserPokemonTrainer((prevState) => {

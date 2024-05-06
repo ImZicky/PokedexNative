@@ -84,13 +84,13 @@ export function usePokemonService() {
       const nr = parseInt(`${playersPokemonLevel - (Math.random() * 5)}`);
       return nr > 3 ? nr : 3;
     },  
-    getPokemonSkills: (abilities: PokemonAbility[], moves: PokemonMove[] ) : PokemonForBattleSkills[] => {
+    getPokemonSkills: (abilities: PokemonAbility[], moves: PokemonMove[], level: number ) : PokemonForBattleSkills[] => {
       let pokemonSkillList : PokemonForBattleSkills[] = [];
 
       abilities.forEach((a) => {
-        let ppTotal = parseInt(`${Math.random() * 30}`);
+        let ppTotal = parseInt(`${Math.random() * level}`);
         if (ppTotal <= 7) ppTotal = 8; 
-        const pDamage = parseInt(`${Math.random() * 20}`);
+        const pDamage = parseInt(`${Math.random() * level}`);
         const pokemonSkill : PokemonForBattleSkills = {
           name: a.ability.name,
           damage: pDamage < 10 ? 10 : pDamage,
@@ -135,7 +135,7 @@ export function usePokemonService() {
           levelXp: (pokemonLevel * 100),
           name: pokemonApi.name,
           type: pokemonApi.types,
-          skills: pokemonService.getPokemonSkills(pokemonApi.abilities, pokemonApi.moves),
+          skills: pokemonService.getPokemonSkills(pokemonApi.abilities, pokemonApi.moves, pokemonLevel),
           nickname: nickname ?? '',
           sprites: pokemonApi.sprites,
           pokeball: undefined,
