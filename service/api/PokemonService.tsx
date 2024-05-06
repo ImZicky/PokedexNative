@@ -1,4 +1,4 @@
-import { Gender, LocationAreaEncounter, Pokemon, PokemonAbility, PokemonClient, PokemonEncounter } from "pokenode-ts";
+import { Gender, LocationAreaEncounter, Pokemon, PokemonAbility, PokemonClient, PokemonEncounter, PokemonMove } from "pokenode-ts";
 import { useCommonService } from "../common/CommonService";
 import { PokemonForBattle, PokemonForBattleSkills } from "./types/PokemonForBattle";
 import { apiPokemon } from "../common/Api";
@@ -81,11 +81,11 @@ export function usePokemonService() {
       if(shouldBeHigher) {
         return parseInt(`${playersPokemonLevel + (Math.random() * 5)}`)
       }
-      return parseInt(`${playersPokemonLevel - (Math.random() * 5)}`)
+      const nr = parseInt(`${playersPokemonLevel - (Math.random() * 5)}`);
+      return nr > 3 ? nr : 3;
     },  
-    getPokemonSkills: (abilities: PokemonAbility[]) : PokemonForBattleSkills[] => {
+    getPokemonSkills: (abilities: PokemonAbility[], moves: PokemonMove[] ) : PokemonForBattleSkills[] => {
       let pokemonSkillList : PokemonForBattleSkills[] = [];
-
 
       abilities.forEach((a) => {
         let ppTotal = parseInt(`${Math.random() * 30}`);
@@ -99,9 +99,32 @@ export function usePokemonService() {
         }
         pokemonSkillList.push(pokemonSkill)
       })  
+
+      const remaining = 4 - pokemonSkillList.length;
+
+      for(let i = 0; i < remaining; i++){
+        let ppTotal = parseInt(`${Math.random() * 30}`);
+        if (ppTotal <= 7) ppTotal = 8; 
+        const pDamage = parseInt(`${Math.random() * 20}`);
+
+        const rand = parseInt(`${Math.random() * moves.length}`);
+        const randomMove = moves[rand];
+
+        const pokemonSkill : PokemonForBattleSkills = {
+          name: randomMove.move.name,
+          damage: pDamage < 10 ? 10 : pDamage,
+          ppNow: ppTotal,
+          ppTotal: ppTotal
+        }
+        pokemonSkillList.push(pokemonSkill)
+      }
+
       return pokemonSkillList;
     },
-    getPokemonForBattle : async (pokemonApi: Pokemon, playersPokemonLevel: number, nickname: string | undefined) => {
+    getIsShiny : () : boolean => {    
+      return parseInt(`${Math.random() * 100}`) > 75;
+    },
+    getPokemonForBattle : async (pokemonApi: Pokemon, playersPokemonLevel: number, nickname: string | undefined, forceShiny ?: boolean ) => {
       const pokemonLevel = pokemonService.getRamdomLevelBasedOnPlayer(playersPokemonLevel);
 
       const pokemonForBattle : PokemonForBattle = {
@@ -112,10 +135,11 @@ export function usePokemonService() {
           levelXp: (pokemonLevel * 100),
           name: pokemonApi.name,
           type: pokemonApi.types,
-          skills: pokemonService.getPokemonSkills(pokemonApi.abilities),
+          skills: pokemonService.getPokemonSkills(pokemonApi.abilities, pokemonApi.moves),
           nickname: nickname ?? '',
           sprites: pokemonApi.sprites,
-          pokeball: undefined
+          pokeball: undefined,
+          shiny: forceShiny ?? pokemonService.getIsShiny() 
         }
       return pokemonForBattle;
     },

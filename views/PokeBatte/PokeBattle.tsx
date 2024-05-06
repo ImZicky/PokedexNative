@@ -37,7 +37,6 @@ function PokeBattle(props: PokeBattleProps) {
   const [wasAttacked, setWasAttacked] = useState<boolean>(false);
   const [pokemonFightingIndex, setPokemonFightingIndex] = useState<number>(0);
   const [gameOver, setGameOver] = useState<boolean>(false);
-  const playersPokemonLevel = 10; // TODO: TRAZER DO PLAYER MESMO
   const [chosenPokeball, setChosenPokeball] = useState<PokeballTypeEnum>("Pokeball");
   const [healPokemonText, setHealPokemonText] = useState<string>("Heal Pokemons");
 
@@ -244,7 +243,7 @@ function PokeBattle(props: PokeBattleProps) {
       handleStartBattleAnimation('start');
       setLoading(true);
       pokemonService.getRamdomPokemon().then((pokemonApi: Pokemon) => {
-          pokemonService.getPokemonForBattle(pokemonApi, playersPokemonLevel, undefined).then(pokeEnemy => {
+          pokemonService.getPokemonForBattle(pokemonApi, props.userPokemonTrainer.level, undefined).then(pokeEnemy => {
             setPokemonEnemy(pokeEnemy);
           });
           setPokemonEnemyType((pokemonApi?.types[0].type.name ?? "grass"));          
@@ -285,7 +284,7 @@ function PokeBattle(props: PokeBattleProps) {
     pokemonService
       .getRamdomPokemon()
       .then((pokemonApi: Pokemon) => {
-        pokemonService.getPokemonForBattle(pokemonApi, playersPokemonLevel, undefined).then(pokeEnemy => {
+        pokemonService.getPokemonForBattle(pokemonApi, props.userPokemonTrainer.level, undefined).then(pokeEnemy => {
           setPokemonEnemy(pokeEnemy);          
           playSoundBackground();
           setTimeout(() => {
@@ -308,12 +307,13 @@ function PokeBattle(props: PokeBattleProps) {
   }
 
   const handleAttack = (skill: PokemonForBattleSkills) => {
-    if(props.userPokemonTrainer.pokemons[pokemonFightingIndex].hp > 0){
+    if(props.userPokemonTrainer.pokemons[pokemonFightingIndex].hp > 0){      
       setOpenPokemonAttackModal(false);
+      
       if(attacked) setAttacked(false);
-
       let tempHp = pokemonEnemy.hp;
       let tempHpTotal = pokemonEnemy.hpTotal;
+    
       if(tempHp){
         setAttacked(true);
         const damagePlus = parseInt(`${Math.random() * 5}`);
@@ -324,22 +324,30 @@ function PokeBattle(props: PokeBattleProps) {
         if(totalDamage >= 19 && damagePlus !== 0) {
           tempHp = (tempHp - totalDamage);
           setPokemonAttackInfoModalMessage(`${props.userPokemonTrainer.pokemons[pokemonFightingIndex].name} used ${skill.name} and got a critical hit!`);
-          setOpenPokemonAttackInfoModal(true);
           skill.ppNow = skill.ppNow - 1;
           playAttackPokemon();
+          handleAnimateAttack()
+          setTimeout(()=> {
+            setOpenPokemonAttackInfoModal(true);
+          }, 2000);  
         }
         if(damagePlus === 0) {
           setPokemonAttackInfoModalMessage(`${props.userPokemonTrainer.pokemons[pokemonFightingIndex].name} used ${skill.name} and missed the attack!`);
-          setOpenPokemonAttackInfoModal(true);
           skill.ppNow = skill.ppNow - 1;
           playDodgePokemon();
+          setTimeout(()=> {
+            setOpenPokemonAttackInfoModal(true);
+          }, 1000);  
         }
         if(totalDamage > 0 && totalDamage < 19 && damagePlus !== 0) {
           tempHp = (tempHp - totalDamage);
           setPokemonAttackInfoModalMessage(`${props.userPokemonTrainer.pokemons[pokemonFightingIndex].name} used ${skill.name} and sucessfully attacked!`);
-          setOpenPokemonAttackInfoModal(true);
           skill.ppNow = skill.ppNow - 1;
           playAttackPokemon();
+          handleAnimateAttack()
+          setTimeout(()=> {
+            setOpenPokemonAttackInfoModal(true);
+          }, 2000);  
         }
 
         enemyHp.value = tempHp;
@@ -365,6 +373,7 @@ function PokeBattle(props: PokeBattleProps) {
       const skill = pokemonEnemy.skills[chosenSkill];
 
       let temp = props.userPokemonTrainer.pokemons[pokemonFightingIndex];
+
       if(temp){
         setWasAttacked(true);
         const damagePlus = parseInt(`${Math.random() * 5}`);
@@ -376,21 +385,30 @@ function PokeBattle(props: PokeBattleProps) {
           temp.hp = temp.hp - totalDamage;
           setPokemonAttackedInfoModalMessage(`${pokemonEnemy.name} used ${skill.name} and got a critical hit!`);
           playAttackPokemon();
+          handleAnimateAttacked();
+          setTimeout(()=> {
+            setOpenPokemonAttackedInfoModal(true);
+          }, 2000);
         }
         if(damagePlus === 0) {
           setPokemonAttackedInfoModalMessage(`${pokemonEnemy.name} used ${skill.name} and missed the attack!`);
           playDodgePokemon();
+          setTimeout(()=> {
+            setOpenPokemonAttackedInfoModal(true);
+          }, 1000);
         }
         if(totalDamage > 0 && totalDamage < 19 && damagePlus !== 0) {
           temp.hp = temp.hp - totalDamage;
           setPokemonAttackedInfoModalMessage(`${pokemonEnemy.name} used ${skill.name} and sucessfully attacked!`);
           playAttackPokemon();
+          handleAnimateAttacked();
+          setTimeout(()=> {
+            setOpenPokemonAttackedInfoModal(true);
+          }, 2000); 
         }
 
         temp.hp = temp.hp <= 0 ? 0 : temp.hp;
         handleSetPlayerPokemon(temp);
-
-        setOpenPokemonAttackedInfoModal(true);
 
         if(temp.hp === 0) {
           let canFight = false;
@@ -562,8 +580,6 @@ function PokeBattle(props: PokeBattleProps) {
   const pokeballWidth = useSharedValue(80)
   const pokeballHeight = useSharedValue(80)
   const pokeballRotate = useSharedValue(0)
-  const pokemonEnemyOpacity = useSharedValue(1);
-  const pokemonOpacity = useSharedValue(1);
   const battleStartDivTop = useSharedValue(0);
   const battleStartDivBottom = useSharedValue(0);
   const battleStartPokemonDivLeft = useSharedValue(-120);
@@ -571,6 +587,29 @@ function PokeBattle(props: PokeBattleProps) {
   let enemyHp = useSharedValue(0);
   let enemyHpTotal = useSharedValue(0);
   let chosenPokeballValue = useSharedValue('Pokeball');
+
+  const pokemonLeft = useSharedValue(0);
+  const pokemonEnemyOpacity = useSharedValue(1);
+
+  const pokemonEnemyLeft = useSharedValue(0);
+  const pokemonOpacity = useSharedValue(1);
+
+
+  // Attack Move
+  const handleAnimateAttack = () => {
+    //Move closer and come back
+    pokemonLeft.value = withRepeat(withTiming(100, { duration: 500 }), 2, true);
+    //Double Blink
+    pokemonEnemyOpacity.value = withRepeat(withTiming(0, { duration: 500 }), 4, true);
+  }
+
+  // Attacked Move
+  const handleAnimateAttacked = () => {
+    //Move closer and come back
+    pokemonEnemyLeft.value = withRepeat(withTiming(-100, { duration: 500 }), 2, true);
+    //Double Blink
+    pokemonOpacity.value = withRepeat(withTiming(0, { duration: 500 }), 4, true);
+  }
 
 
   const calculateIfCaptured = useWorkletCallback((hp: number, hpTotal: number, chosenPokeball: string) => {
@@ -768,6 +807,19 @@ function PokeBattle(props: PokeBattleProps) {
     };
   });
 
+  const animationPokemonAttackStyle = useAnimatedStyle(() => {
+    return {
+      left: pokemonLeft.value,
+      opacity: pokemonOpacity.value,
+    };
+  });
+
+  const animationPokemonAttackedStyle = useAnimatedStyle(() => {
+    return {
+      left: pokemonEnemyLeft.value,
+      opacity: pokemonEnemyOpacity.value,
+    };
+  });
 
 
 
@@ -914,7 +966,7 @@ function PokeBattle(props: PokeBattleProps) {
       opacity: 1,
       width: "110%", 
       height: "100%", 
-      display: "flex"
+      position: "absolute"
     },
     enemyImageDiv: {
       position: "absolute", 
@@ -1107,10 +1159,10 @@ function PokeBattle(props: PokeBattleProps) {
                         style={[styles.enemyImageDiv, reanimationPokemonEnemyStyle]}
                       >
                       <Image
-                        style={[styles.enemyImage]}
+                        style={[styles.enemyImage, animationPokemonAttackedStyle]}
                         source={{
                           uri: `${commonService.getPokemonMainImageFrontForBattle(
-                            pokemonEnemy?.sprites
+                            pokemonEnemy?.sprites, pokemonEnemy.shiny
                           )}`,
                         }}
                       />
@@ -1232,11 +1284,12 @@ function PokeBattle(props: PokeBattleProps) {
                   <Animated.View 
                     style={[styles.playerImageDiv, reanimationPokemonStyle]}
                   >
-                    <Image
-                      style={[styles.playerImage]}
+                    <Animated.Image
+                      style={[styles.playerImage, animationPokemonAttackStyle]}
                       source={{
                         uri: `${commonService.getPokemonMainImageBackForBattle(
-                          props.userPokemonTrainer.pokemons[pokemonFightingIndex]?.sprites
+                          props.userPokemonTrainer.pokemons[pokemonFightingIndex]?.sprites,
+                          props.userPokemonTrainer.pokemons[pokemonFightingIndex]?.shiny,
                         )}`,
                       }}
                     />

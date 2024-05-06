@@ -27,6 +27,7 @@ export default function App() {
     name: 'Lucas', // TODO: retirar isso dps de testar
     pokemons: [],
     money: 0,
+    level: 1,
     items:[
       {
         name: 'Potion',

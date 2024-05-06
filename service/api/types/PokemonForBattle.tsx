@@ -1,6 +1,6 @@
 import { Gender, Pokemon, PokemonSpeciesGender, PokemonSprites, PokemonType } from "pokenode-ts";
 
-export type PokemonForBattle = {
+export type PokemonForBattle = {  
   id: number;
   name: string;
   nickname: string | undefined;
@@ -12,6 +12,7 @@ export type PokemonForBattle = {
   type: PokemonType[];
   sprites: PokemonSprites,
   pokeball?: PokeballTypeEnum | undefined
+  shiny: boolean;
 };
 
 

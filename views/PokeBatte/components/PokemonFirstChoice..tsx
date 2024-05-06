@@ -64,7 +64,7 @@ function PokemonFirstChoice(props: PokemonFirstChoiceProps) {
   ) => {
     if (pokemonApi) {
       pokemonService
-        .getPokemonForBattle(pokemonApi, 10, nickname ?? "")
+        .getPokemonForBattle(pokemonApi, 10, nickname ?? "", true)
         .then((pokeForBattle) => {
           setOpenChoosePokemonModal(false);
           props.trainer.pokemons.push(pokeForBattle);
@@ -171,7 +171,7 @@ function PokemonFirstChoice(props: PokemonFirstChoiceProps) {
                       <Image
                         style={styles.cardImageModal}
                         source={{
-                          uri: `${commonService.getPokemonMainImageFrontForBattle(chosenPokemon?.sprites)}`
+                          uri: `${commonService.getPokemonMainImageFrontForBattle(chosenPokemon?.sprites, true)}`
                         }}
                         />
                       <PokeTextField

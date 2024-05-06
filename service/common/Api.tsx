@@ -3,11 +3,10 @@ import axios from "axios";
 
 export const apiPokemon = axios.create({
   baseURL: 'https://pokeapi.co/api/v2/', 
-  // baseURL: process.env.POKEMON_API_BASEURL, 
 });
 
 export const apiPokedex = axios.create({
-  baseURL: process.env.POKEDEX_APP_BACKEND_API, 
+  baseURL: 'https://pokeapi.co/api/v2/', 
 });
 
 const handlerRequest = (config) => {

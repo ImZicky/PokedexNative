@@ -48,7 +48,7 @@ function PokeCardChoose(props: PokeCardProps) {
         <Image
           style={styles.cardImage}
           source={{
-            uri: `${commonService.getPokemonMainImageFrontForBattle(props.pokemon.sprites)}`,
+            uri: `${commonService.getPokemonMainImageFrontForBattle(props.pokemon.sprites, true)}`,
           }}
         />
       </Flex>

@@ -9,6 +9,7 @@ import PokeBattle from "../views/PokeBatte/PokeBattle";
 import { PokemonTrainer } from "../service/api/types/PokemonTrainer";
 import { PokeballTypeEnum, PokemonForBattle } from "../service/api/types/PokemonForBattle";
 import { MusicName } from "../service/api/types/Music";
+import { View } from "react-native";
 
 const Drawer = createDrawerNavigator();
 
@@ -83,15 +84,15 @@ export default function DrawerRoutes(cProps: DrawerRoutesProps) {
         { ...headerOptions, headerShown: !cProps.isAppLoading } as any
       }
     >
-      <Drawer.Screen
+      <Drawer.Screen      
         name="PokeList"
         options={{
           headerTitle: "POKEDEX",
           drawerIcon: ({ size }) => (
             <MaterialCommunityIcons
-              name="image-multiple-outline"
-              color={"#ed5463"}
-              size={size}
+            name="image-multiple-outline"
+            color={"#ed5463"}
+            size={size}
             />
           ),
           drawerLabel: "Pokedex",
@@ -99,16 +100,15 @@ export default function DrawerRoutes(cProps: DrawerRoutesProps) {
             color: "#ed5463",
             textTransform: "capitalize",
           },
-        }}
-
-      >
-        {(props) => <PokeList
+        }}        
+        >
+        {(props) => <PokeList          
           playSoundDefault={(name: MusicName) => cProps.playSoundDefault(name)}
           userPokemons={cProps.userPokemonTrainer.pokemons}
           userPokemonIds={cProps.userPokemonTrainer.pokemons.map(x=> x.id)}
           navigation={props.navigation} 
-        />}
-      </Drawer.Screen>
+          />}
+    </Drawer.Screen>
 
       <Drawer.Screen
         name="PokeBattle"
