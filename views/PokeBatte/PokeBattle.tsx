@@ -21,6 +21,7 @@ export type PokeBattleProps = {
   userPokemonTrainer: PokemonTrainer;
   handleSetPokemonBattling: (pokemon : PokemonForBattle, position: number) => void;
   handleCapturePokemon: (pokemon : PokemonForBattle, moneyReward: number, chosenPokeball: PokeballTypeEnum) => void;
+  handleChooseOtherPokemon: (pokemon : PokemonForBattle) => void;
   handleHealPokemon: (position : number, potionName: string) => void;
   handleUsePokeball: (pokeballName : string) => void;
   handleHealBattlingPokemons: () => void;
@@ -47,6 +48,10 @@ function PokeBattle(props: PokeBattleProps) {
   const [openPokemonAttackInfoModal, setOpenPokemonAttackInfoModal] = useState<boolean>(false);
   const [pokemonAttackInfoModalMessage, setPokemonAttackInfoModalMessage] = useState<string>("");
   const [openPokemonAttackModal, setOpenPokemonAttackModal] = useState<boolean>(false);
+
+  const [openPokemonInfoMessageModal, setOpenPokemonInfoMessageModal] = useState<boolean>(false);
+  const [pokemonModalMessage, setPokemonModalMessage] = useState<string>("");
+  const [openPokemonsModal, setOpenPokemonsModal] = useState<boolean>(false);
 
   const [openLevelUpModal, setOpenLevelUpModal] = useState<boolean>(false);
 
@@ -441,7 +446,12 @@ function PokeBattle(props: PokeBattleProps) {
     if(wasAttacked) setWasAttacked(false);
   }
 
-
+  const handleChooseOtherPokemon = (pokemon: PokemonForBattle) => {
+    props.handleChooseOtherPokemon(pokemon);
+    setOpenPokemonsModal(false);
+    setPokemonModalMessage(`${pokemon.name} was thrown!!!`);
+    setOpenPokemonInfoMessageModal(true);
+  }
 
 
   const handleIncreaseLevelXp = (value: number) => {
@@ -1360,7 +1370,7 @@ function PokeBattle(props: PokeBattleProps) {
                             text="Pokemon"
                             styleType={"invisible"}
                             // onClick={() => handlePokemonsModal()}
-                            onClick={() => alert("Not implemented yet...")}
+                            onClick={() => setOpenPokemonsModal(true)}
                           />
                         </Box>
                         <Box w={"50%"} style={{alignItems: "center"}}>
@@ -1472,11 +1482,134 @@ function PokeBattle(props: PokeBattleProps) {
                           text="Back"
                           onClick={() => setOpenPokemonAttackModal(false)}
                         />
-
                       </View>
                     </View>
                   </Modal>
 
+
+                {/* Pokemons choose info modal */}
+                <Modal
+                  animationType="slide"
+                  transparent
+                  visible={openPokemonInfoMessageModal}
+                  onRequestClose={() => {
+                    setOpenPokemonInfoMessageModal(false);
+                  }}
+                >
+                  <View style={styles.centeredViewModal}>
+                    <View style={[styles.modalViewModal, {overflow: "scroll", borderColor: "#4E6648", borderStyle: "solid", borderWidth: 5}]}>
+                      <PokeText 
+                        text={pokemonModalMessage}
+                        color={"#000000"}
+                        type={"battle-card-infos"}
+                      />
+                      <View style={{marginTop: 50}}/>
+                      <PokeButton
+                        styleType={props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name ?? ""}
+                        variant="contained"
+                        size="fullwidth"
+                        text="Close"
+                        onClick={() => {
+                          setOpenPokemonInfoMessageModal(false);
+                        }}
+                      />
+                    </View>
+                  </View>
+                </Modal>
+
+
+                {/* Pokemons choose modal */}
+                <Modal
+                  animationType="slide"
+                  transparent
+                  visible={openPokemonsModal}
+                  onRequestClose={() => {
+                    setOpenPokemonsModal(false);
+                  }}
+                >
+                  <View style={styles.centeredViewModal}>
+                    <View style={[styles.modalViewModal, {overflow: "scroll", borderColor: "#4E6648", borderStyle: "solid", borderWidth: 5}]}>
+                      {props.userPokemonTrainer.pokemons.length > 1 ? (
+                        props.userPokemonTrainer.pokemons.map((pokemon, i) => (
+                          i >= 1 && i < 5 && (
+                            <View key={`item-${i}`}>
+                              <Wrap w="100%">
+                                <Box w="20%">
+                                <Image
+                                  style={{ width: 65, height: 65, left: -20 }}
+                                  source={{
+                                    uri: `${commonService.getPokemonMainImageFrontForBattle(
+                                      pokemon?.sprites, pokemon.shiny
+                                    )}`,
+                                  }}
+                                />
+                                </Box>
+                                <Box w="70%" mb={20}>
+                                  <PokeText 
+                                    text={`${commonService.stringToCapitalLetters(pokemon.name)}`}
+                                    color={"#000000"}
+                                    type={"skill-name"}
+                                  />
+                                <PokeText 
+                                  text={`Lv: ${pokemon.level}`}
+                                  color={"#000000"}
+                                  type={"pp-text"}
+                                />
+                                </Box>
+                                <Box w="10%" pt={5}>
+                                  <PokeIconButton
+                                    isReadOnly={!(pokemon.hp > 0)}
+                                    color="#fff"
+                                    styleType={props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name ?? ""}
+                                    variant="contained"
+                                    icon="pokeball"
+                                    onClick={() => handleChooseOtherPokemon(pokemon)}
+                                  />
+                                </Box>
+                              </Wrap>
+                              <Wrap mt={-25} mb={25} left={50}>
+                              <Box radius={3} w={202} h={16} style={{backgroundColor: "#4E6648"}} >
+                                {pokemon.hp > 0 && 
+                                  <>
+                                    <View style={{position: "absolute", zIndex: 200, bottom: 0, left: 2}}>
+                                      <PokeText
+                                        color={pokemon.hp > 25 ? "#4E6648" : "#000000"}
+                                        text={`${pokemon.hp}/${pokemon.hpTotal}`}
+                                        type={"battle-enemy-card-level"}
+                                        />
+                                    </View>
+                                    <Box borderStyle="solid" borderColor={"#4E6648"} border={1} radius={3}                                       
+                                      w={attacked ? Math.ceil((pokemon.hp * 200) / pokemon.hpTotal) : Math.ceil((pokemon.hp * 200) / pokemon.hpTotal) } 
+                                      h={15}
+                                      style={{backgroundColor: getHpBackgroundColor(pokemon.hp, pokemon.hpTotal)}}
+                                      />
+                                  </>
+                                }
+                              </Box>
+                            </Wrap>
+                          </View>                          
+                          )
+                        ))
+                      ):(
+                        <View style={{marginBottom: 50}}>
+                          <PokeText 
+                            text={`You have no Pokemons to choose`}
+                            color={"#000000"}
+                            type={"skill-name"}
+                            />
+                          </View>
+                      )
+                      }
+                        <PokeButton
+                          styleType={props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name ?? ""}
+                          variant="contained"
+                          size="fullwidth"
+                          text="Back"
+                          onClick={() => setOpenPokemonsModal(false)}
+                          />
+                      </View>
+                    </View>
+                  </Modal>
 
 
                 {/* Pokemon bag modal */}

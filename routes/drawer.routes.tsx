@@ -23,6 +23,7 @@ export type DrawerRoutesProps = {
   handleSetPokemonBattling: (pokemon: PokemonForBattle, position: number) => void;
   handleHealPokemon: (position : number, potionName: string) => void;
   handleCapturePokemon: (pokemon: PokemonForBattle, moneyReward: number, chosenPokeball: PokeballTypeEnum) => void;
+  handleChooseOtherPokemon: (pokemon: PokemonForBattle) => void;
 };
 
 export type CustomDrawerContentProps = {
@@ -133,6 +134,7 @@ export default function DrawerRoutes(cProps: DrawerRoutesProps) {
             playSoundDefault={(name: MusicName) => cProps.playSoundDefault(name)}
             handleHealBattlingPokemons={() => cProps.handleHealBattlingPokemons()}
             handleCapturePokemon={(pokemon: PokemonForBattle, moneyReward: number, chosenPokeball: PokeballTypeEnum) => cProps.handleCapturePokemon(pokemon, moneyReward, chosenPokeball)} 
+            handleChooseOtherPokemon={(pokemon: PokemonForBattle) => cProps.handleChooseOtherPokemon(pokemon)} 
             handleUsePokeball={(pokeballName: string) => cProps.handleUsePokeball(pokeballName)} 
             handleHealPokemon={(position: number, potionName: string) => cProps.handleHealPokemon(position, potionName)} 
             handleSetPokemonBattling={(pokemon: PokemonForBattle, position: number) => cProps.handleSetPokemonBattling(pokemon, position)} 

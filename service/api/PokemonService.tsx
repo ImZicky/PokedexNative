@@ -83,7 +83,7 @@ export function usePokemonService() {
       }
       const nr = parseInt(`${playersPokemonLevel - (Math.random() * 5)}`);
       return nr > 3 ? nr : 3;
-    },  
+    },
     getPokemonSkills: (abilities: PokemonAbility[], moves: PokemonMove[], level: number ) : PokemonForBattleSkills[] => {
       let pokemonSkillList : PokemonForBattleSkills[] = [];
 

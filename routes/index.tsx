@@ -15,6 +15,7 @@ export type RoutesProps = {
   handleSetPokemonBattling: (pokemon: PokemonForBattle, position: number) => void;
   handleHealPokemon: (position: number, potionName: string) => void;  
   handleCapturePokemon: (pokemon: PokemonForBattle, moneyReward: number, chosenPokeball: PokeballTypeEnum) => void;
+  handleChooseOtherPokemon: (pokemon: PokemonForBattle) => void;
   isAppLoading: boolean;
   userPokemonTrainer: PokemonTrainer
 };
@@ -26,6 +27,7 @@ export default function Routes(props: RoutesProps) {
         playSoundDefault={(name: MusicName) => props.playSoundDefault(name)}
         handleHealBattlingPokemons={() => props.handleHealBattlingPokemons()}
         handleCapturePokemon={(pokemon: PokemonForBattle, moneyReward: number, chosenPokeball: PokeballTypeEnum) => props.handleCapturePokemon(pokemon, moneyReward, chosenPokeball)} 
+        handleChooseOtherPokemon={(pokemon: PokemonForBattle) => props.handleChooseOtherPokemon(pokemon)} 
         handleHealPokemon={(position: number, potionName: string) => props.handleHealPokemon(position, potionName)} 
         handleUsePokeball={(pokeballName: string) => props.handleUsePokeball(pokeballName)}
         handleSetPokemonBattling={(pokemon: PokemonForBattle, position: number) => props.handleSetPokemonBattling(pokemon, position)} 

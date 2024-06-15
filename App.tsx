@@ -122,6 +122,20 @@ export default function App() {
     });
   };
 
+  const handleChooseOtherPokemon = (pokemon: PokemonForBattle) => {
+    let temp = userPokemonTrainer.pokemons;
+    
+    temp.splice(userPokemonTrainer.pokemons.findIndex(item => item === pokemon), 1)
+    temp.unshift(pokemon);
+
+    setUserPokemonTrainer((prevState) => {
+      return {
+        ...prevState,
+        pokemons: temp,
+      };
+    });
+  };
+
   const handleHealBattlingPokemons = () => {
     let temp = userPokemonTrainer.pokemons;
 
@@ -245,6 +259,7 @@ export default function App() {
               handleUsePokeball={(pokeballName: string) => handleUsePokeball(pokeballName)}
               handleHealPokemon={(position: number, potionName: string) => handleHealPokemon(position, potionName)}
               handleCapturePokemon={(pokemon : PokemonForBattle, moneyReward: number, chosenPokeball: PokeballTypeEnum) => handleCapturePokemon(pokemon, moneyReward, chosenPokeball)}
+              handleChooseOtherPokemon={(pokemon : PokemonForBattle) => handleChooseOtherPokemon(pokemon)}
               handleSetPokemonBattling={(pokemon : PokemonForBattle, position : number) => handleSetPokemonBattling(pokemon, position)}
               handlerUser={(userLogin: UserCredentials) => handlerUser(userLogin)}
               userPokemonTrainer={userPokemonTrainer}
@@ -261,6 +276,7 @@ export default function App() {
                 handleUsePokeball={(pokeballName: string) => handleUsePokeball(pokeballName)}
                 handleHealPokemon={(position: number, potionName: string) => handleHealPokemon(position, potionName)}
                 handleCapturePokemon={(pokemon : PokemonForBattle, moneyReward: number, chosenPokeball: PokeballTypeEnum) => handleCapturePokemon(pokemon, moneyReward, chosenPokeball)}
+                handleChooseOtherPokemon={(pokemon : PokemonForBattle) => handleChooseOtherPokemon(pokemon)}
                 handleSetPokemonBattling={(pokemon : PokemonForBattle, position : number) => handleSetPokemonBattling(pokemon, position)}
                 handlerUser={() => handlerUser} 
                 userPokemonTrainer={userPokemonTrainer} 
