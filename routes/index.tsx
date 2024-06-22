@@ -16,6 +16,8 @@ export type RoutesProps = {
   handleHealPokemon: (position: number, potionName: string) => void;
   handleCapturePokemon: (pokemon: PokemonForBattle, moneyReward: number, chosenPokeball: PokeballTypeEnum) => void;
   handleChooseOtherPokemon: (pokemon: PokemonForBattle) => void;
+  setIsBattling: (value: boolean) => void;
+  isBattling: boolean;
   isAppLoading: boolean;
   userPokemonTrainer: PokemonTrainer
 };
@@ -24,6 +26,8 @@ export default function Routes(props: RoutesProps) {
   return (
     <NavigationContainer>
       <DrawerRoutes
+        isBattling={props.isBattling}
+        setIsBattling={props.setIsBattling}
         playSoundDefault={(name: MusicName) => props.playSoundDefault(name)}
         handleHealBattlingPokemons={() => props.handleHealBattlingPokemons()}
         handleCapturePokemon={(pokemon: PokemonForBattle, moneyReward: number, chosenPokeball: PokeballTypeEnum) => props.handleCapturePokemon(pokemon, moneyReward, chosenPokeball)} 

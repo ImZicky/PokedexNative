@@ -17,6 +17,7 @@ export type PokeCardManagementProps = {
   items: PokemonTrainerItem[];
   navigation: any;
   index: number;
+  isBattling: boolean;
   handleHealPokemon: (position : number, potionName: string) => void;
   handleSetToBattlePokemon: (pokemon : PokemonForBattle) => void;
   playSoundDefault: (name: MusicName) => void;
@@ -25,6 +26,7 @@ export type PokeCardManagementProps = {
 function PokeCardManagement(props: PokeCardManagementProps) {
   // PROPS
   const [openBagModal, setOpenBagModal] = useState<boolean>(false);
+  const [openWarnStoppingBatlingFirstModal, setOpenWarnStoppingBatlingFirstModal] = useState<boolean>(false);
 
   //Services
   const commonService = useCommonService();
@@ -299,7 +301,7 @@ function PokeCardManagement(props: PokeCardManagementProps) {
 
             <View style={{marginTop: 10, marginBottom: 10}}>
               <PokeButton
-                onClick={() => handleInsertIntoBattleModal(props.pokemon)}
+                onClick={() => props.isBattling ? setOpenWarnStoppingBatlingFirstModal(true) : handleInsertIntoBattleModal(props.pokemon)}
                 text="to battle"
                 variant="contained"
                 size="small"
@@ -378,6 +380,38 @@ function PokeCardManagement(props: PokeCardManagementProps) {
                   text="Back"
                   color="white"
                   onClick={() => setOpenBagModal(false)}
+                />
+              </View>
+            </View>
+          </Modal>
+
+
+          {/* Pokemons choose info modal */}
+          <Modal
+            animationType="slide"
+            transparent
+            visible={openWarnStoppingBatlingFirstModal}
+            onRequestClose={() => {
+              setOpenWarnStoppingBatlingFirstModal(false);
+            }}
+          >
+            <View style={styles.centeredViewModal}>
+              <View style={[styles.modalViewModal, {overflow: "scroll", borderColor: "#4E6648", borderStyle: "solid", borderWidth: 5}]}>
+                <PokeText 
+                  text={"First stop battling by running back home"}
+                  color={"#000000"}
+                  type={"battle-card-infos"}
+                />
+                <View style={{marginTop: 50}}/>
+                <PokeButton
+                  styleType={props.pokemon.type[0].type.name ?? ""}
+                  variant="contained"
+                  size="medium"
+                  color="white"
+                  text="OK"
+                  onClick={() => {
+                    setOpenWarnStoppingBatlingFirstModal(false);                         
+                  }}
                 />
               </View>
             </View>

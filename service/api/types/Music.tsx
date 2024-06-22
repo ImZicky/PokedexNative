@@ -1,4 +1,4 @@
 
 
 
-export type MusicName = "battle" | "chooseFirstPokemon" | "pokedex" | "turnOff";
+export type MusicName = "battle" | "chooseFirstPokemon" | "pokedex" | "turnOff" | "lavender";

@@ -19,6 +19,8 @@ import PokeIconButton from "../../components/buttons/PokeIconButton";
 export type PokeBattleProps = {
   navigation: any;
   userPokemonTrainer: PokemonTrainer;
+  isBattling: boolean;
+  setIsBattling: (value: boolean) => void;  
   handleSetPokemonBattling: (pokemon : PokemonForBattle, position: number) => void;
   handleCapturePokemon: (pokemon : PokemonForBattle, moneyReward: number, chosenPokeball: PokeballTypeEnum) => void;
   handleChooseOtherPokemon: (pokemon : PokemonForBattle) => void;
@@ -65,6 +67,8 @@ function PokeBattle(props: PokeBattleProps) {
 
   const [openModalGameOver, setOpenModalGameOver] = useState<boolean>(false);
 
+  const [openRunModal, setOpenRunModal] = useState<boolean>(false);
+
   //Services
   const pokemonService = usePokemonService();
   const commonService = useCommonService();
@@ -84,6 +88,10 @@ function PokeBattle(props: PokeBattleProps) {
 
   const playSoundBackground = async () => {
     props.playSoundDefault('battle');
+  }
+
+  const playSoundLavender = async () => {
+    props.playSoundDefault('lavender');
   }
 
   const stopSoundBackground = async () => {
@@ -226,6 +234,7 @@ function PokeBattle(props: PokeBattleProps) {
     : undefined;
   }, [soundCapturePokemon]);
 
+
   useEffect(() => {
     if(openPokemonCaughtModal) {      
       props.playSoundDefault("turnOff")
@@ -235,12 +244,9 @@ function PokeBattle(props: PokeBattleProps) {
 
 
 
-
   useEffect(() => {
     if(haveAPokemonForBattle) playSoundBackground();
   }, [haveAPokemonForBattle]);
-
-
 
   //UseEffect
   useEffect(() => {
@@ -281,6 +287,7 @@ function PokeBattle(props: PokeBattleProps) {
   }
 
   const handleRunAway = () => {
+    props.setIsBattling(true);
     props.playSoundDefault("turnOff");
     pokemonEnemyOpacity.value = withTiming(1, { duration: 1000 });
     pokemonOpacity.value = withTiming(1, { duration: 1000 });
@@ -544,6 +551,16 @@ function PokeBattle(props: PokeBattleProps) {
       setGameOver(false);
       setHealPokemonText("Heal Pokemons")
     }, 5000);
+  }
+
+  const handleRunModal = (value: boolean, wish: "Battle" | "Home") => {
+    if(wish === "Battle") 
+      handleRunAway();
+    else 
+      props.setIsBattling(false);
+
+    playSoundLavender();
+    setOpenRunModal(value);
   }
 
   const getHpWidth = (hp: number, hpTotal : number) => {
@@ -1067,7 +1084,7 @@ function PokeBattle(props: PokeBattleProps) {
           />
         ):(
           <>
-            {!gameOver ? (
+            {!gameOver && props.isBattling ? (
               <ImageBackground source={
                   pokemonEnemyType === 'grass' ? require(`../../assets/images/battlefields/grass.gif`) :
                   pokemonEnemyType === 'rock' ? require(`../../assets/images/battlefields/rock.gif`) :
@@ -1371,7 +1388,7 @@ function PokeBattle(props: PokeBattleProps) {
                             color={"menuGreen"}
                             text="Run" 
                             styleType={"invisible"}
-                            onClick={() => handleRunAway()}
+                            onClick={() => setOpenRunModal(true)}
                           />
                         </Box>
                       </Wrap>
@@ -1685,8 +1702,6 @@ function PokeBattle(props: PokeBattleProps) {
                   </Modal>
 
 
-
-
                 {/* Pokemon changed info modal */}
                 <Modal
                   animationType="slide"
@@ -1717,6 +1732,7 @@ function PokeBattle(props: PokeBattleProps) {
                       </View>
                     </View>
                   </Modal>
+
 
                 {/* Pokemon gameover info modal */}
                 <Modal
@@ -1785,7 +1801,6 @@ function PokeBattle(props: PokeBattleProps) {
                   </Modal>
 
 
-
                 {/* Pokemon attack info modal */}
                 <Modal
                   animationType="slide"
@@ -1819,7 +1834,6 @@ function PokeBattle(props: PokeBattleProps) {
                   </Modal>
 
 
-
                 {/* Pokemon didtn't caught modal */}
                 <Modal
                   animationType="slide"
@@ -1849,6 +1863,7 @@ function PokeBattle(props: PokeBattleProps) {
                   </View>
                 </Modal>
 
+
                 {/* Pokemon caught modal */}
                 <Modal
                   animationType="slide"
@@ -1861,8 +1876,8 @@ function PokeBattle(props: PokeBattleProps) {
                     pokemonEnemyOpacity.value = withTiming(1, { duration: 500 });
                   }}
                 >
-                <View style={styles.centeredViewModal}>
-                  <View style={[styles.modalViewModal, {overflow: "scroll", borderColor: "#4E6648", borderStyle: "solid", borderWidth: 5}]}>
+                  <View style={styles.centeredViewModal}>
+                    <View style={[styles.modalViewModal, {overflow: "scroll", borderColor: "#4E6648", borderStyle: "solid", borderWidth: 5}]}>
                       <PokeText 
                         text={`${commonService.stringToCapitalLetters(pokemonEnemy.name)} was caught !!!`}
                         color={"#000000"}
@@ -1886,8 +1901,80 @@ function PokeBattle(props: PokeBattleProps) {
                     </View>
                   </View>
                 </Modal>
+
+
+                {/* Pokemons choose info modal */}
+                <Modal
+                  animationType="slide"
+                  transparent
+                  visible={openRunModal}
+                  onRequestClose={() => {
+                    setOpenPokemonInfoMessageModal(false);
+                  }}
+                >
+                  <View style={styles.centeredViewModal}>
+                    <View style={[styles.modalViewModal, {overflow: "scroll", borderColor: "#4E6648", borderStyle: "solid", borderWidth: 5}]}>
+                      <PokeText 
+                        text={"Do you wanna go back home? or keep searching for pokemons to battle?"}
+                        color={"#000000"}
+                        type={"battle-card-infos"}
+                      />
+                      <View style={{marginTop: 50}}/>
+                      <PokeButton
+                        styleType={props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name ?? ""}
+                        variant="contained"
+                        size="medium"
+                        color="white"
+                        text="Go back to home"
+                        onClick={() => {
+                          handleRunModal(false, "Home");
+                        }}
+                      />
+                      <View style={{marginTop: 10}}/>
+                      <PokeButton
+                        styleType={props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name ?? ""}
+                        variant="contained"
+                        size="medium"
+                        color="white"
+                        text="Keep on Battling"
+                        onClick={() => {
+                          // handleRunModal(false, "Battle");                          
+                          setOpenRunModal(false);
+                        }}
+                      />
+                    </View>
+                  </View>
+                </Modal>
+
+
               </ImageBackground>
               ) : (
+                !props.isBattling ? (
+                  <ImageBackground  style={styles.image} source={require(`../../assets/images/characters/house.gif`)}>
+                  <View style={{margin: 20}}>
+                    <PokeText
+                      backgroungColor="#fff"
+                      text={`HOME`}
+                      color={"#000"}
+                      type={"gameover-title"}
+                      />
+                    <PokeText
+                      backgroungColor="#fff"
+                      text={`You're SAD as Fuck`}
+                      color={"#000"}
+                      type={"modal-text"}
+                    />
+                    <PokeButton
+                      styleType={"dark"}
+                      size="fullwidth"
+                      variant="text"
+                      color="white"
+                      text={"be Happy Catchin' 'Em All"}
+                      onClick={() => handleRunAway()}
+                    />
+                    </View>
+                  </ImageBackground>
+                ) : ( 
                 <ImageBackground  style={styles.image} source={require(`../../assets/images/battlefields/gameover.gif`)}>
                   <View style={{margin: 20}}>
                   <Image style={{width: "100%", top: -30}} source={require(`../../assets/images/characters/joy-nurse.gif`)}/>
@@ -1911,6 +1998,7 @@ function PokeBattle(props: PokeBattleProps) {
                     />
                     </View>
                   </ImageBackground>
+                )
               )}
             </>
             )}

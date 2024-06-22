@@ -16,6 +16,7 @@ import PokeCardManagement from "../../components/cards/PokeCardManagement";
 export type PokeManagementProps = {
   navigation: any;
   userPokemonTrainer: PokemonTrainer;
+  isBattling: boolean;
   handleSetToBattlePokemon: (pokemon : PokemonForBattle) => void;
   playSoundDefault: (name: MusicName) => void;
   handleHealPokemon: (position : number, potionName: string) => void;
@@ -58,7 +59,16 @@ function PokeManagement(props: PokeManagementProps) {
             <Wrap>
               {
                 props.userPokemonTrainer.pokemons.map((pokemon, i) => (
-                  <PokeCardManagement handleSetToBattlePokemon={(pokemon: PokemonForBattle) => props.handleSetToBattlePokemon(pokemon)} handleHealPokemon={(position : number, potionName: string) => props.handleHealPokemon(position, potionName)} playSoundDefault={props.playSoundDefault} pokemon={pokemon} items={props.userPokemonTrainer.items} index={i} navigation={props.navigation}/>
+                  <PokeCardManagement 
+                    key={`management_${pokemon.name}_${i}`}
+                    isBattling={props.isBattling} 
+                    handleSetToBattlePokemon={(pokemon: PokemonForBattle) => props.handleSetToBattlePokemon(pokemon)} 
+                    handleHealPokemon={(position : number, potionName: string) => props.handleHealPokemon(position, potionName)} 
+                    playSoundDefault={props.playSoundDefault} 
+                    pokemon={pokemon} 
+                    items={props.userPokemonTrainer.items} 
+                    index={i} 
+                    navigation={props.navigation}/>
                 ))
               }
             </Wrap>

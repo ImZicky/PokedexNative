@@ -18,6 +18,8 @@ const Drawer = createDrawerNavigator();
 export type DrawerRoutesProps = {
   isAppLoading: boolean;
   userPokemonTrainer: PokemonTrainer;
+  isBattling: boolean;
+  setIsBattling: (value: boolean) => void;
   playSoundDefault: (name: MusicName) => void;
   handleHealBattlingPokemons: () => void;
   handlerUser: (userLogin: UserCredentials) => void;
@@ -133,6 +135,8 @@ export default function DrawerRoutes(cProps: DrawerRoutesProps) {
       >
         {(props) => 
           <PokeBattle
+            isBattling={cProps.isBattling}
+            setIsBattling={cProps.setIsBattling}
             playSoundDefault={(name: MusicName) => cProps.playSoundDefault(name)}
             handleHealBattlingPokemons={() => cProps.handleHealBattlingPokemons()}
             handleCapturePokemon={(pokemon: PokemonForBattle, moneyReward: number, chosenPokeball: PokeballTypeEnum) => cProps.handleCapturePokemon(pokemon, moneyReward, chosenPokeball)} 
@@ -166,6 +170,7 @@ export default function DrawerRoutes(cProps: DrawerRoutesProps) {
       >
         {(props) => 
           <PokeManagement
+            isBattling={cProps.isBattling}
             playSoundDefault={(name: MusicName) => cProps.playSoundDefault(name)}
             handleSetToBattlePokemon={(pokemon: PokemonForBattle) => cProps.handleChooseOtherPokemon(pokemon)} 
             handleHealPokemon={(position: number, potionName: string) => cProps.handleHealPokemon(position, potionName)} 

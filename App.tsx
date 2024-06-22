@@ -22,7 +22,8 @@ const Stack = createStackNavigator();
 
 export default function App() {
   const [isAppLoading, setIsAppLoading] = useState<boolean>(false);
-  const [userCredentials, setUserCredentials] = useState<UserCredentials | undefined>();
+  const [isBattling, setIsBattling] = useState<boolean>(true);
+  const [userCredentials, setUserCredentials] = useState<UserCredentials | undefined>();  
   const [userPokemonTrainer, setUserPokemonTrainer] = useState<PokemonTrainer>({
     name: 'Lucas', // TODO: retirar isso dps de testar
     pokemons: [],
@@ -218,6 +219,7 @@ export default function App() {
     const { sound } = await Audio.Sound.createAsync(
       name === 'battle' ? require('./assets/musics/battle.mp3') :
       name === 'chooseFirstPokemon' ? require('./assets/musics/researchLab.mp3') :
+      name === 'lavender' ? require('./assets/musics/lavender.mp3') :
       name === 'pokedex' ? require('./assets/musics/defaultPalletTown.mp3')
       : require('./assets/musics/defaultPalletTown.mp3'));
 
@@ -254,6 +256,8 @@ export default function App() {
         <IconComponentProvider IconComponent={MaterialCommunityIcons}>
           <UserContext.Provider value={userCredentials}>
             <Routes
+              isBattling={isBattling}
+              setIsBattling={setIsBattling}
               playSoundDefault={(name: MusicName) => playSoundDefault(name)}
               handleHealBattlingPokemons={() => handleHealBattlingPokemons()}
               handleUsePokeball={(pokeballName: string) => handleUsePokeball(pokeballName)}
@@ -271,6 +275,8 @@ export default function App() {
           <IconComponentProvider IconComponent={MaterialCommunityIcons}>
             <UserContext.Provider value={userCredentials}>
               <Routes
+                isBattling={isBattling}
+                setIsBattling={setIsBattling}              
                 playSoundDefault={(name: MusicName) => playSoundDefault(name)}
                 handleHealBattlingPokemons={() => handleHealBattlingPokemons()}
                 handleUsePokeball={(pokeballName: string) => handleUsePokeball(pokeballName)}
