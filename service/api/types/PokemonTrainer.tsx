@@ -11,5 +11,6 @@ export type PokemonTrainer = {
 export type PokemonTrainerItem = {
   name: string;
   quantity: number;
-  category : "Pokeball" | "Heal"
+  category : "Pokeball" | "Heal";
+  price: number
 }

@@ -34,43 +34,50 @@ export default function App() {
         name: 'Potion',
         category: "Heal",
         quantity: 6,
+        price: 500
       },
       {
         name: 'Super Potion',
         category: "Heal",
         quantity: 8,
+        price: 1000
       },
       {
         name: 'Hyper Potion',
         category: "Heal",
         quantity: 5,
+        price: 2000
       },
       // {
       //   name: 'Death Potion',
       //   category: "Heal",
       //   quantity: 5,
+      //   price: 0
       // },
       {
         name: 'Pokeball',
         category: "Pokeball",
         quantity: 10,
+        price: 300
       },
       {
         name: 'Great Ball',
         category: "Pokeball",
         quantity: 16,
+        price: 600
       },
       {
         name: 'Ultra Ball',
         category: "Pokeball",
         quantity: 14,
+        price: 1200
       },
       {
         name: 'Master Ball',
         category: "Pokeball",
         quantity: 10,
+        price: 2400
       },
-
     ]
   });
 

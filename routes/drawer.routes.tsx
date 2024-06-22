@@ -12,6 +12,7 @@ import { MusicName } from "../service/api/types/Music";
 import { View } from "react-native";
 import PokeManagement from "../views/PokeManagement/PokeManagement";
 import PokeTrainer from "../views/PokeTrainer/PokeTrainer";
+import PokeStore from "../views/PokeStore/PokeStore";
 
 const Drawer = createDrawerNavigator();
 
@@ -28,6 +29,7 @@ export type DrawerRoutesProps = {
   handleHealPokemon: (position : number, potionName: string) => void;
   handleCapturePokemon: (pokemon: PokemonForBattle, moneyReward: number, chosenPokeball: PokeballTypeEnum) => void;
   handleChooseOtherPokemon: (pokemon: PokemonForBattle) => void;
+  handleBuyItemPokemon: (itemName: string, price: number) => void; 
 };
 
 export type CustomDrawerContentProps = {
@@ -199,7 +201,8 @@ export default function DrawerRoutes(cProps: DrawerRoutesProps) {
         }}
       >
         {(props) => 
-          <PokeTrainer
+          <PokeStore
+            handleBuyItemPokemon={(itemName: string, price: number) => cProps.handleBuyItemPokemon(itemName, price)}
             playSoundDefault={(name: MusicName) => cProps.playSoundDefault(name)}
             userPokemonTrainer={cProps.userPokemonTrainer}
             navigation={props.navigation} 
