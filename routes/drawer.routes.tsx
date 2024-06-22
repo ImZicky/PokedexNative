@@ -181,6 +181,33 @@ export default function DrawerRoutes(cProps: DrawerRoutesProps) {
       </Drawer.Screen>
 
       <Drawer.Screen
+        name="Store"
+        options={{
+          headerTitle: "Store",
+          drawerIcon: ({ size }) => (
+            <MaterialCommunityIcons
+              name="store-outline"
+              color={"#ed5463"}
+              size={size}
+            />
+          ),
+          drawerLabel: "Store",
+          drawerLabelStyle: {
+            color: "#ed5463",
+            textTransform: "capitalize",
+          },
+        }}
+      >
+        {(props) => 
+          <PokeTrainer
+            playSoundDefault={(name: MusicName) => cProps.playSoundDefault(name)}
+            userPokemonTrainer={cProps.userPokemonTrainer}
+            navigation={props.navigation} 
+          />
+        }
+      </Drawer.Screen>
+
+      <Drawer.Screen
         name="Trainer"
         options={{
           headerTitle: "Trainer",
@@ -206,6 +233,7 @@ export default function DrawerRoutes(cProps: DrawerRoutesProps) {
           />
         }
       </Drawer.Screen>
+
 
       <Drawer.Screen
         name="PokePerfil"
