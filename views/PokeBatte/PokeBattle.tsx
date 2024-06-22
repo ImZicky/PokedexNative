@@ -1133,6 +1133,14 @@ function PokeBattle(props: PokeBattleProps) {
                   <View style={styles.enemyDivInfosBorder}>              
                     <View style={styles.enemyDivInfos}>
                       <Flex style={styles.enemyDivHeader} >
+                        {
+                          pokemonEnemy.shiny && (
+                            <Image
+                              style={{width: 20, height: 20, position: "absolute", right: -5, top: 35}}
+                              source={require('../../assets/images/icons/star-shiny.gif')}
+                            />
+                          )
+                        }
                         <Wrap>
                           <Box w={170}>
                             <PokeText 
@@ -1250,7 +1258,15 @@ function PokeBattle(props: PokeBattleProps) {
                 {/* TRAINER POKEMON DIV */}
                 <Animated.View style={[styles.playerDiv, animationBattleStartPokemonDivStyle]}>    
                   <View style={styles.playerDivInfosBorder}>              
-                    <View style={styles.playerDivInfos}>
+                    <View style={styles.playerDivInfos}>  
+                      {
+                          props.userPokemonTrainer.pokemons[pokemonFightingIndex].shiny && (
+                            <Image
+                              style={{width: 20, height: 20, position: "absolute", right: 5, top: 45}}
+                              source={require('../../assets/images/icons/star-shiny.gif')}
+                            />
+                          )
+                      }
                       <Flex style={styles.playerDivHeader} >
                         <Wrap>
                           <Box w={170}>
@@ -1561,7 +1577,7 @@ function PokeBattle(props: PokeBattleProps) {
                                     type={"skill-name"}
                                   />
                                 <PokeText 
-                                  text={`Lv: ${pokemon.level}`}
+                                  text={pokemon.shiny ? `Lv: ${pokemon.level} | Shiny` : `Lv: ${pokemon.level}`}
                                   color={"#000000"}
                                   type={"pp-text"}
                                 />
