@@ -274,7 +274,7 @@ function PokeBattle(props: PokeBattleProps) {
   const handleStartBattleAnimation = (value: string) => {
     if(value === 'start'){
       battleStartDivTop.value = 0;
-      battleStartDivBottom.value = 0;
+      battleStartDivBottom.value = -20;
       battleStartEnemyDivLeft.value = 250;
       battleStartPokemonDivLeft.value = -250;
     }
@@ -1954,8 +1954,18 @@ function PokeBattle(props: PokeBattleProps) {
                         color="white"
                         text="Keep on Battling"
                         onClick={() => {
-                          // handleRunModal(false, "Battle");                          
                           setOpenRunModal(false);
+                        }}
+                      />
+                    <View style={{marginTop: 10}}/>
+                      <PokeButton
+                        styleType={props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name ?? ""}
+                        variant="contained"
+                        size="medium"
+                        color="white"
+                        text="Find another foe"
+                        onClick={() => {
+                          handleRunModal(false, "Battle");                          
                         }}
                       />
                     </View>
