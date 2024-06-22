@@ -42,7 +42,7 @@ function PokeManagement(props: PokeManagementProps) {
       paddingRight: 10,
       marginTop: 10,
       backgroundColor: "#ed5463",
-      marginBottom: 60,
+      marginBottom: 20,
     },
     image: {
       flex: 1,
