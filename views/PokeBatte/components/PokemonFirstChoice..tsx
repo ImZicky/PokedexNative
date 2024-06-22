@@ -196,6 +196,7 @@ function PokemonFirstChoice(props: PokemonFirstChoiceProps) {
                       styleType=""
                       variant="contained"
                       size="fullwidth"
+                      color="white"
                       text="Cancel"
                       onClick={() => setOpenChoosePokemonModal(false)}
                       />
@@ -204,6 +205,7 @@ function PokemonFirstChoice(props: PokemonFirstChoiceProps) {
                     <PokeButton
                       styleType={chosenPokemon?.types[0].type.name ?? ""}
                       variant="contained"
+                      color="white"
                       size="fullwidth"
                       text="Choose"
                       onClick={() => handleChoosePokemon(chosenPokemon, nickname)}
@@ -247,6 +249,7 @@ function PokemonFirstChoice(props: PokemonFirstChoiceProps) {
                   styleType={"primary"}
                   variant="contained"
                   size="fullwidth"
+                  color="white"
                   text="Start"
                   onClick={() => setOpenFirstPokemonProfOakTutorial(false)}
                 />

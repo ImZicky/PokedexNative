@@ -292,7 +292,7 @@ export default function App() {
         //         handlerUser={(userLogin: UserCredentials) =>
         //           handlerUser(userLogin)
         //         }
-        //       />
+        //       /> 
         //     </UserContext.Provider>
         //   </IconComponentProvider>
         // </View>

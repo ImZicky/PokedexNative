@@ -10,6 +10,8 @@ import { PokemonTrainer } from "../service/api/types/PokemonTrainer";
 import { PokeballTypeEnum, PokemonForBattle } from "../service/api/types/PokemonForBattle";
 import { MusicName } from "../service/api/types/Music";
 import { View } from "react-native";
+import PokeManagement from "../views/PokeManagement/PokeManagement";
+import PokeTrainer from "../views/PokeTrainer/PokeTrainer";
 
 const Drawer = createDrawerNavigator();
 
@@ -138,6 +140,62 @@ export default function DrawerRoutes(cProps: DrawerRoutesProps) {
             handleUsePokeball={(pokeballName: string) => cProps.handleUsePokeball(pokeballName)} 
             handleHealPokemon={(position: number, potionName: string) => cProps.handleHealPokemon(position, potionName)} 
             handleSetPokemonBattling={(pokemon: PokemonForBattle, position: number) => cProps.handleSetPokemonBattling(pokemon, position)} 
+            userPokemonTrainer={cProps.userPokemonTrainer}
+            navigation={props.navigation} 
+          />
+        }
+      </Drawer.Screen>
+
+      <Drawer.Screen
+        name="MyPokemons"
+        options={{
+          headerTitle: "My Pokemons",
+          drawerIcon: ({ size }) => (
+            <MaterialCommunityIcons
+              name="pokemon-go"
+              color={"#ed5463"}
+              size={size}
+            />
+          ),
+          drawerLabel: "My Pokemons",
+          drawerLabelStyle: {
+            color: "#ed5463",
+            textTransform: "capitalize",
+          },
+        }}
+      >
+        {(props) => 
+          <PokeManagement
+            playSoundDefault={(name: MusicName) => cProps.playSoundDefault(name)}
+            handleSetToBattlePokemon={(pokemon: PokemonForBattle) => cProps.handleChooseOtherPokemon(pokemon)} 
+            handleHealPokemon={(position: number, potionName: string) => cProps.handleHealPokemon(position, potionName)} 
+            userPokemonTrainer={cProps.userPokemonTrainer}
+            navigation={props.navigation} 
+          />
+        }
+      </Drawer.Screen>
+
+      <Drawer.Screen
+        name="Trainer"
+        options={{
+          headerTitle: "Trainer",
+          drawerIcon: ({ size }) => (
+            <MaterialCommunityIcons
+              name="account-outline"
+              color={"#ed5463"}
+              size={size}
+            />
+          ),
+          drawerLabel: "Trainer",
+          drawerLabelStyle: {
+            color: "#ed5463",
+            textTransform: "capitalize",
+          },
+        }}
+      >
+        {(props) => 
+          <PokeTrainer
+            playSoundDefault={(name: MusicName) => cProps.playSoundDefault(name)}
             userPokemonTrainer={cProps.userPokemonTrainer}
             navigation={props.navigation} 
           />

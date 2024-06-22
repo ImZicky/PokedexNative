@@ -10,6 +10,7 @@ export type PokeTextProps = {
   | "card-text-big" | "battle-enemy-card-name" | "battle-enemy-card-level" | "modal-title"
   | "battle-card-infos" | "pp-text" | "skill-name" | "gameover-title" | "modal-text";
   hasShadow?: boolean;
+  shadowColor?: string,
   backgroungColor?: string;
 };
 
@@ -87,11 +88,17 @@ function PokeText(props: PokeTextProps) {
       fontSize: 15,
       fontFamily: "Heebo",
       textAlign: "left",
+      textShadowRadius: props.hasShadow ? 10 : undefined,
+      textShadowColor: props.hasShadow ?  props.shadowColor ? props.shadowColor : "#FFF" : undefined,
+      textShadowOffset: props.hasShadow ? {width: 2, height: 2 } : undefined
     },
     cardTextBig: {
       fontSize: 17,
       fontFamily: "Heebo",
       textAlign: "left",
+      textShadowRadius: props.hasShadow ? 10 : undefined,
+      textShadowColor: props.hasShadow ? props.shadowColor ? props.shadowColor : "#FFF" : undefined,
+      textShadowOffset: props.hasShadow ? {width: 2, height: 2 } : undefined
     },
     battleEnemyCardName: {
       paddingTop: 5,

@@ -555,15 +555,8 @@ function PokeBattle(props: PokeBattleProps) {
     const levelBase = Math.floor((levelXp / 100));
     const nextLevel = (levelBase * 100) + 100;
     const diffToNext = nextLevel - (levelXp);
-    
-    // console.log("levelXp: ", levelXp);
-    // console.log("level base: ", levelBase * 10);
-    // console.log("next level: ", nextLevel);
-    // console.log("quanto falta diff: ", diffToNext);
-    // console.log("width: ", 200 - (diffToNext * 2));
     return Math.floor(200 - (diffToNext * 2));
   }
-
 
   const getHpBackgroundColor = (hp: number, hpTotal : number) : string => {
     const maxValue =  200;
@@ -1343,11 +1336,10 @@ function PokeBattle(props: PokeBattleProps) {
                           <PokeButton 
                             size="small"
                             variant="text"
-                            color={"menuGreen"}
+                            color="menuGreen"
                             text="Fight" 
                             styleType={"invisible"}
                             onClick={() => handleAttackModal(true)}
-                            // onClick={() => openAttacksMenu(true)}
                           />
                         </Box>
                         <Box w={"50%"} style={{alignItems: "center"}}>
@@ -1369,7 +1361,6 @@ function PokeBattle(props: PokeBattleProps) {
                             color={"menuGreen"}
                             text="Pokemon"
                             styleType={"invisible"}
-                            // onClick={() => handlePokemonsModal()}
                             onClick={() => setOpenPokemonsModal(true)}
                           />
                         </Box>
@@ -1479,6 +1470,7 @@ function PokeBattle(props: PokeBattleProps) {
                           styleType={props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name ?? ""}
                           variant="contained"
                           size="fullwidth"
+                          color="white"
                           text="Back"
                           onClick={() => setOpenPokemonAttackModal(false)}
                         />
@@ -1508,6 +1500,7 @@ function PokeBattle(props: PokeBattleProps) {
                         styleType={props.userPokemonTrainer.pokemons[pokemonFightingIndex].type[0].type.name ?? ""}
                         variant="contained"
                         size="fullwidth"
+                        color="white"
                         text="Close"
                         onClick={() => {
                           setOpenPokemonInfoMessageModal(false);
@@ -1605,6 +1598,7 @@ function PokeBattle(props: PokeBattleProps) {
                           variant="contained"
                           size="fullwidth"
                           text="Back"
+                          color="white"
                           onClick={() => setOpenPokemonsModal(false)}
                           />
                       </View>
@@ -1682,6 +1676,7 @@ function PokeBattle(props: PokeBattleProps) {
                           variant="contained"
                           size="fullwidth"
                           text="Back"
+                          color="white"
                           onClick={() => setOpenBagModal(false)}
                           />
 
@@ -1713,6 +1708,7 @@ function PokeBattle(props: PokeBattleProps) {
                           styleType={pokemonEnemy?.type[0].type.name ?? ""}
                           variant="contained"
                           size="fullwidth"
+                          color="white"
                           text="Close"
                           onClick={() => {
                             setOpenModalChangingPokemon(false);
@@ -1744,6 +1740,7 @@ function PokeBattle(props: PokeBattleProps) {
                           variant="contained"
                           size="fullwidth"
                           text="Close"
+                          color="white"
                           onClick={() => { 
                             setOpenModalGameOver(false);
                             stopSoundBackground();
@@ -1778,6 +1775,7 @@ function PokeBattle(props: PokeBattleProps) {
                           variant="contained"
                           size="fullwidth"
                           text="Close"
+                          color="white"
                           onClick={() => {
                             setOpenPokemonAttackedInfoModal(false);
                           }}
@@ -1810,6 +1808,7 @@ function PokeBattle(props: PokeBattleProps) {
                           variant="contained"
                           size="fullwidth"
                           text="Close"
+                          color="white"
                           onClick={() => {
                             setOpenPokemonAttackInfoModal(false);
                             handleAttacked();
@@ -1843,6 +1842,7 @@ function PokeBattle(props: PokeBattleProps) {
                         variant="contained"
                         size="fullwidth"
                         text="Close"
+                        color="white"
                         onClick={handleDidntCaught}
                       />
                     </View>
@@ -1874,6 +1874,7 @@ function PokeBattle(props: PokeBattleProps) {
                         variant="contained"
                         size="fullwidth"
                         text="Close"
+                        color="white"
                         onClick={() => {
                           setOpenPokemonCaughtModal(false);
                           handleCaptureEnemy(pokemonEnemy);

@@ -13,7 +13,7 @@ export type RoutesProps = {
   handleHealBattlingPokemons: () => void;
   handleUsePokeball: (pokeballName : string) => void;
   handleSetPokemonBattling: (pokemon: PokemonForBattle, position: number) => void;
-  handleHealPokemon: (position: number, potionName: string) => void;  
+  handleHealPokemon: (position: number, potionName: string) => void;
   handleCapturePokemon: (pokemon: PokemonForBattle, moneyReward: number, chosenPokeball: PokeballTypeEnum) => void;
   handleChooseOtherPokemon: (pokemon: PokemonForBattle) => void;
   isAppLoading: boolean;

@@ -14,8 +14,8 @@ export type ButtonProps = {
   variant: "text" | "outlined" | "contained";
   isReadOnly?: boolean;
   styleType: string;
-  onClick?: (event: any) => void;
   color?: string;
+  onClick?: (event: any) => void;
 };
 
 export default function PokeButton(buttonProps: ButtonProps) {
@@ -68,24 +68,25 @@ export default function PokeButton(buttonProps: ButtonProps) {
   return buttonProps.icon ? (
     <Button
       style={styles.button}
+      tintColor={commonService.getColorFromType(buttonProps.color)}
+      color={commonService.getColorFromType(buttonProps.color)}
       title={buttonProps.text}
       variant={buttonProps.variant}
       loading={buttonProps.loading}
       disabled={buttonProps.isReadOnly}
       trailing={(props) => <Icon name={buttonProps.icon} {...props} />}
       onPress={(e) => handleClick(e)}
-      color={commonService.getColorFromType(buttonProps.color ?? "#000000")}
       />
     ) : (
-      <Button
+    <Button
       style={styles.button}
+      tintColor={commonService.getColorFromType(buttonProps.color)}
+      color={commonService.getColorFromType(buttonProps.color)}
       title={buttonProps.text}
       variant={buttonProps.variant}
       loading={buttonProps.loading}
       disabled={buttonProps.isReadOnly}
       onPress={(e) => handleClick(e)}
-      // onPress={buttonProps.onClick}
-      color={commonService.getColorFromType(buttonProps.color ?? "#000000")}
     />
   );
 }

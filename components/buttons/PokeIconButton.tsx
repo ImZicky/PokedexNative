@@ -51,7 +51,7 @@ export default function PokeIconButton(buttonProps: PokeIconButtonProps) {
   return (
     <IconButton
       disabled={buttonProps.isReadOnly}      
-      style={buttonProps.isReadOnly ? [styles.button, {backgroundColor: "#808080"}] : styles.button}
+      style={buttonProps.isReadOnly ? [styles.button, {backgroundColor: "#fff"}] : styles.button}
       icon={(props) => (
         <Icon name={buttonProps.icon} {...props} color={buttonProps.color} />
       )}

@@ -71,13 +71,6 @@ export default function PokeList(cProps: PokeListProps) {
       height: "100%",
       backgroundColor: "#ed5463",
     },
-    header: {
-      paddingTop: 20,
-      height: 300,
-      marginBottom: 10,
-      backgroundColor: "#ed5463",
-      borderRadius: 20,
-    },
     scrollview: {
       width: "100%",
       height: "100%",
@@ -91,7 +84,6 @@ export default function PokeList(cProps: PokeListProps) {
       alignItems: "center",
       alignContent: "center",
     },
-    headerImage: { marginTop: 20, padding: 20, width: 100, height: 100 },
     pagination: {
       bottom: 0, 
       position: "absolute", 

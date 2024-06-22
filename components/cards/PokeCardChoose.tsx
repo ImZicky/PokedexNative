@@ -59,6 +59,7 @@ function PokeCardChoose(props: PokeCardProps) {
           variant="contained"
           styleType={props.pokemon.types[0].type.name}
           size="small"
+          color="white"
         />
       </Flex>
     </Box>

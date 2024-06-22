@@ -147,6 +147,7 @@ function PokeCard(props: PokeCardProps) {
         <PokeButton
           onClick={() => goToPokemonDetails()}
           text="Details"
+          color="white"
           variant="contained"
           styleType={props.pokemon.types[0].type.name}
           size="small"
