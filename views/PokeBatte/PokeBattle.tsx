@@ -21,6 +21,7 @@ export type PokeBattleProps = {
   userPokemonTrainer: PokemonTrainer;
   isBattling: boolean;
   setIsBattling: (value: boolean) => void;  
+  handleReward: (moneyReward: number) => void;
   handleSetPokemonBattling: (pokemon : PokemonForBattle, position: number) => void;
   handleCapturePokemon: (pokemon : PokemonForBattle, moneyReward: number, chosenPokeball: PokeballTypeEnum) => void;
   handleChooseOtherPokemon: (pokemon : PokemonForBattle) => void;
@@ -64,6 +65,8 @@ function PokeBattle(props: PokeBattleProps) {
   const [openModalChangingPokemonInfo, setOpenModalChangingPokemonInfo] = useState<string>("");
   
   const [openBagModal, setOpenBagModal] = useState<boolean>(false);
+
+  const [openModalWin, setOpenModalWin] = useState<boolean>(false);
 
   const [openModalGameOver, setOpenModalGameOver] = useState<boolean>(false);
 
@@ -298,10 +301,8 @@ function PokeBattle(props: PokeBattleProps) {
       .then((pokemonApi: Pokemon) => {
         pokemonService.getPokemonForBattle(pokemonApi, props.userPokemonTrainer.level, undefined).then(pokeEnemy => {
           setPokemonEnemy(pokeEnemy);          
-          playSoundBackground();
           setTimeout(() => {
             handleStartBattleAnimation('animate');
-
           }, 1500);
         });
         setPokemonEnemyType((pokemonApi?.types[0].type.name ?? "grass"));
@@ -309,6 +310,7 @@ function PokeBattle(props: PokeBattleProps) {
       })
       .catch((error) => console.error(error))
       .finally(() => {
+        playSoundBackground();
         setLoading(false);
       });
     handleStartBattleAnimation('fade');
@@ -398,25 +400,16 @@ function PokeBattle(props: PokeBattleProps) {
           setPokemonAttackedInfoModalMessage(`${pokemonEnemy.name} used ${skill.name} and got a critical hit!`);
           playAttackPokemon();
           handleAnimateAttacked();
-          setTimeout(()=> {
-            setOpenPokemonAttackedInfoModal(true);
-          }, 2000);
         }
         if(damagePlus === 0) {
           setPokemonAttackedInfoModalMessage(`${pokemonEnemy.name} used ${skill.name} and missed the attack!`);
           playDodgePokemon();
-          setTimeout(()=> {
-            setOpenPokemonAttackedInfoModal(true);
-          }, 1000);
         }
         if(totalDamage > 0 && totalDamage < 19 && damagePlus !== 0) {
           temp.hp = temp.hp - totalDamage;
           setPokemonAttackedInfoModalMessage(`${pokemonEnemy.name} used ${skill.name} and sucessfully attacked!`);
           playAttackPokemon();
           handleAnimateAttacked();
-          setTimeout(()=> {
-            setOpenPokemonAttackedInfoModal(true);
-          }, 2000); 
         }
 
         temp.hp = temp.hp <= 0 ? 0 : temp.hp;
@@ -438,6 +431,11 @@ function PokeBattle(props: PokeBattleProps) {
             handleGameOver()
           };
         }
+        else{
+          setTimeout(()=> {
+            setOpenPokemonAttackedInfoModal(true);
+          }, 1000);  
+        }
       }
       if(wasAttacked) setWasAttacked(false);
     }
@@ -446,11 +444,15 @@ function PokeBattle(props: PokeBattleProps) {
       props.playSoundDefault("turnOff");
       playSoundWin();
       handleIncreaseLevelXp(10);
-      setTimeout(()=> {
-        handleRunAway();
-      }, 5000)
+      handleReward();
+      setOpenModalWin(true);
     }
     if(wasAttacked) setWasAttacked(false);
+  }
+
+  const handleReward = () => {
+    const moneyReward = parseInt(`${Math.random() * 500}`);
+    props.handleReward(moneyReward);
   }
 
   const handleChooseOtherPokemon = (pokemon: PokemonForBattle) => {
@@ -1423,7 +1425,7 @@ function PokeBattle(props: PokeBattleProps) {
                   }}
                 >
                   <View style={styles.centeredViewModal}>
-                    <View style={[styles.modalViewModal, {overflow: "scroll", borderColor: "#4E6648", borderStyle: "solid", borderWidth: 5}]}>
+                    <View style={[styles.modalViewModal, {borderColor: "#4E6648", borderStyle: "solid", borderWidth: 5}]}>
                       <View style={{marginBottom: 30}}>
                         <PokeText
                           text={'Level Up'}
@@ -1472,7 +1474,7 @@ function PokeBattle(props: PokeBattleProps) {
                   }}
                 >
                   <View style={styles.centeredViewModal}>
-                    <View style={[styles.modalViewModal, {overflow: "scroll", borderColor: "#4E6648", borderStyle: "solid", borderWidth: 5}]}>
+                    <View style={[styles.modalViewModal, {borderColor: "#4E6648", borderStyle: "solid", borderWidth: 5}]}>
                       {props.userPokemonTrainer.pokemons[pokemonFightingIndex].skills.map((skill, i) => (
                         <Wrap w="100%" key={`skill-${i}`}>
                           <Box w="80%" mb={20}>
@@ -1522,7 +1524,7 @@ function PokeBattle(props: PokeBattleProps) {
                   }}
                 >
                   <View style={styles.centeredViewModal}>
-                    <View style={[styles.modalViewModal, {overflow: "scroll", borderColor: "#4E6648", borderStyle: "solid", borderWidth: 5}]}>
+                    <View style={[styles.modalViewModal, {borderColor: "#4E6648", borderStyle: "solid", borderWidth: 5}]}>
                       <PokeText 
                         text={pokemonModalMessage}
                         color={"#000000"}
@@ -1554,7 +1556,7 @@ function PokeBattle(props: PokeBattleProps) {
                   }}
                 >
                   <View style={styles.centeredViewModal}>
-                    <View style={[styles.modalViewModal, {overflow: "scroll", borderColor: "#4E6648", borderStyle: "solid", borderWidth: 5}]}>
+                    <View style={[styles.modalViewModal, {borderColor: "#4E6648", borderStyle: "solid", borderWidth: 5}]}>
                       {props.userPokemonTrainer.pokemons.length > 1 ? (
                         props.userPokemonTrainer.pokemons.map((pokemon, i) => (
                           i >= 1 && i < 5 && (
@@ -1649,7 +1651,7 @@ function PokeBattle(props: PokeBattleProps) {
                   }}
                 >
                   <View style={styles.centeredViewModal}>
-                    <View style={[styles.modalViewModal, {overflow: "scroll", borderColor: "#4E6648", borderStyle: "solid", borderWidth: 5}]}>
+                    <View style={[styles.modalViewModal, {borderColor: "#4E6648", borderStyle: "solid", borderWidth: 5}]}>
                       {props.userPokemonTrainer.items.find(x => x.quantity > 0) ? (                      
                         props.userPokemonTrainer.items.map((item, i) => (
                           item.quantity > 0 && (
@@ -1728,7 +1730,7 @@ function PokeBattle(props: PokeBattleProps) {
                   }}
                 >
                   <View style={styles.centeredViewModal}>
-                    <View style={[styles.modalViewModal, {overflow: "scroll", borderColor: "#4E6648", borderStyle: "solid", borderWidth: 5}]}>
+                    <View style={[styles.modalViewModal, {borderColor: "#4E6648", borderStyle: "solid", borderWidth: 5}]}>
                       <PokeText 
                         text={openModalChangingPokemonInfo}
                         color={"#000000"}
@@ -1760,7 +1762,7 @@ function PokeBattle(props: PokeBattleProps) {
                   }}
                 >
                   <View style={styles.centeredViewModal}>
-                    <View style={[styles.modalViewModal, {overflow: "scroll", borderColor: "#4E6648", borderStyle: "solid", borderWidth: 5}]}>
+                    <View style={[styles.modalViewModal, {borderColor: "#4E6648", borderStyle: "solid", borderWidth: 5}]}>
                       <PokeText 
                         text={"Game Over!!! You have no pokemons left to battle!"}
                         color={"#000000"}
@@ -1795,7 +1797,7 @@ function PokeBattle(props: PokeBattleProps) {
                   }}
                 >
                   <View style={styles.centeredViewModal}>
-                    <View style={[styles.modalViewModal, {overflow: "scroll", borderColor: "#4E6648", borderStyle: "solid", borderWidth: 5}]}>
+                    <View style={[styles.modalViewModal, {borderColor: "#4E6648", borderStyle: "solid", borderWidth: 5}]}>
                       <PokeText 
                         text={pokemonAttackedInfoModalMessage}
                         color={"#000000"}
@@ -1827,7 +1829,7 @@ function PokeBattle(props: PokeBattleProps) {
                   }}
                 >
                   <View style={styles.centeredViewModal}>
-                    <View style={[styles.modalViewModal, {overflow: "scroll", borderColor: "#4E6648", borderStyle: "solid", borderWidth: 5}]}>
+                    <View style={[styles.modalViewModal, {borderColor: "#4E6648", borderStyle: "solid", borderWidth: 5}]}>
                       <PokeText 
                         text={pokemonAttackInfoModalMessage}
                         color={"#000000"}
@@ -1860,7 +1862,7 @@ function PokeBattle(props: PokeBattleProps) {
                   }}
                 >
                 <View style={styles.centeredViewModal}>
-                  <View style={[styles.modalViewModal, {overflow: "scroll", borderColor: "#4E6648", borderStyle: "solid", borderWidth: 5}]}>
+                  <View style={[styles.modalViewModal, {borderColor: "#4E6648", borderStyle: "solid", borderWidth: 5}]}>
                       <PokeText 
                         text={"Pokemon couldn't be caught"}
                         color={"#000000"}
@@ -1880,6 +1882,39 @@ function PokeBattle(props: PokeBattleProps) {
                 </Modal>
 
 
+                {/* Pokemon battle win modal */}
+                <Modal
+                  animationType="slide"
+                  transparent
+                  visible={openModalWin}
+                  onRequestClose={() => {
+                    setOpenModalWin(false);
+                  }}
+                >
+                <View style={styles.centeredViewModal}>
+                  <View style={[styles.modalViewModal, {borderColor: "#4E6648", borderStyle: "solid", borderWidth: 5}]}>
+                      <PokeText 
+                        text={"You won this battle!"}
+                        color={"#000000"}
+                        type={"battle-card-infos"}
+                      />
+                      <View style={{marginTop: 50}}/>
+                      <PokeButton
+                        styleType={props.userPokemonTrainer.pokemons[0]?.type[0].type.name ?? ""}
+                        variant="contained"
+                        size="fullwidth"
+                        text="Close"
+                        color="white"
+                        onClick={() => {
+                          setOpenModalWin(false);
+                          handleRunAway();
+                        }}
+                      />
+                    </View>
+                  </View>
+                </Modal>
+
+
                 {/* Pokemon caught modal */}
                 <Modal
                   animationType="slide"
@@ -1893,7 +1928,7 @@ function PokeBattle(props: PokeBattleProps) {
                   }}
                 >
                   <View style={styles.centeredViewModal}>
-                    <View style={[styles.modalViewModal, {overflow: "scroll", borderColor: "#4E6648", borderStyle: "solid", borderWidth: 5}]}>
+                    <View style={[styles.modalViewModal, {borderColor: "#4E6648", borderStyle: "solid", borderWidth: 5}]}>
                       <PokeText 
                         text={`${commonService.stringToCapitalLetters(pokemonEnemy.name)} was caught !!!`}
                         color={"#000000"}
@@ -1929,7 +1964,7 @@ function PokeBattle(props: PokeBattleProps) {
                   }}
                 >
                   <View style={styles.centeredViewModal}>
-                    <View style={[styles.modalViewModal, {overflow: "scroll", borderColor: "#4E6648", borderStyle: "solid", borderWidth: 5}]}>
+                    <View style={[styles.modalViewModal, {borderColor: "#4E6648", borderStyle: "solid", borderWidth: 5}]}>
                       <PokeText 
                         text={"Do you wanna go back home? or keep searching for pokemons to battle?"}
                         color={"#000000"}
@@ -2015,10 +2050,10 @@ function PokeBattle(props: PokeBattleProps) {
                       type={"modal-text"}
                     />
                     <PokeButton
-                      styleType={pokemonEnemy.type[0].type.name}
+                      styleType={props.userPokemonTrainer.pokemons[0].type[0].type.name}
                       size="fullwidth"
                       variant="contained"
-                      color="#4E6648"
+                      color="white"
                       text={healPokemonText}
                       onClick={() => handleHealAllPokemons()}
                     />

@@ -20,12 +20,18 @@ function PokeText(props: PokeTextProps) {
       fontFamily: "PressStart",
       fontSize: 20,
       textAlign: "center",
+      textShadowRadius: props.hasShadow ? 10 : undefined,
+      textShadowColor: props.hasShadow ?  props.shadowColor ? props.shadowColor : "#FFF" : undefined,
+      textShadowOffset: props.hasShadow ? {width: 2, height: 2 } : undefined
     },
     h2: {
       fontSize: 35,
       fontFamily: "Orbitron",
       textAlign: "center",
       marginBottom: 20,
+      textShadowRadius: props.hasShadow ? 10 : undefined,
+      textShadowColor: props.hasShadow ?  props.shadowColor ? props.shadowColor : "#FFF" : undefined,
+      textShadowOffset: props.hasShadow ? {width: 2, height: 2 } : undefined
     },
     cardTitle: {
       fontSize: 20,
@@ -33,6 +39,9 @@ function PokeText(props: PokeTextProps) {
       textAlign: "center",
       marginBottom: 5,
       marginTop: 5,
+      textShadowRadius: props.hasShadow ? 10 : undefined,
+      textShadowColor: props.hasShadow ?  props.shadowColor ? props.shadowColor : "#FFF" : undefined,
+      textShadowOffset: props.hasShadow ? {width: 2, height: 2 } : undefined
     },
     modalText: {
       fontSize: 20,
@@ -40,6 +49,9 @@ function PokeText(props: PokeTextProps) {
       textAlign: "center",
       marginBottom: 5,
       marginTop: 5,
+      textShadowRadius: props.hasShadow ? 10 : undefined,
+      textShadowColor: props.hasShadow ?  props.shadowColor ? props.shadowColor : "#FFF" : undefined,
+      textShadowOffset: props.hasShadow ? {width: 2, height: 2 } : undefined
     },
     ppText: {
       fontSize: 15,
@@ -47,7 +59,10 @@ function PokeText(props: PokeTextProps) {
       textAlign: "left",
       marginBottom: 5,
       marginTop: 5,
-      fontWeight: "700"
+      fontWeight: "700",
+      textShadowRadius: props.hasShadow ? 10 : undefined,
+      textShadowColor: props.hasShadow ?  props.shadowColor ? props.shadowColor : "#FFF" : undefined,
+      textShadowOffset: props.hasShadow ? {width: 2, height: 2 } : undefined
     },
     cardTitleBig: {
       fontSize: 40,
@@ -55,6 +70,9 @@ function PokeText(props: PokeTextProps) {
       textAlign: "center",
       marginBottom: 5,
       marginTop: 5,
+      textShadowRadius: props.hasShadow ? 10 : undefined,
+      textShadowColor: props.hasShadow ?  props.shadowColor ? props.shadowColor : "#FFF" : undefined,
+      textShadowOffset: props.hasShadow ? {width: 2, height: 2 } : undefined
     },
     gameoverTitle: {
       fontSize: 35,
@@ -62,6 +80,9 @@ function PokeText(props: PokeTextProps) {
       textAlign: "center",
       marginBottom: 5,
       marginTop: -20,
+      textShadowRadius: props.hasShadow ? 10 : undefined,
+      textShadowColor: props.hasShadow ?  props.shadowColor ? props.shadowColor : "#FFF" : undefined,
+      textShadowOffset: props.hasShadow ? {width: 2, height: 2 } : undefined
     },
     cardId: {
       borderBottomRightRadius: 15,
@@ -71,8 +92,10 @@ function PokeText(props: PokeTextProps) {
       fontFamily: "SpaceGrotesk",
       textAlign: "left",
       fontWeight: "800",
-      // color: "#ED5463",
-      zIndex: 1000
+      zIndex: 1000,
+      textShadowRadius: props.hasShadow ? 10 : undefined,
+      textShadowColor: props.hasShadow ?  props.shadowColor ? props.shadowColor : "#FFF" : undefined,
+      textShadowOffset: props.hasShadow ? {width: 2, height: 2 } : undefined
     },
     cardIdBig: {
       borderBottomRightRadius: 15,
@@ -82,7 +105,10 @@ function PokeText(props: PokeTextProps) {
       fontFamily: "SpaceGrotesk",
       textAlign: "center",
       fontWeight: "800",
-      zIndex: 500
+      zIndex: 500,
+      textShadowRadius: props.hasShadow ? 10 : undefined,
+      textShadowColor: props.hasShadow ?  props.shadowColor ? props.shadowColor : "#FFF" : undefined,
+      textShadowOffset: props.hasShadow ? {width: 2, height: 2 } : undefined
     },
     cardText: {
       fontSize: 15,
@@ -104,6 +130,9 @@ function PokeText(props: PokeTextProps) {
       paddingTop: 5,
       fontFamily: "PressStart",
       fontSize: 13,
+      textShadowRadius: props.hasShadow ? 10 : undefined,
+      textShadowColor: props.hasShadow ?  props.shadowColor ? props.shadowColor : "#FFF" : undefined,
+      textShadowOffset: props.hasShadow ? {width: 2, height: 2 } : undefined
     },
     battleCardInfos: {
       paddingTop: 5,
@@ -112,22 +141,34 @@ function PokeText(props: PokeTextProps) {
       fontWeight: "700",
       letterSpacing: 5,
       lineHeight: 23,
+      textShadowRadius: props.hasShadow ? 10 : undefined,
+      textShadowColor: props.hasShadow ?  props.shadowColor ? props.shadowColor : "#FFF" : undefined,
+      textShadowOffset: props.hasShadow ? {width: 2, height: 2 } : undefined
     },
     battleEnemyCardLevel: {
       fontSize: 13,
       fontFamily: "Orbitron",
       textAlign: "left",
+      textShadowRadius: props.hasShadow ? 10 : undefined,
+      textShadowColor: props.hasShadow ?  props.shadowColor ? props.shadowColor : "#FFF" : undefined,
+      textShadowOffset: props.hasShadow ? {width: 2, height: 2 } : undefined
     },
     skillName: {
       fontSize: 20,
       fontFamily: "Orbitron",
       textAlign: "left",
+      textShadowRadius: props.hasShadow ? 10 : undefined,
+      textShadowColor: props.hasShadow ?  props.shadowColor ? props.shadowColor : "#FFF" : undefined,
+      textShadowOffset: props.hasShadow ? {width: 2, height: 2 } : undefined
     },
     modalTitle: {
       fontSize: 18,
       fontFamily: "Orbitron",
       textAlign: "center",
       marginBottom: 20,
+      textShadowRadius: props.hasShadow ? 10 : undefined,
+      textShadowColor: props.hasShadow ?  props.shadowColor ? props.shadowColor : "#FFF" : undefined,
+      textShadowOffset: props.hasShadow ? {width: 2, height: 2 } : undefined
     },
   });
 

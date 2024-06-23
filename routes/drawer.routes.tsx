@@ -21,6 +21,7 @@ export type DrawerRoutesProps = {
   userPokemonTrainer: PokemonTrainer;
   isBattling: boolean;
   setIsBattling: (value: boolean) => void;
+  handleReward: (moneyReward: number) => void;
   playSoundDefault: (name: MusicName) => void;
   handleHealBattlingPokemons: () => void;
   handlerUser: (userLogin: UserCredentials) => void;
@@ -139,6 +140,7 @@ export default function DrawerRoutes(cProps: DrawerRoutesProps) {
           <PokeBattle
             isBattling={cProps.isBattling}
             setIsBattling={cProps.setIsBattling}
+            handleReward={(moneyReward: number) => cProps.handleReward(moneyReward)}
             playSoundDefault={(name: MusicName) => cProps.playSoundDefault(name)}
             handleHealBattlingPokemons={() => cProps.handleHealBattlingPokemons()}
             handleCapturePokemon={(pokemon: PokemonForBattle, moneyReward: number, chosenPokeball: PokeballTypeEnum) => cProps.handleCapturePokemon(pokemon, moneyReward, chosenPokeball)} 

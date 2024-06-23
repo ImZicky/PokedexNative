@@ -33,50 +33,50 @@ export default function App() {
       {
         name: 'Potion',
         category: "Heal",
-        quantity: 6,
-        price: 500
+        quantity: 3,
+        price: 300
       },
       {
         name: 'Super Potion',
         category: "Heal",
-        quantity: 8,
-        price: 1000
+        quantity: 0,
+        price: 500
       },
       {
         name: 'Hyper Potion',
         category: "Heal",
-        quantity: 5,
-        price: 2000
+        quantity: 0,
+        price: 1200
       },
-      // {
-      //   name: 'Death Potion',
-      //   category: "Heal",
-      //   quantity: 5,
-      //   price: 0
-      // },
+      {
+        name: 'Death Potion',
+        category: "Heal",
+        quantity: 0,
+        price: 2600
+      },
       {
         name: 'Pokeball',
         category: "Pokeball",
-        quantity: 10,
-        price: 300
+        quantity: 5,
+        price: 200
       },
       {
         name: 'Great Ball',
         category: "Pokeball",
-        quantity: 16,
+        quantity: 2,
         price: 600
       },
       {
         name: 'Ultra Ball',
         category: "Pokeball",
-        quantity: 14,
-        price: 1200
+        quantity: 1,
+        price: 800
       },
       {
         name: 'Master Ball',
         category: "Pokeball",
-        quantity: 10,
-        price: 2400
+        quantity: 0,
+        price: 2000
       },
     ]
   });
@@ -218,6 +218,28 @@ export default function App() {
     });
   };
 
+  const handleBuyItemPokemon = (itemName: string, price: number) => {
+    let tempItems = userPokemonTrainer.items;
+    tempItems[tempItems.findIndex(x=> x.name === itemName)].quantity += 1;
+
+    setUserPokemonTrainer((prevState) => {
+      return {
+        ...prevState,
+        items: tempItems,
+        money: userPokemonTrainer.money - price
+      };
+    });
+  };
+
+  const handleReward = (moneyReward: number) => {
+    setUserPokemonTrainer((prevState) => {
+      return {
+        ...prevState,
+        money: userPokemonTrainer.money + moneyReward
+      };
+    });
+  };
+
 
   const [soundDefault, setSoundDefault] = useState<any>();
 
@@ -263,6 +285,8 @@ export default function App() {
         <IconComponentProvider IconComponent={MaterialCommunityIcons}>
           <UserContext.Provider value={userCredentials}>
             <Routes
+              handleReward={(moneyReward: number) => handleReward(moneyReward)}
+              handleBuyItemPokemon={(itemName: string, price: number) => handleBuyItemPokemon(itemName, price)}
               isBattling={isBattling}
               setIsBattling={setIsBattling}
               playSoundDefault={(name: MusicName) => playSoundDefault(name)}
@@ -282,6 +306,8 @@ export default function App() {
           <IconComponentProvider IconComponent={MaterialCommunityIcons}>
             <UserContext.Provider value={userCredentials}>
               <Routes
+                handleReward={(moneyReward: number) => handleReward(moneyReward)}
+                handleBuyItemPokemon={(itemName: string, price: number) => handleBuyItemPokemon(itemName, price)}
                 isBattling={isBattling}
                 setIsBattling={setIsBattling}              
                 playSoundDefault={(name: MusicName) => playSoundDefault(name)}

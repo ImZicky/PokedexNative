@@ -10,6 +10,7 @@ import { MusicName } from "../service/api/types/Music";
 export type RoutesProps = {
   handlerUser: (userLogin: UserCredentials) => void;
   playSoundDefault: (name: MusicName) => void;
+  handleReward: (moneyReward: number) => void;
   handleHealBattlingPokemons: () => void;
   handleUsePokeball: (pokeballName : string) => void;
   handleSetPokemonBattling: (pokemon: PokemonForBattle, position: number) => void;
@@ -17,6 +18,7 @@ export type RoutesProps = {
   handleCapturePokemon: (pokemon: PokemonForBattle, moneyReward: number, chosenPokeball: PokeballTypeEnum) => void;
   handleChooseOtherPokemon: (pokemon: PokemonForBattle) => void;
   setIsBattling: (value: boolean) => void;
+  handleBuyItemPokemon: (itemName: string, price: number) => void; 
   isBattling: boolean;
   isAppLoading: boolean;
   userPokemonTrainer: PokemonTrainer
@@ -26,6 +28,8 @@ export default function Routes(props: RoutesProps) {
   return (
     <NavigationContainer>
       <DrawerRoutes
+        handleReward={(moneyReward: number) => props.handleReward(moneyReward)}
+        handleBuyItemPokemon={(itemName: string, price: number) => props.handleBuyItemPokemon(itemName, price)}
         isBattling={props.isBattling}
         setIsBattling={props.setIsBattling}
         playSoundDefault={(name: MusicName) => props.playSoundDefault(name)}
