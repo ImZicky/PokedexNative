@@ -25,9 +25,10 @@ export default function App() {
   const [isBattling, setIsBattling] = useState<boolean>(true);
   const [userCredentials, setUserCredentials] = useState<UserCredentials | undefined>();  
   const [userPokemonTrainer, setUserPokemonTrainer] = useState<PokemonTrainer>({
-    name: 'Lucas', // TODO: retirar isso dps de testar
+    name: 'SIMAS', // TODO: retirar isso dps de testar
     pokemons: [],
-    money: 0,
+    favoritePokemons: [],
+    money: 1000,
     level: 1,
     items:[
       {
@@ -75,7 +76,7 @@ export default function App() {
       {
         name: 'Master Ball',
         category: "Pokeball",
-        quantity: 0,
+        quantity: 200,
         price: 2000
       },
     ]
@@ -84,11 +85,12 @@ export default function App() {
   const handlerUser = (userCredentials: UserCredentials) => {
     setUserCredentials(userCredentials);
     setUserPokemonTrainer({
-      name: 'Lucas',
+      name: 'SIMAS',
       pokemons: [],
+      favoritePokemons:[],
       items:[],
       money: 0,
-      level: 1
+      level: 1,
     })
   };
 
@@ -105,6 +107,7 @@ export default function App() {
 
   const handleCapturePokemon = (pokemon: PokemonForBattle, moneyReward: number, chosenPokeball: PokeballTypeEnum) => {
     let temp = userPokemonTrainer.pokemons;
+    let tempFav = userPokemonTrainer.favoritePokemons;
     
     temp.push({
       id: pokemon.id,
@@ -121,13 +124,42 @@ export default function App() {
       shiny : pokemon.shiny
     });
 
-    setUserPokemonTrainer((prevState) => {
-      return {
-        ...prevState,
-        money: prevState.money + moneyReward,
-        pokemons: temp,
-      };
-    });
+    if(userPokemonTrainer.pokemons.length > 0 && userPokemonTrainer.favoritePokemons.length < 2){
+
+      tempFav.push({
+        id: pokemon.id,
+        hp: pokemon.hp,
+        hpTotal: pokemon.hpTotal,
+        level: pokemon.level,
+        levelXp: pokemon.level * 100,
+        name: pokemon.name,
+        nickname: pokemon.nickname,
+        skills: pokemon.skills,
+        sprites: pokemon.sprites,
+        type: pokemon.type,
+        pokeball: chosenPokeball,
+        shiny : pokemon.shiny
+      });
+
+      setUserPokemonTrainer((prevState) => {
+        return {
+          ...prevState,
+          money: prevState.money + moneyReward,
+          pokemons: temp,
+          favoritePokemons: [temp[0], ...tempFav],
+        };
+      });
+    }
+    else{
+      setUserPokemonTrainer((prevState) => {
+        return {
+          ...prevState,
+          money: prevState.money + moneyReward,
+          pokemons: temp,
+        };
+      });
+    }
+
   };
 
   const handleChooseOtherPokemon = (pokemon: PokemonForBattle) => {

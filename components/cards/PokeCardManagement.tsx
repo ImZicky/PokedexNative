@@ -173,7 +173,7 @@ function PokeCardManagement(props: PokeCardManagementProps) {
             />
           }
           <Flex style={styles.centeredDiv}>
-            {props.index < 5 && (
+            {props.index <= 5 && (
               <Image
                 // style={{width: 25, height: 25, position: "absolute", right: -15, top: 110}}
                 style={{
@@ -375,7 +375,7 @@ function PokeCardManagement(props: PokeCardManagementProps) {
               alignItems: "center",
             }}
           >
-            {props.index < 5 ? (
+            {props.index <= 5 ? (
               <View style={{ marginTop: 20, marginBottom: 10 }}>
                 <PokeButton
                   onClick={() => handleUseItemModal(true, props.pokemon)}

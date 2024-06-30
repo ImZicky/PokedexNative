@@ -4,6 +4,7 @@ export type PokemonTrainer = {
   name: string;
   level: number,
   pokemons: PokemonForBattle[];
+  favoritePokemons: PokemonForBattle[];
   money: number;
   items: PokemonTrainerItem[];  
 };

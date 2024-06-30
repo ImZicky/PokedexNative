@@ -1559,7 +1559,7 @@ function PokeBattle(props: PokeBattleProps) {
                     <View style={[styles.modalViewModal, {borderColor: "#4E6648", borderStyle: "solid", borderWidth: 5}]}>
                       {props.userPokemonTrainer.pokemons.length > 1 ? (
                         props.userPokemonTrainer.pokemons.map((pokemon, i) => (
-                          i >= 1 && i < 5 && (
+                          i >= 1 && i <= 5 && (
                             <View key={`item-${i}`}>
                               <Wrap w="100%">
                                 <Box w="20%">
