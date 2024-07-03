@@ -5,7 +5,7 @@ import PokeDetail from "../views/PokeDetail/PokeDetail";
 import React from "react";
 import { Icon, Text } from "@react-native-material/core";
 import { UserCredentials } from "../service/api/types/User";
-import PokeBattle from "../views/PokeBatte/PokeBattle";
+import PokeBattle from "../views/PokeBattle/PokeBattle";
 import { PokemonTrainer } from "../service/api/types/PokemonTrainer";
 import { PokeballTypeEnum, PokemonForBattle } from "../service/api/types/PokemonForBattle";
 import { MusicName } from "../service/api/types/Music";
