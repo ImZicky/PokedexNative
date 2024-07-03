@@ -1,6 +1,6 @@
 import { Icon, IconButton, TextInput } from "@react-native-material/core";
 import React, { useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { IconType } from "../icons/types/IconType";
 
 export type PokeTextFieldProps = {
@@ -59,6 +59,12 @@ function PokeTextField(textFieldProps: PokeTextFieldProps) {
       backgroundColor: "#fff",
       color: "#424242",
     },
+    helperText:{
+      color: 'red', 
+      marginTop: -40, 
+      marginBottom: 20, 
+      marginLeft: 10
+    }
   });
 
   //Miscelaneous Functions
@@ -69,65 +75,65 @@ function PokeTextField(textFieldProps: PokeTextFieldProps) {
   };
 
   return textFieldProps.icon ? (
-    <TextInput
-      label={textFieldProps.label}
-      variant={textFieldProps.variant}
-      defaultValue={textFieldProps.defaultValue}
-      onChangeText={textFieldProps.onChange}
-      value={textFieldProps.value}
-      style={
-        textFieldProps.error ? styles.pokeTextFieldError : styles.pokeTextField
-      }
-      underlineColorAndroid={"transparent"}
-      secureTextEntry={!showPassword}
-      helperText={
-        typeof textFieldProps.helperText == "string"
-          ? textFieldProps.helperText
-          : undefined
-      }
-      color={textFieldProps.color}
-      placeholderTextColor={textFieldProps.placeholderTextColor}
-      cursorColor={textFieldProps.cursorColor}
-      placeholder={textFieldProps.placeholder}
-      trailing={(props) => (
-        <IconButton
+    <>
+      <TextInput
+        label={textFieldProps.label}
+        variant={textFieldProps.variant}
+        defaultValue={textFieldProps.defaultValue}
+        onChangeText={textFieldProps.onChange}
+        value={textFieldProps.value}
+        style={
+          textFieldProps.error ? styles.pokeTextFieldError : styles.pokeTextField
+        }
+        underlineColorAndroid={"transparent"}
+        secureTextEntry={!showPassword}
+        color={textFieldProps.error ? "red" : textFieldProps.color}
+        placeholderTextColor={textFieldProps.placeholderTextColor}
+        cursorColor={textFieldProps.cursorColor}
+        placeholder={textFieldProps.placeholder}
+        trailing={(props) => (
+          <IconButton
           onPress={handlePressIcon}
           icon={(props) => (
             <Icon
-              name={
-                textFieldProps.isPassword
-                  ? showPassword
-                    ? "eye-outline"
-                    : "eye-off-outline"
-                  : textFieldProps.icon ?? "eye-outline"
-              }
-              {...props}
+            name={
+                  textFieldProps.isPassword
+                    ? showPassword
+                      ? "eye-outline"
+                      : "eye-off-outline"
+                      : textFieldProps.icon ?? "eye-outline"
+                    }
+                    {...props}
+              />
+            )}
+            {...props}
             />
           )}
-          {...props}
-        />
+      />
+      {typeof textFieldProps.helperText == "string" && (
+        <Text style={styles.helperText}>{textFieldProps.helperText}</Text>
       )}
-    />
+    </>
   ) : (
-    <TextInput
-      label={textFieldProps.label}
-      variant={textFieldProps.variant}
-      defaultValue={textFieldProps.defaultValue}
-      value={textFieldProps.value}
-      style={
-        textFieldProps.error ? styles.pokeTextFieldError : styles.pokeTextField
-      }
-      helperText={
-        typeof textFieldProps.helperText == "string"
-          ? textFieldProps.helperText
-          : undefined
-      }
-      onChangeText={textFieldProps.onChange}
-      color={textFieldProps.color}
-      placeholderTextColor={textFieldProps.placeholderTextColor}
-      cursorColor={textFieldProps.cursorColor}
-      placeholder={textFieldProps.placeholder}
-    />
+    <>
+      <TextInput
+        label={textFieldProps.label}
+        variant={textFieldProps.variant}
+        defaultValue={textFieldProps.defaultValue}
+        value={textFieldProps.value}
+        style={
+          textFieldProps.error ? styles.pokeTextFieldError : styles.pokeTextField
+        }
+        onChangeText={textFieldProps.onChange}
+        color={textFieldProps.error ? "red" : textFieldProps.color}
+        placeholderTextColor={textFieldProps.placeholderTextColor}
+        cursorColor={textFieldProps.cursorColor}
+        placeholder={textFieldProps.placeholder}
+      />
+      {typeof textFieldProps.helperText == "string" && (
+        <Text style={styles.helperText}>{textFieldProps.helperText}</Text>
+      )}
+    </>
   );
 }
 

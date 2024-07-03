@@ -1,27 +1,43 @@
 import React, { useEffect } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import PokePerfil from "../views/PokePerfil/PokePerfil";
-import PokeList from "../views/PokeList/PokeList";
 import { useCommonService } from "../service/common/CommonService";
+import { UserCredentials } from "../service/api/types/User";
+import PokePerfilCreate from "../views/PokePerfilCreate/PokePerfilCreate";
+import PokeLogin from "../views/PokeLogin/PokeLogin";
+import PokePerfil from "../views/PokePerfil/PokePerfil";
 
 const Stack = createStackNavigator();
 
-export default function StackRoutes() {
-  return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      {/* <Stack.Screen name="PokeList" options={{ headerTitle: "TESTE" }}>
-        {() => <PokeList />}
-      </Stack.Screen> */}
+export type StackRoutesProps = {
+  isAppLoading: boolean;
+  handlerUser: (userLogin: UserCredentials) => void;
+};
 
-      <Stack.Screen name="PokePerfil">
+export default function StackRoutesLogin(cProps: StackRoutesProps) {
+  return (
+    <Stack.Navigator 
+      initialRouteName="PokeLogin"
+      screenOptions={{ headerShown: false }}>
+      <Stack.Screen
+        name="PokeLogin"
+      >
         {(props) => (
-          <PokePerfil
-            {...props}
-            navigation={props.navigation}
-            route={props.route}
-          />
+          <PokeLogin
+            handlerUser={(userLogin: UserCredentials) => cProps.handlerUser(userLogin)}
+            navigation={props.navigation} route={props.route}/>
         )}
       </Stack.Screen>
+
+      <Stack.Screen
+        name="PokePerfilCreate"
+      >
+        {(props) => (
+          <PokePerfilCreate
+            handlerUser={(userLogin: UserCredentials) => cProps.handlerUser(userLogin)}
+            navigation={props.navigation} route={props.route}/>
+        )}
+      </Stack.Screen>
+
     </Stack.Navigator>
   );
 }

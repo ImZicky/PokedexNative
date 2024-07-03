@@ -1,5 +1,10 @@
 import { Pokemon } from "pokenode-ts";
 
+export type UserLoginCriteria = {
+  password: string | undefined;
+  email: string | undefined;
+};
+
 export type UserCriteria = {
   password: string | undefined;
   email: string | undefined;

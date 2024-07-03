@@ -12,15 +12,34 @@ import { MusicName } from "../../service/api/types/Music";
 import PokeButton from "../../components/buttons/PokeButton";
 import PokeIconButton from "../../components/buttons/PokeIconButton";
 import PokeCardFavorite from "../../components/cards/PokeCardFavorite";
+import * as ImagePicker from 'expo-image-picker';
 
 export type PokeTrainerProps = {
   navigation: any;
   userPokemonTrainer: PokemonTrainer;
   playSoundDefault: (name: MusicName) => void;
+  handleChooseNewProfilePic: (image: string) => void;
 };
 
 function PokeTrainer(props: PokeTrainerProps) {
   const [loading, setLoading] = useState<boolean>(false);
+
+
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+      base64: true,
+    });
+
+    if (!result.canceled) {
+      props.handleChooseNewProfilePic(result.assets[0].base64);
+    }
+  };
+
 
   //Style
   const styles = StyleSheet.create({
@@ -52,11 +71,9 @@ function PokeTrainer(props: PokeTrainerProps) {
         <View style={styles.view}>
           <ScrollView style={styles.scrollview}>
             <View style={styles.modalViewModal}>
-              <Image 
+              <Image
                 style={{width: 100, height: 100, marginBottom: 20, borderRadius: 100, borderColor: "#c52222", borderWidth: 3}} 
-                source={{
-                  uri: 'https://yt3.ggpht.com/rWzYIBTtR8oAjk1LBwBglCFxLSZ4JJAHy5m2ZbzovSVmxR4TmKGfBoOqWqlADMD9xkEdjNdhAQ=s108-c-k-c0x00ffffff-no-rj',
-                }}
+                source={{ uri: props.userPokemonTrainer.image ? 'data:image/jpeg;base64,' + props.userPokemonTrainer.image : 'https://i.pinimg.com/originals/e3/af/9c/e3af9c7dc24b3fcb9b5f2d812d839783.jpg'}}
               />
               <View style={{position: "absolute", top: 90, left: 180}}>
                 <PokeIconButton 
@@ -64,7 +81,7 @@ function PokeTrainer(props: PokeTrainerProps) {
                   styleType="fire" 
                   icon="camera-outline" 
                   variant="text" 
-                  onClick={() => alert(`${props.userPokemonTrainer.favoritePokemons.length}`)} 
+                  onClick={() => pickImage()} 
                 />
               </View>
 
@@ -95,22 +112,25 @@ function PokeTrainer(props: PokeTrainerProps) {
               </View>
 
 
-              <View style={{marginTop: 10}}>
-                <PokeText color="#c52222" type="skill-name" text={`- Favs -`} />
-              </View>
-
-              <View style={{width: "97%", marginTop: 20}}>              
-                <Wrap>
-                  {
-                    props.userPokemonTrainer.favoritePokemons && props.userPokemonTrainer.favoritePokemons.map((p, i) => (
-                      <Box w={165} style={{marginTop: 20}} key={`fav_${i}_pokemon`}>
-                        <PokeCardFavorite pokemon={p}/>
-                      </Box>
-                    ))
-                  }
-                </Wrap>
-              </View>
-
+            {
+              props.userPokemonTrainer.favoritePokemons && props.userPokemonTrainer.favoritePokemons.length > 0 && (
+                <>
+                  <View style={{marginTop: 10}}>
+                    <PokeText color="#c52222" type="skill-name" text={`- Favs -`} />
+                  </View>
+                  <View style={{width: "97%", marginTop: 20}}>              
+                    <Wrap>
+                      {
+                        props.userPokemonTrainer.favoritePokemons.map((p, i) => (
+                          <Box w={165} style={{marginTop: 20}} key={`fav_${i}_pokemon`}>
+                            <PokeCardFavorite pokemon={p}/>
+                          </Box>
+                        ))
+                      }
+                    </Wrap>
+                  </View>
+                </>
+              )}
             </View>
 
           </ScrollView>

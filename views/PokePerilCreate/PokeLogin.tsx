@@ -12,10 +12,9 @@ import { useCommonService } from "../../service/common/CommonService";
 import UseUserService from "../../service/api/UserService";
 import * as Yup from "yup";
 import { FormikProvider, useFormik } from "formik";
+import { useNavigation } from "@react-navigation/native";
 
 export type PokeLoginProps = {
-  navigation: any;
-  route: any;
   handlerUser: (userLogin: UserCredentials) => void;
 };
 
@@ -27,6 +26,7 @@ const DefaultValue = {
 type FormValues = {
   email?: string;
   password?: string;
+  navigation: any;
 };
 
 function PokeLogin(props: PokeLoginProps) {
@@ -73,7 +73,7 @@ function PokeLogin(props: PokeLoginProps) {
   };
 
   const handleGoCreateAccount = () => {
-    props.navigation.navigate("PokePerfilCreate");
+    useNavigation().navigate("PokeList");
   }
   
   //Validatiopn
@@ -115,9 +115,10 @@ function PokeLogin(props: PokeLoginProps) {
     view: {
       backgroundColor: pokemonTypeColor,
       width: "100%",
+      height: "44%",
       position: "relative",
       alignItems: "center",
-      minHeight: 310,      
+      flex: 0,
       justifyContent: "center",
     },
     header: {
@@ -126,7 +127,6 @@ function PokeLogin(props: PokeLoginProps) {
     },
     form: {
       width: 400,
-      minHeight: 250,
       padding: 50,
       paddingTop: 15,
       backgroundColor: "#FFFFFF",
@@ -167,7 +167,7 @@ function PokeLogin(props: PokeLoginProps) {
             </Flex>
           </Flex>
           <Flex fill style={styles.centeredDiv}>
-            <Flex fill style={styles.form}>
+            <Flex style={styles.form}>
               <FormikProvider value={formik}>
                 <PokeText
                   text={"Login"}

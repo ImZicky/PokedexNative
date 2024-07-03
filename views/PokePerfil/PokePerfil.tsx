@@ -137,7 +137,7 @@ function PokePerfil(props: PokePerfilProps) {
                   style={styles.cardImage}
                   source={{
                     uri: `${commonService.getPokemonMainImageFrontForBattle(
-                      pokemon.sprites
+                      pokemon.sprites, false
                     )}`,
                   }}
                 />

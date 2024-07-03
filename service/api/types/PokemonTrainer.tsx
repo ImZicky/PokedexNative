@@ -2,6 +2,7 @@ import { PokemonForBattle } from "./PokemonForBattle";
 
 export type PokemonTrainer = {
   name: string;
+  image: string | undefined;
   level: number,
   pokemons: PokemonForBattle[];
   favoritePokemons: PokemonForBattle[];

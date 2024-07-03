@@ -7,7 +7,7 @@ import { PokemonTrainer } from "../service/api/types/PokemonTrainer";
 import { PokeballTypeEnum, PokemonForBattle } from "../service/api/types/PokemonForBattle";
 import { MusicName } from "../service/api/types/Music";
 
-export type RoutesProps = {
+export type RoutesDrawerProps = {
   handlerUser: (userLogin: UserCredentials) => void;
   playSoundDefault: (name: MusicName) => void;
   handleReward: (moneyReward: number) => void;
@@ -18,16 +18,19 @@ export type RoutesProps = {
   handleCapturePokemon: (pokemon: PokemonForBattle, moneyReward: number, chosenPokeball: PokeballTypeEnum) => void;
   handleChooseOtherPokemon: (pokemon: PokemonForBattle) => void;
   setIsBattling: (value: boolean) => void;
-  handleBuyItemPokemon: (itemName: string, price: number) => void; 
+  handleBuyItemPokemon: (itemName: string, price: number) => void;
+  handleChooseNewProfilePic: (image: string) => void;
   isBattling: boolean;
   isAppLoading: boolean;
-  userPokemonTrainer: PokemonTrainer
+  userPokemonTrainer: PokemonTrainer;
+  isLogin: boolean
 };
 
-export default function Routes(props: RoutesProps) {
+export default function RoutesDrawer(props: RoutesDrawerProps) {
   return (
     <NavigationContainer>
       <DrawerRoutes
+        handleChooseNewProfilePic={(image: string) => props.handleChooseNewProfilePic(image)}
         handleReward={(moneyReward: number) => props.handleReward(moneyReward)}
         handleBuyItemPokemon={(itemName: string, price: number) => props.handleBuyItemPokemon(itemName, price)}
         isBattling={props.isBattling}

@@ -5,7 +5,6 @@ import { Pokemon } from "pokenode-ts";
 import { StyleSheet, Image, View, Modal } from "react-native";
 import { useCommonService } from "../../service/common/CommonService";
 import PokeButton from "../buttons/PokeButton";
-import { useNavigation } from "@react-navigation/native";
 import { PokemonForBattle } from "../../service/api/types/PokemonForBattle";
 import { MusicName } from "../../service/api/types/Music";
 import { PokemonTrainerItem } from "../../service/api/types/PokemonTrainer";

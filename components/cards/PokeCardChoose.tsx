@@ -5,7 +5,6 @@ import { Pokemon } from "pokenode-ts";
 import { StyleSheet, Image } from "react-native";
 import { useCommonService } from "../../service/common/CommonService";
 import PokeButton from "../buttons/PokeButton";
-import { useNavigation } from "@react-navigation/native";
 
 export type PokeCardProps = {
   pokemon: Pokemon;

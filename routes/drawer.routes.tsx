@@ -30,7 +30,8 @@ export type DrawerRoutesProps = {
   handleHealPokemon: (position : number, potionName: string) => void;
   handleCapturePokemon: (pokemon: PokemonForBattle, moneyReward: number, chosenPokeball: PokeballTypeEnum) => void;
   handleChooseOtherPokemon: (pokemon: PokemonForBattle) => void;
-  handleBuyItemPokemon: (itemName: string, price: number) => void; 
+  handleBuyItemPokemon: (itemName: string, price: number) => void;
+  handleChooseNewProfilePic: (image: string) => void;
 };
 
 export type CustomDrawerContentProps = {
@@ -232,6 +233,7 @@ export default function DrawerRoutes(cProps: DrawerRoutesProps) {
       >
         {(props) => 
           <PokeTrainer
+            handleChooseNewProfilePic={(image: string) => cProps.handleChooseNewProfilePic(image)}
             playSoundDefault={(name: MusicName) => cProps.playSoundDefault(name)}
             userPokemonTrainer={cProps.userPokemonTrainer}
             navigation={props.navigation} 

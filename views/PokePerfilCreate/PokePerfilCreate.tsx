@@ -12,8 +12,9 @@ import { useCommonService } from "../../service/common/CommonService";
 import UseUserService from "../../service/api/UserService";
 import * as Yup from "yup";
 import { FormikProvider, useFormik } from "formik";
+import { useNavigation } from "@react-navigation/native";
 
-export type PokeLoginProps = {
+export type PokePerfilCreateProps = {
   navigation: any;
   route: any;
   handlerUser: (userLogin: UserCredentials) => void;
@@ -29,10 +30,9 @@ type FormValues = {
   password?: string;
 };
 
-function PokeLogin(props: PokeLoginProps) {
+function PokePerfilCreate(props: PokePerfilCreateProps) {
   //Consts
-  const [userCriteria] = useState<UserLoginCriteria>(DefaultValue);
-  const [pokemon, setPokemon] = useState<Pokemon | undefined>(undefined);
+  const [userCriteria, setUserCriteria] = useState<UserLoginCriteria>(DefaultValue);
   const [pokemonTypeColor, setPokemonTypeColor] = useState<
     string | undefined
   >();
@@ -48,21 +48,20 @@ function PokeLogin(props: PokeLoginProps) {
       pokemonService
         .getRamdomPokemon()
         .then((data) => {
-          setPokemon(data);
           setPokemonTypeColor(
             commonService.getColorFromType(data?.types[0].type.name ?? "")
           );
         })
         .catch((error) => console.error(error));
     };
-    if (pokemon === undefined) fetchPokemon();
+    if (pokemonTypeColor === undefined) fetchPokemon();
   });
 
   //Methods
-  const handleLogin = async () => {
+  const handlePerfilCreate = async () => {
     if (userCriteria !== undefined) {
       userService
-        .login(userCriteria)
+        .createAccount(userCriteria)
         .then((data) => {
           props.handlerUser(data);
         })
@@ -72,12 +71,9 @@ function PokeLogin(props: PokeLoginProps) {
     }
   };
 
-  const handleGoCreateAccount = () => {
-    props.navigation.navigate("PokePerfilCreate");
-  }
   
   //Validatiopn
-  const LoginSchema = Yup.object().shape({
+  const CreateSchema = Yup.object().shape({
     email: Yup.string()
       .email("It must to be a valid email")
       .required("Required field"),
@@ -93,10 +89,10 @@ function PokeLogin(props: PokeLoginProps) {
   //Formik
   const formik = useFormik<FormValues>({
     initialValues: userCriteria,
-    validationSchema: LoginSchema,
+    validationSchema: CreateSchema,
     onSubmit: async (values, { setSubmitting }) => {
       setSubmitting(true);
-      await handleLogin();
+      await handlePerfilCreate();
       setSubmitting(false);
     },
   });
@@ -115,9 +111,10 @@ function PokeLogin(props: PokeLoginProps) {
     view: {
       backgroundColor: pokemonTypeColor,
       width: "100%",
+      height: "20%",
       position: "relative",
       alignItems: "center",
-      minHeight: 310,      
+      flex: 0,
       justifyContent: "center",
     },
     header: {
@@ -126,7 +123,7 @@ function PokeLogin(props: PokeLoginProps) {
     },
     form: {
       width: 400,
-      minHeight: 250,
+      minHeight: "80%",
       padding: 50,
       paddingTop: 15,
       backgroundColor: "#FFFFFF",
@@ -140,36 +137,21 @@ function PokeLogin(props: PokeLoginProps) {
 
   return (
     <>
-      {pokemon ? (
+      {pokemonTypeColor ? (
         <>
           <Flex style={styles.view}>
             <Flex style={styles.header}>
               <PokeText
-                text="Who's That Pokémon??"
-                color={"#FFFFFF"}
-                type={"h1"}
-              />
-              <Flex style={styles.centeredDiv}>
-                <Image
-                  style={styles.headerImage}
-                  source={{
-                    uri: `${commonService.getPokemonMainImage(
-                      pokemon?.sprites
-                    )}`,
-                  }}
-                />
-              </Flex>
-              <PokeText
-                text={`It's ${pokemon?.name.toUpperCase()}`}
+                text="Who's You?"
                 color={"#FFFFFF"}
                 type={"h1"}
               />
             </Flex>
           </Flex>
           <Flex fill style={styles.centeredDiv}>
-            <Flex fill style={styles.form}>
+            <Flex style={styles.form}>
               <FormikProvider value={formik}>
-                <PokeText
+                {/* <PokeText
                   text={"Login"}
                   color={pokemonTypeColor ?? "#000000"}
                   type={"h2"}
@@ -211,19 +193,7 @@ function PokeLogin(props: PokeLoginProps) {
                   loading={isSubmitting}
                   styleType={pokemon?.types[0].type.name ?? ""}
                   onClick={handleSubmit}
-                />
-                <Flex mt={10}>
-                  <PokeButton
-                    text="Criar conta"
-                    size="fullwidth"
-                    icon="account-outline"
-                    color={pokemon?.types[0].type.name}
-                    variant="outlined"
-                    loading={isSubmitting}
-                    styleType={"white"}
-                    onClick={handleGoCreateAccount}
-                    />
-                </Flex>
+                /> */}
               </FormikProvider>
             </Flex>
           </Flex>
@@ -235,4 +205,4 @@ function PokeLogin(props: PokeLoginProps) {
   );
 }
 
-export default PokeLogin;
+export default PokePerfilCreate;

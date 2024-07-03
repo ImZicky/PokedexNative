@@ -2,14 +2,8 @@ import "react-native-gesture-handler";
 import { IconComponentProvider } from "@react-native-material/core";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
-import PokeList from "./views/PokeList/PokeList";
-import PokePerfil from "./views/PokePerfil/PokePerfil";
-import PokeLogin from "./views/PokeLogin/PokeLogin";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
-import PokeLoading from "./components/loader/PokeLoading";
-import Routes from "./routes";
+import RoutesDrawer from "./routes/routes-drawer-index";
 import { DeviceEventEmitter } from "react-native";
 import { UserCredentials } from "./service/api/types/User";
 import { UserContext } from "./contexts/UserContext";
@@ -17,8 +11,8 @@ import { PokemonTrainer } from "./service/api/types/PokemonTrainer";
 import { PokeballTypeEnum, PokemonForBattle } from "./service/api/types/PokemonForBattle";
 import { Audio } from 'expo-av';
 import { MusicName } from "./service/api/types/Music";
+import RoutesStackLogin from "./routes/routes-stack-index";
 
-const Stack = createStackNavigator();
 
 export default function App() {
   const [isAppLoading, setIsAppLoading] = useState<boolean>(false);
@@ -28,6 +22,7 @@ export default function App() {
     name: 'SIMAS', // TODO: retirar isso dps de testar
     pokemons: [],
     favoritePokemons: [],
+    image: undefined,
     money: 1000,
     level: 1,
     items:[
@@ -52,7 +47,7 @@ export default function App() {
       {
         name: 'Death Potion',
         category: "Heal",
-        quantity: 0,
+        quantity: 1,
         price: 2600
       },
       {
@@ -88,6 +83,7 @@ export default function App() {
       name: 'SIMAS',
       pokemons: [],
       favoritePokemons:[],
+      image: undefined,
       items:[],
       money: 0,
       level: 1,
@@ -197,6 +193,15 @@ export default function App() {
       };
     });
   };
+
+  const handleChooseNewProfilePic = (image: string) => {
+    setUserPokemonTrainer((prevState) => {
+      return {
+        ...prevState,
+        image: image,
+      };
+    });
+  }
 
   const handleHealPokemon = (position: number, potionName: string) => {
     if(potionName === 'Death Potion') { // APENAS PRA DEBUG
@@ -316,7 +321,9 @@ export default function App() {
       {userCredentials && userCredentials.isLogged ? (
         <IconComponentProvider IconComponent={MaterialCommunityIcons}>
           <UserContext.Provider value={userCredentials}>
-            <Routes
+            <RoutesDrawer
+              isLogin={false}
+              handleChooseNewProfilePic={(image: string) => handleChooseNewProfilePic(image)}
               handleReward={(moneyReward: number) => handleReward(moneyReward)}
               handleBuyItemPokemon={(itemName: string, price: number) => handleBuyItemPokemon(itemName, price)}
               isBattling={isBattling}
@@ -335,38 +342,37 @@ export default function App() {
           </UserContext.Provider>
         </IconComponentProvider>
       ) : (
-          <IconComponentProvider IconComponent={MaterialCommunityIcons}>
-            <UserContext.Provider value={userCredentials}>
-              <Routes
-                handleReward={(moneyReward: number) => handleReward(moneyReward)}
-                handleBuyItemPokemon={(itemName: string, price: number) => handleBuyItemPokemon(itemName, price)}
-                isBattling={isBattling}
-                setIsBattling={setIsBattling}              
-                playSoundDefault={(name: MusicName) => playSoundDefault(name)}
-                handleHealBattlingPokemons={() => handleHealBattlingPokemons()}
-                handleUsePokeball={(pokeballName: string) => handleUsePokeball(pokeballName)}
-                handleHealPokemon={(position: number, potionName: string) => handleHealPokemon(position, potionName)}
-                handleCapturePokemon={(pokemon : PokemonForBattle, moneyReward: number, chosenPokeball: PokeballTypeEnum) => handleCapturePokemon(pokemon, moneyReward, chosenPokeball)}
-                handleChooseOtherPokemon={(pokemon : PokemonForBattle) => handleChooseOtherPokemon(pokemon)}
-                handleSetPokemonBattling={(pokemon : PokemonForBattle, position : number) => handleSetPokemonBattling(pokemon, position)}
-                handlerUser={() => handlerUser} 
-                userPokemonTrainer={userPokemonTrainer} 
-                isAppLoading={isAppLoading}
-              />
-            </UserContext.Provider>
-          </IconComponentProvider>
+          // <IconComponentProvider IconComponent={MaterialCommunityIcons}>
+          //   <UserContext.Provider value={userCredentials}>
+          //     <Routes
+          //       handleChooseNewProfilePic={(image: string) => handleChooseNewProfilePic(image)}
+          //       handleReward={(moneyReward: number) => handleReward(moneyReward)}
+          //       handleBuyItemPokemon={(itemName: string, price: number) => handleBuyItemPokemon(itemName, price)}
+          //       isBattling={isBattling}
+          //       setIsBattling={setIsBattling}              
+          //       playSoundDefault={(name: MusicName) => playSoundDefault(name)}
+          //       handleHealBattlingPokemons={() => handleHealBattlingPokemons()}
+          //       handleUsePokeball={(pokeballName: string) => handleUsePokeball(pokeballName)}
+          //       handleHealPokemon={(position: number, potionName: string) => handleHealPokemon(position, potionName)}
+          //       handleCapturePokemon={(pokemon : PokemonForBattle, moneyReward: number, chosenPokeball: PokeballTypeEnum) => handleCapturePokemon(pokemon, moneyReward, chosenPokeball)}
+          //       handleChooseOtherPokemon={(pokemon : PokemonForBattle) => handleChooseOtherPokemon(pokemon)}
+          //       handleSetPokemonBattling={(pokemon : PokemonForBattle, position : number) => handleSetPokemonBattling(pokemon, position)}
+          //       handlerUser={() => handlerUser} 
+          //       userPokemonTrainer={userPokemonTrainer} 
+          //       isAppLoading={isAppLoading}
+          //     />
+          //   </UserContext.Provider>
+          // </IconComponentProvider>
 
-        // <View style={styles.container}>
-        //   <IconComponentProvider IconComponent={MaterialCommunityIcons}>
-        //     <UserContext.Provider value={userCredentials}>
-        //       <PokeLogin
-        //         handlerUser={(userLogin: UserCredentials) =>
-        //           handlerUser(userLogin)
-        //         }
-        //       /> 
-        //     </UserContext.Provider>
-        //   </IconComponentProvider>
-        // </View>
+        <IconComponentProvider IconComponent={MaterialCommunityIcons}>
+          <UserContext.Provider value={userCredentials}>
+            <RoutesStackLogin
+              handlerUser={handlerUser}
+              isAppLoading={isAppLoading}                
+            >
+            </RoutesStackLogin>
+          </UserContext.Provider>
+        </IconComponentProvider>
       )}
     </>
   );
