@@ -38,7 +38,7 @@ function PokeCard(props: PokeCardProps) {
   //Navigation
   const goToPokemonDetails = () => {
     props.playSoundDefault('pokedex');
-    props.navigation.navigate("PokePerfil", { pokemon: props.pokemon });
+    props.navigation.navigate("PokeDetail", { pokemon: props.pokemon });
   };
 
   return (

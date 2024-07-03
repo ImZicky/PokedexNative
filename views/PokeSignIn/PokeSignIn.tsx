@@ -12,8 +12,9 @@ import { useCommonService } from "../../service/common/CommonService";
 import UseUserService from "../../service/api/UserService";
 import * as Yup from "yup";
 import { FormikProvider, useFormik } from "formik";
+import { ScrollView } from "react-native-gesture-handler";
 
-export type PokeLoginProps = {
+export type PokeSignProps = {
   navigation: any;
   route: any;
   handlerUser: (userLogin: UserCredentials) => void;
@@ -29,7 +30,7 @@ type FormValues = {
   password?: string;
 };
 
-function PokeLogin(props: PokeLoginProps) {
+function PokeSignIn(props: PokeSignProps) {
   //Consts
   const [userCriteria] = useState<UserLoginCriteria>(DefaultValue);
   const [pokemon, setPokemon] = useState<Pokemon | undefined>(undefined);
@@ -73,7 +74,7 @@ function PokeLogin(props: PokeLoginProps) {
   };
 
   const handleGoCreateAccount = () => {
-    props.navigation.navigate("PokePerfilCreate");
+    props.navigation.navigate("PokeSignUp", {pokemonTypeColor: pokemonTypeColor});
   }
   
   //Validatiopn
@@ -126,7 +127,7 @@ function PokeLogin(props: PokeLoginProps) {
     },
     form: {
       width: 400,
-      minHeight: 250,
+      minHeight: 400,
       padding: 50,
       paddingTop: 15,
       backgroundColor: "#FFFFFF",
@@ -166,67 +167,69 @@ function PokeLogin(props: PokeLoginProps) {
               />
             </Flex>
           </Flex>
-          <Flex fill style={styles.centeredDiv}>
-            <Flex fill style={styles.form}>
-              <FormikProvider value={formik}>
-                <PokeText
-                  text={"Login"}
-                  color={pokemonTypeColor ?? "#000000"}
-                  type={"h2"}
-                />
-                <PokeTextField
-                  {...getFieldProps("email")}
-                  color={pokemonTypeColor}
-                  cursorColor={pokemonTypeColor}
-                  variant="outlined"
-                  label={"Email"}
-                  placeholder="Email"
-                  isReadOnly={false}
-                  placeholderTextColor={pokemonTypeColor}
-                  onChange={(val) => setFieldValue("email", val.trim())}
-                  error={Boolean(touched.email && errors.email)}
-                  helperText={touched.email && errors.email}
-                />
-                <PokeTextField
-                  {...getFieldProps("password")}
-                  color={pokemonTypeColor}
-                  cursorColor={pokemonTypeColor}
-                  variant="outlined"
-                  placeholder="Password"
-                  label={"Password"}
-                  isReadOnly={false}
-                  placeholderTextColor={pokemonTypeColor}
-                  onChange={(val) => setFieldValue("password", val.trim())}
-                  icon="eye-outline"
-                  isPassword
-                  error={Boolean(touched.password && errors.password)}
-                  helperText={touched.password && errors.password}
-                />
-                <PokeButton
-                  text="Entrar"
-                  size="fullwidth"
-                  icon="location-enter"
-                  color="white"
-                  variant="contained"
-                  loading={isSubmitting}
-                  styleType={pokemon?.types[0].type.name ?? ""}
-                  onClick={handleSubmit}
-                />
-                <Flex mt={10}>
-                  <PokeButton
-                    text="Criar conta"
-                    size="fullwidth"
-                    icon="account-outline"
-                    color={pokemon?.types[0].type.name}
+          <ScrollView>
+            <Flex fill style={styles.centeredDiv}>
+              <Flex fill style={styles.form}>
+                <FormikProvider value={formik}>
+                  <PokeText
+                    text={"Sign In"}
+                    color={pokemonTypeColor ?? "#000000"}
+                    type={"h2"}
+                  />
+                  <PokeTextField
+                    {...getFieldProps("email")}
+                    color={pokemonTypeColor}
+                    cursorColor={pokemonTypeColor}
                     variant="outlined"
+                    label={"Email"}
+                    placeholder="Email"
+                    isReadOnly={false}
+                    placeholderTextColor={pokemonTypeColor}
+                    onChange={(val) => setFieldValue("email", val.trim())}
+                    error={Boolean(touched.email && errors.email)}
+                    helperText={touched.email && errors.email}
+                  />
+                  <PokeTextField
+                    {...getFieldProps("password")}
+                    color={pokemonTypeColor}
+                    cursorColor={pokemonTypeColor}
+                    variant="outlined"
+                    placeholder="Password"
+                    label={"Password"}
+                    isReadOnly={false}
+                    placeholderTextColor={pokemonTypeColor}
+                    onChange={(val) => setFieldValue("password", val.trim())}
+                    icon="eye-outline"
+                    isPassword
+                    error={Boolean(touched.password && errors.password)}
+                    helperText={touched.password && errors.password}
+                  />
+                  <PokeButton
+                    text="Sign In"
+                    size="fullwidth"
+                    icon="location-enter"
+                    color="white"
+                    variant="contained"
                     loading={isSubmitting}
-                    styleType={"white"}
-                    onClick={handleGoCreateAccount}
+                    styleType={pokemonTypeColor}
+                    onClick={handleSubmit}
+                  />
+                  <Flex mt={10}>
+                    <PokeButton
+                      text="Sign Up"
+                      size="fullwidth"
+                      icon="account-outline"                    
+                      color={pokemonTypeColor}
+                      variant="outlined"
+                      loading={isSubmitting}
+                      styleType={"white"}
+                      onClick={handleGoCreateAccount}
                     />
-                </Flex>
-              </FormikProvider>
+                  </Flex>
+                </FormikProvider>
+              </Flex>
             </Flex>
-          </Flex>
+          </ScrollView>
         </>
       ) : (
         <PokeLoading loadType="page" />
@@ -235,4 +238,4 @@ function PokeLogin(props: PokeLoginProps) {
   );
 }
 
-export default PokeLogin;
+export default PokeSignIn;

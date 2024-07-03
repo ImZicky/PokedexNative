@@ -10,12 +10,12 @@ import { usePokemonService } from "../../service/api/PokemonService";
 import { PokemonAbilityFull } from "../../service/api/types/PokemonAbilityFull";
 import PokeIconButton from "../../components/buttons/PokeIconButton";
 
-export type PokePerfilProps = {
+export type PokeDetailProps = {
   route: any;
   navigation: any;
 };
 
-function PokePerfil(props: PokePerfilProps) {
+function PokeDetail(props: PokeDetailProps) {
   //States
   const [pokemon, setPokemon] = useState<Pokemon | undefined>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -531,4 +531,4 @@ function PokePerfil(props: PokePerfilProps) {
   );
 }
 
-export default PokePerfil;
+export default PokeDetail;

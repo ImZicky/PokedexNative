@@ -2,8 +2,9 @@ import { UserCredentials, UserCriteria, UserLoginCriteria } from "./types/User";
 
 export default function UseUserService() {
   return {
+    //TODO: PRECISA FAZER LIGAR A UMA API DE FATO
     login: async (user: UserLoginCriteria) => {
-      const response: UserCredentials = {
+      const criteria: UserCredentials = {
         isLogged: true,
         token: "Bearer_TOKEN-AQUI",
         user: {
@@ -13,20 +14,16 @@ export default function UseUserService() {
           name: "Ash Ketchum",
         },
       };
-      return response;
+      return criteria;
     },
     createAccount: async (user: UserCriteria) => {
-      const response: UserCredentials = {
-        isLogged: true,
-        token: "Bearer_TOKEN-AQUI",
-        user: {
-          id: "id_hashed_aqui",
-          pokemons: undefined,
-          email: user.email,
-          name: "Ash Ketchum",
-        },
+      const criteria: UserCriteria = {
+        email: user.email,
+        name: user.name,
+        password: user.password,
+        image: user.image
       };
-      return response;
+      return criteria;
     },
   };
 }

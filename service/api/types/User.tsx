@@ -7,6 +7,8 @@ export type UserLoginCriteria = {
 
 export type UserCriteria = {
   password: string | undefined;
+  image: string | undefined;
+  name: string | undefined;
   email: string | undefined;
 };
 

@@ -1,7 +1,7 @@
 import "react-native-gesture-handler";
 import { IconComponentProvider } from "@react-native-material/core";
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import RoutesDrawer from "./routes/routes-drawer-index";
 import { DeviceEventEmitter } from "react-native";

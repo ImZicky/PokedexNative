@@ -1,7 +1,7 @@
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItem, DrawerItemList } from "@react-navigation/drawer";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import PokeList from "../views/PokeList/PokeList";
-import PokePerfil from "../views/PokePerfil/PokePerfil";
+import PokeDetail from "../views/PokeDetail/PokeDetail";
 import React from "react";
 import { Icon, Text } from "@react-native-material/core";
 import { UserCredentials } from "../service/api/types/User";
@@ -243,14 +243,14 @@ export default function DrawerRoutes(cProps: DrawerRoutesProps) {
 
 
       <Drawer.Screen
-        name="PokePerfil"
+        name="PokeDetail"
         options={{
           headerTitle: "INFOS",
           drawerItemStyle: { display: "none" },
         }}
       >
         {(props) => (
-          <PokePerfil navigation={props.navigation} route={props.route} />
+          <PokeDetail navigation={props.navigation} route={props.route} />
         )}
       </Drawer.Screen>
     </Drawer.Navigator>

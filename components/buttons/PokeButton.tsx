@@ -38,7 +38,7 @@ export default function PokeButton(buttonProps: ButtonProps) {
 
   const styles = StyleSheet.create({
     button: {
-      backgroundColor: commonService.getColorFromType(buttonProps.styleType),
+      backgroundColor: buttonProps.styleType,
       width: getWidthFromSize(buttonProps.size),
     },
   });
@@ -68,8 +68,8 @@ export default function PokeButton(buttonProps: ButtonProps) {
   return buttonProps.icon ? (
     <Button
       style={styles.button}
-      tintColor={commonService.getColorFromType(buttonProps.color)}
-      color={commonService.getColorFromType(buttonProps.color)}
+      tintColor={buttonProps.color}
+      color={buttonProps.color}
       title={buttonProps.text}
       variant={buttonProps.variant}
       loading={buttonProps.loading}
@@ -80,8 +80,8 @@ export default function PokeButton(buttonProps: ButtonProps) {
     ) : (
     <Button
       style={styles.button}
-      tintColor={commonService.getColorFromType(buttonProps.color)}
-      color={commonService.getColorFromType(buttonProps.color)}
+      tintColor={buttonProps.color}
+      color={buttonProps.color}
       title={buttonProps.text}
       variant={buttonProps.variant}
       loading={buttonProps.loading}
